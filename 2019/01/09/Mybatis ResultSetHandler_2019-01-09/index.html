@@ -2,23 +2,24 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-<title>Categorias - 塑料内存</title>
+<title>[片段] Mybatis ResultSetHandler 实践 - 塑料内存</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
-    <meta name="description" content="随笔">
-<meta name="keywords" content="工作,代码,算法,读书,java,感悟,linux,mybatis,spring,aop,团队,搜索,redis">
-<meta property="og:type" content="website">
-<meta property="og:title" content="塑料内存">
-<meta property="og:url" content="http://blog.yamato.moe/categories/index.html">
+    <meta name="description" content="这次拦截的方法是handleResultSets(Statement stmt)，用来批量解密用@Encrypted注解的String字段，可能还有一些坑。 12345678910111213141516171819202122232425262728293031323334353637@Overridepublic List&amp;lt;Object&amp;gt; handleResultSets(Stat">
+<meta name="keywords" content="代码,java,mybatis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[片段] Mybatis ResultSetHandler 实践">
+<meta property="og:url" content="http://blog.yamato.moe/2019/01/09/Mybatis ResultSetHandler_2019-01-09/index.html">
 <meta property="og:site_name" content="塑料内存">
-<meta property="og:description" content="随笔">
+<meta property="og:description" content="这次拦截的方法是handleResultSets(Statement stmt)，用来批量解密用@Encrypted注解的String字段，可能还有一些坑。 12345678910111213141516171819202122232425262728293031323334353637@Overridepublic List&amp;lt;Object&amp;gt; handleResultSets(Stat">
 <meta property="og:locale" content="zh-cn">
 <meta property="og:image" content="http://blog.yamato.moe/images/og_image.png">
+<meta property="og:updated_time" content="2019-06-24T08:04:08.660Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="塑料内存">
-<meta name="twitter:description" content="随笔">
+<meta name="twitter:title" content="[片段] Mybatis ResultSetHandler 实践">
+<meta name="twitter:description" content="这次拦截的方法是handleResultSets(Statement stmt)，用来批量解密用@Encrypted注解的String字段，可能还有一些坑。 12345678910111213141516171819202122232425262728293031323334353637@Overridepublic List&amp;lt;Object&amp;gt; handleResultSets(Stat">
 <meta name="twitter:image" content="http://blog.yamato.moe/images/og_image.png">
 
 
@@ -93,7 +94,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/logo.svg" alt="塑料内存" height="28">
+                <img src="/images/logo.svg" alt="[片段] Mybatis ResultSetHandler 实践" height="28">
             
             </a>
         </div>
@@ -105,7 +106,7 @@
                 
                 <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item is-active" href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
                 <a class="navbar-item" href="/tags">Tags</a>
                 
@@ -138,139 +139,103 @@
     <section class="section">
         <div class="container">
             <div class="columns">
-                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
-<div class="card widget">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-01-09T02:00:00.000Z">2019-01-09</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    3 分钟 read (About 497 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                [片段] Mybatis ResultSetHandler 实践
+            
+        </h1>
+        <div class="content">
+            <p>这次拦截的方法是handleResultSets(Statement stmt)，用来批量解密用@Encrypted注解的String字段，可能还有一些坑。</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">@Override</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Object&gt; <span class="hljs-title">handleResultSets</span><span class="hljs-params">(Statement stmt)</span> <span class="hljs-keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">  ErrorContext.instance().activity(<span class="hljs-string">"handling results"</span>).object(mappedStatement.getId());</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">final</span> List&lt;Object&gt; multipleResults = <span class="hljs-keyword">new</span> ArrayList&lt;Object&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">int</span> resultSetCount = <span class="hljs-number">0</span>;</span><br><span class="line">  ResultSetWrapper rsw = getFirstResultSet(stmt);</span><br><span class="line"></span><br><span class="line">  List&lt;ResultMap&gt; resultMaps = mappedStatement.getResultMaps();</span><br><span class="line">  <span class="hljs-keyword">int</span> resultMapCount = resultMaps.size();</span><br><span class="line">  validateResultMapsCount(rsw, resultMapCount);</span><br><span class="line">  <span class="hljs-keyword">while</span> (rsw != <span class="hljs-keyword">null</span> &amp;&amp; resultMapCount &gt; resultSetCount) &#123;</span><br><span class="line">    ResultMap resultMap = resultMaps.get(resultSetCount);</span><br><span class="line">    handleResultSet(rsw, resultMap, multipleResults, <span class="hljs-keyword">null</span>);</span><br><span class="line">    rsw = getNextResultSet(stmt);</span><br><span class="line">    cleanUpAfterHandlingResultSet();</span><br><span class="line">    resultSetCount++;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  String[] resultSets = mappedStatement.getResultSets();</span><br><span class="line">  <span class="hljs-keyword">if</span> (resultSets != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">    <span class="hljs-keyword">while</span> (rsw != <span class="hljs-keyword">null</span> &amp;&amp; resultSetCount &lt; resultSets.length) &#123;</span><br><span class="line">      ResultMapping parentMapping = nextResultMaps.get(resultSets[resultSetCount]);</span><br><span class="line">      <span class="hljs-keyword">if</span> (parentMapping != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">        String nestedResultMapId = parentMapping.getNestedResultMapId();</span><br><span class="line">        ResultMap resultMap = configuration.getResultMap(nestedResultMapId);</span><br><span class="line">        handleResultSet(rsw, resultMap, <span class="hljs-keyword">null</span>, parentMapping);</span><br><span class="line">      &#125;</span><br><span class="line">      rsw = getNextResultSet(stmt);</span><br><span class="line">      cleanUpAfterHandlingResultSet();</span><br><span class="line">      resultSetCount++;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span> collapseSingleResultList(multipleResults);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> app.pooi.common.encrypt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.common.encrypt.anno.CipherSpi;</span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.common.encrypt.anno.Encrypted;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.Getter;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.executor.resultset.ResultSetHandler;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.plugin.*;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.reflection.MetaObject;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.reflection.SystemMetaObject;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="hljs-keyword">import</span> java.sql.Statement;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.*;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Function;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.logging.Logger;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Intercepts</span>(&#123;</span><br><span class="line">        <span class="hljs-meta">@Signature</span>(type = ResultSetHandler.class, method = <span class="hljs-string">"handleResultSets"</span>, args = &#123;Statement.class&#125;),</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EncryptInterceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Interceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Logger logger = Logger.getLogger(EncryptInterceptor.class.getName());</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> CipherSpi cipherSpi;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">EncryptInterceptor</span><span class="hljs-params">(CipherSpi cipherSpi)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.cipherSpi = cipherSpi;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">intercept</span><span class="hljs-params">(Invocation invocation)</span> <span class="hljs-keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Object proceed = invocation.proceed();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (proceed == <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> proceed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        List&lt;?&gt; results = (List&lt;?&gt;) proceed;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (results.isEmpty()) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> proceed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Object first = results.iterator().next();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Class&lt;?&gt; modelClazz = first.getClass();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; fieldsNeedDecrypt = Arrays.stream(modelClazz.getDeclaredFields())</span><br><span class="line">                .filter(f -&gt; f.getAnnotation(Encrypted.class) != <span class="hljs-keyword">null</span>)</span><br><span class="line">                .filter(f -&gt; &#123;</span><br><span class="line">                    <span class="hljs-keyword">boolean</span> isString = f.getType() == String.class;</span><br><span class="line">                    <span class="hljs-keyword">if</span> (!isString) &#123;</span><br><span class="line">                        logger.warning(f.getName() + <span class="hljs-string">"is not String, actual type is "</span> + f.getType().getSimpleName() + <span class="hljs-string">" ignored"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="hljs-keyword">return</span> isString;</span><br><span class="line">                &#125;)</span><br><span class="line">                .map(Field::getName)</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;List&lt;String&gt;&gt; partition = partition(fieldsNeedDecrypt, <span class="hljs-number">20</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">for</span> (Object r : results) &#123;</span><br><span class="line">            <span class="hljs-keyword">final</span> MetaObject metaObject = SystemMetaObject.forObject(r);</span><br><span class="line"></span><br><span class="line">            <span class="hljs-keyword">for</span> (List&lt;String&gt; fields : partition) &#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> Map&lt;String, String&gt; fieldValueMap = fields.stream().collect(Collectors.toMap(Function.identity(), f -&gt; (String) metaObject.getValue(f)));</span><br><span class="line">                <span class="hljs-keyword">final</span> ArrayList&lt;String&gt; values = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;(fieldValueMap.values());</span><br><span class="line">                Map&lt;String, String&gt; decryptValues = cipherSpi.decrypt(values);</span><br><span class="line"></span><br><span class="line">                fieldValueMap.entrySet()</span><br><span class="line">                        .stream()</span><br><span class="line">                        .map(e -&gt; Tuple2.of(e.getKey(), decryptValues.getOrDefault(e.getValue(), <span class="hljs-string">""</span>)))</span><br><span class="line">                        .forEach(e -&gt; metaObject.setValue(e.getT1(), e.getT2()));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">return</span> results;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> &lt;T&gt; List&lt;List&lt;T&gt;&gt; partition(List&lt;T&gt; list, <span class="hljs-keyword">int</span> batchCount) &#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (!(batchCount &gt; <span class="hljs-number">0</span>)) &#123;</span><br><span class="line">            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalArgumentException(<span class="hljs-string">"batch count must greater than zero"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        List&lt;List&lt;T&gt;&gt; partitionList = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;(list.size() / (batchCount + <span class="hljs-number">1</span>));</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; list.size(); i += batchCount) &#123;</span><br><span class="line">            partitionList.add(list.stream().skip(i).limit(batchCount).collect(Collectors.toList()));</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">return</span> partitionList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">plugin</span><span class="hljs-params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> Plugin.wrap(target, <span class="hljs-keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setProperties</span><span class="hljs-params">(Properties properties)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Getter</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tuple2</span>&lt;<span class="hljs-title">T1</span>, <span class="hljs-title">T2</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> T1 t1;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> T2 t2;</span><br><span class="line"></span><br><span class="line">    Tuple2(T1 t1, T2 t2) &#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.t1 = t1;</span><br><span class="line">        <span class="hljs-keyword">this</span>.t2 = t2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">static</span> &lt;T1, T2&gt; <span class="hljs-function">Tuple2&lt;T1, T2&gt; <span class="hljs-title">of</span><span class="hljs-params">(T1 t1, T2 t2)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Tuple2&lt;&gt;(t1, t2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/java/">java</a>, <a class="has-link-grey -link" href="/tags/mybatis/">mybatis</a>, <a class="has-link-grey -link" href="/tags/代码/">代码</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
     <div class="card-content">
-        <div class="menu">
-            <h3 class="menu-label">
-                Categorias
-            </h3>
-            <ul class="menu-list">
-            <li>
-        <a class="level is-marginless" href="/categories/Java基础/">
-            <span class="level-start">
-                <span class="level-item">Java基础</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">2</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/Java并发/">
-            <span class="level-start">
-                <span class="level-item">Java并发</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/Java框架/">
-            <span class="level-start">
-                <span class="level-item">Java框架</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">5</span>
-            </span>
-        </a><ul><li>
-        <a class="level is-marginless" href="/categories/Java框架/Mybatis/">
-            <span class="level-start">
-                <span class="level-item">Mybatis</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">4</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/Java框架/Spring/">
-            <span class="level-start">
-                <span class="level-item">Spring</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li></ul></li><li>
-        <a class="level is-marginless" href="/categories/中间件/">
-            <span class="level-start">
-                <span class="level-item">中间件</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">2</span>
-            </span>
-        </a><ul><li>
-        <a class="level is-marginless" href="/categories/中间件/resilience4j/">
-            <span class="level-start">
-                <span class="level-item">resilience4j</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/中间件/搜索引擎/">
-            <span class="level-start">
-                <span class="level-item">搜索引擎</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li></ul></li><li>
-        <a class="level is-marginless" href="/categories/工作/">
-            <span class="level-start">
-                <span class="level-item">工作</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">3</span>
-            </span>
-        </a><ul><li>
-        <a class="level is-marginless" href="/categories/工作/总结/">
-            <span class="level-start">
-                <span class="level-item">总结</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/工作/挑战/">
-            <span class="level-start">
-                <span class="level-item">挑战</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">2</span>
-            </span>
-        </a></li></ul></li><li>
-        <a class="level is-marginless" href="/categories/算法/">
-            <span class="level-start">
-                <span class="level-item">算法</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">2</span>
-            </span>
-        </a><ul><li>
-        <a class="level is-marginless" href="/categories/算法/二叉树/">
-            <span class="level-start">
-                <span class="level-item">二叉树</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/算法/字符串/">
-            <span class="level-start">
-                <span class="level-item">字符串</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li></ul></li><li>
-        <a class="level is-marginless" href="/categories/读书/">
-            <span class="level-start">
-                <span class="level-item">读书</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">5</span>
-            </span>
-        </a></li>
-            </ul>
+        <h3 class="menu-label has-text-centered">Suka dengan artikel ini? Bantu penulis dengan donasi melalui</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>Alipay</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="Alipay"></div>
+</a>
+
+                
         </div>
     </div>
-</div></div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2019/01/22/Spring_aop_argument_collector_2019-01-22/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">[片段] Java收集方法参数+Spring DataBinder</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2018/12/27/2018-12-27-softablity/">
+                <span class="level-item">代码外的生存之道-读书笔记-职业篇</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
                 
 
 
@@ -1270,7 +1235,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/logo.svg" alt="塑料内存" height="28">
+                    <img src="/images/logo.svg" alt="[片段] Mybatis ResultSetHandler 实践" height="28">
                 
                 </a>
                 <p class="is-size-7">

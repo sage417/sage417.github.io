@@ -2,23 +2,24 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-<title>Categorias - 塑料内存</title>
+<title>[片段]使用TypeToken在运行期保存泛型信息 - 塑料内存</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
-    <meta name="description" content="随笔">
-<meta name="keywords" content="工作,代码,算法,读书,java,感悟,linux,mybatis,spring,aop,团队,搜索,redis">
-<meta property="og:type" content="website">
-<meta property="og:title" content="塑料内存">
-<meta property="og:url" content="http://blog.yamato.moe/categories/index.html">
+    <meta name="description" content="一般来说可以使用getGenericSuperclass 获取子类范型信息，但是泛型有嵌套的话想获取完整信息还是有点复杂的。例如：Message&amp;lt;List&amp;gt; 有两个泛型信息。 guava中有强大的TypeToken帮助你保存复杂泛型信息，可以参考： 123ParameterizedTypeReference&amp;lt;Message&amp;lt;T&amp;gt;&amp;gt; responseTypeRef">
+<meta name="keywords" content="代码,java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[片段]使用TypeToken在运行期保存泛型信息">
+<meta property="og:url" content="http://blog.yamato.moe/2019/02/26/2019-02-26-java-genic-type/index.html">
 <meta property="og:site_name" content="塑料内存">
-<meta property="og:description" content="随笔">
+<meta property="og:description" content="一般来说可以使用getGenericSuperclass 获取子类范型信息，但是泛型有嵌套的话想获取完整信息还是有点复杂的。例如：Message&amp;lt;List&amp;gt; 有两个泛型信息。 guava中有强大的TypeToken帮助你保存复杂泛型信息，可以参考： 123ParameterizedTypeReference&amp;lt;Message&amp;lt;T&amp;gt;&amp;gt; responseTypeRef">
 <meta property="og:locale" content="zh-cn">
 <meta property="og:image" content="http://blog.yamato.moe/images/og_image.png">
+<meta property="og:updated_time" content="2019-06-24T08:04:08.659Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="塑料内存">
-<meta name="twitter:description" content="随笔">
+<meta name="twitter:title" content="[片段]使用TypeToken在运行期保存泛型信息">
+<meta name="twitter:description" content="一般来说可以使用getGenericSuperclass 获取子类范型信息，但是泛型有嵌套的话想获取完整信息还是有点复杂的。例如：Message&amp;lt;List&amp;gt; 有两个泛型信息。 guava中有强大的TypeToken帮助你保存复杂泛型信息，可以参考： 123ParameterizedTypeReference&amp;lt;Message&amp;lt;T&amp;gt;&amp;gt; responseTypeRef">
 <meta name="twitter:image" content="http://blog.yamato.moe/images/og_image.png">
 
 
@@ -93,7 +94,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/logo.svg" alt="塑料内存" height="28">
+                <img src="/images/logo.svg" alt="[片段]使用TypeToken在运行期保存泛型信息" height="28">
             
             </a>
         </div>
@@ -105,7 +106,7 @@
                 
                 <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item is-active" href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
                 <a class="navbar-item" href="/tags">Tags</a>
                 
@@ -138,139 +139,106 @@
     <section class="section">
         <div class="container">
             <div class="columns">
-                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
-<div class="card widget">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-02-26T02:00:00.000Z">2019-02-26</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Java基础/">Java基础</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    1 分钟 read (About 197 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                [片段]使用TypeToken在运行期保存泛型信息
+            
+        </h1>
+        <div class="content">
+            <p>一般来说可以使用getGenericSuperclass 获取子类范型信息，但是泛型有嵌套的话想获取完整信息还是有点复杂的。例如：Message&lt;List<t>&gt; 有两个泛型信息。</t></p>
+<p>guava中有强大的TypeToken帮助你保存复杂泛型信息，可以参考：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ParameterizedTypeReference&lt;Message&lt;T&gt;&gt; responseTypeRef = </span><br><span class="line">	ParameterizedTypeReferenceBuilder.fromTypeToken(</span><br><span class="line">        <span class="hljs-keyword">new</span> TypeToken&lt;Message&lt;T&gt;&gt;() &#123;&#125;.where(<span class="hljs-keyword">new</span> TypeParameter&lt;T&gt;() &#123;&#125;, <span class="hljs-keyword">new</span> TypeToken&lt;List&lt;OrgSugVOV1&gt;&gt;() &#123;&#125;));</span><br></pre></td></tr></table></figure>
+
+<p>如果需要在spring框架中使用，需要一个适配器：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ParameterizedTypeReferenceBuilder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; <span class="hljs-function">ParameterizedTypeReference&lt;T&gt; <span class="hljs-title">fromTypeToken</span><span class="hljs-params">(TypeToken&lt;T&gt; typeToken)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TypeTokenParameterizedTypeReference&lt;&gt;(typeToken);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TypeTokenParameterizedTypeReference</span>&lt;<span class="hljs-title">T</span>&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title">ParameterizedTypeReference</span>&lt;<span class="hljs-title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Type type;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">TypeTokenParameterizedTypeReference</span><span class="hljs-params">(TypeToken&lt;T&gt; typeToken)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">this</span>.type = typeToken.getType();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">getType</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> type;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">equals</span><span class="hljs-params">(Object obj)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span> == obj || (obj <span class="hljs-keyword">instanceof</span> ParameterizedTypeReference &amp;&amp;</span><br><span class="line">                    <span class="hljs-keyword">this</span>.type.equals(((ParameterizedTypeReference&lt;?&gt;) obj).getType())));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">hashCode</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.type.hashCode();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">toString</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-string">"ParameterizedTypeReference&lt;"</span> + <span class="hljs-keyword">this</span>.type + <span class="hljs-string">"&gt;"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于java的泛型我就不多做吐槽了。</p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/java/">java</a>, <a class="has-link-grey -link" href="/tags/代码/">代码</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
     <div class="card-content">
-        <div class="menu">
-            <h3 class="menu-label">
-                Categorias
-            </h3>
-            <ul class="menu-list">
-            <li>
-        <a class="level is-marginless" href="/categories/Java基础/">
-            <span class="level-start">
-                <span class="level-item">Java基础</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">2</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/Java并发/">
-            <span class="level-start">
-                <span class="level-item">Java并发</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/Java框架/">
-            <span class="level-start">
-                <span class="level-item">Java框架</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">5</span>
-            </span>
-        </a><ul><li>
-        <a class="level is-marginless" href="/categories/Java框架/Mybatis/">
-            <span class="level-start">
-                <span class="level-item">Mybatis</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">4</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/Java框架/Spring/">
-            <span class="level-start">
-                <span class="level-item">Spring</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li></ul></li><li>
-        <a class="level is-marginless" href="/categories/中间件/">
-            <span class="level-start">
-                <span class="level-item">中间件</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">2</span>
-            </span>
-        </a><ul><li>
-        <a class="level is-marginless" href="/categories/中间件/resilience4j/">
-            <span class="level-start">
-                <span class="level-item">resilience4j</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/中间件/搜索引擎/">
-            <span class="level-start">
-                <span class="level-item">搜索引擎</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li></ul></li><li>
-        <a class="level is-marginless" href="/categories/工作/">
-            <span class="level-start">
-                <span class="level-item">工作</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">3</span>
-            </span>
-        </a><ul><li>
-        <a class="level is-marginless" href="/categories/工作/总结/">
-            <span class="level-start">
-                <span class="level-item">总结</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/工作/挑战/">
-            <span class="level-start">
-                <span class="level-item">挑战</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">2</span>
-            </span>
-        </a></li></ul></li><li>
-        <a class="level is-marginless" href="/categories/算法/">
-            <span class="level-start">
-                <span class="level-item">算法</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">2</span>
-            </span>
-        </a><ul><li>
-        <a class="level is-marginless" href="/categories/算法/二叉树/">
-            <span class="level-start">
-                <span class="level-item">二叉树</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/算法/字符串/">
-            <span class="level-start">
-                <span class="level-item">字符串</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li></ul></li><li>
-        <a class="level is-marginless" href="/categories/读书/">
-            <span class="level-start">
-                <span class="level-item">读书</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">5</span>
-            </span>
-        </a></li>
-            </ul>
+        <h3 class="menu-label has-text-centered">Suka dengan artikel ini? Bantu penulis dengan donasi melalui</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>Alipay</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="Alipay"></div>
+</a>
+
+                
         </div>
     </div>
-</div></div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2019/03/11/[片段]使用redis创建简易搜索引擎（核心篇）/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">[片段] 使用redis创建简易搜索引擎（核心篇）</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/02/11/【片段】@CreatedBy  @ModifiedBy/">
+                <span class="level-item">[片段] @CreatedBy / @ModifiedBy 拦截器实现</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
                 
 
 
@@ -1270,7 +1238,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/logo.svg" alt="塑料内存" height="28">
+                    <img src="/images/logo.svg" alt="[片段]使用TypeToken在运行期保存泛型信息" height="28">
                 
                 </a>
                 <p class="is-size-7">
