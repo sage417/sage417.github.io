@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>塑料内存</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="随笔">
+<meta property="og:type" content="website">
+<meta property="og:title" content="塑料内存">
+<meta property="og:url" content="http://blog.yamato.moe/page/6/index.html">
+<meta property="og:site_name" content="塑料内存">
+<meta property="og:description" content="随笔">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://blog.yamato.moe/images/og_image.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="塑料内存">
+<meta name="twitter:description" content="随笔">
+<meta name="twitter:image" content="http://blog.yamato.moe/images/og_image.png">
+
+
+
+
+
+
+
+<link rel="icon" href="/images/favicon.svg">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.svg" alt="塑料内存" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">Home</a>
+                
+                <a class="navbar-item" href="/archives">Archives</a>
+                
+                <a class="navbar-item" href="/categories">Categories</a>
+                
+                <a class="navbar-item" href="/tags">Tags</a>
+                
+                <a class="navbar-item" href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/sage417/sage417.github.io">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="Search" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
+    <div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-11-19T02:00:00.000Z">2018-11-19</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/读书/">读书</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    13 分钟 read (About 1895 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2018/11/19/Distributed architecture concepts I learned while building a large payments system/">构建大型支付系统时分布式架构的关键点</a>
+            
+        </h1>
+        <div class="content">
+            <h2 id="SLA"><a href="#SLA" class="headerlink" title="SLA"></a>SLA</h2><p>在构建大型系统时，常常会遇到各种错误。在计划构建一个系统时，定义系统的“健康状态”十分重要。</p>
+<p>“健康状态”必须是可度量的，一般做法是使用SLAs来度量系统的“健康状态”。最常见的SLA为</p>
+<ul>
+<li><p>可达性 </p>
+<p>从时间维度衡量（99.999%可达性，每年下线50分钟）</p>
+</li>
+<li><p>准确性</p>
+<p>对于数据的丢失或失真是否可以接受？可以达到多少百分比？对于支付系统来说，不接受任何数据的丢失和失真</p>
+</li>
+<li><p>容量</p>
+<p>系统支持并发</p>
+</li>
+<li><p>延迟</p>
+<p>响应延迟，一般衡量95%请求的响应时间和99%请求响应时间</p>
+</li>
+</ul>
+<p>确保新系统比被替代系统“更好”，可以使用上面四个SLA指标来衡量，可达性是最重要的需求。</p>
+<h2 id="水平和垂直伸缩"><a href="#水平和垂直伸缩" class="headerlink" title="水平和垂直伸缩"></a>水平和垂直伸缩</h2><p>随着新业务的增长，负载也会增加。最常见的伸缩策略是垂直和水平伸缩。</p>
+<p>水平伸缩就是增加更多的机器或节点，对于分布式系统来说水平伸缩是最常有的方式。</p>
+<p>垂直伸缩基本上就是买更大/好的机器。</p>
+<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><p>可达性对于任何系统都是很重要的，但是分布式系统一般都构建在低可达性的机器上（比如：服务的可达性要求99.999% 机器的可达性为99.9%）。简单的做法是维护一组机器组成集群，这样服务的可达性不依赖单独的机器。</p>
+<p>一致性是在高可用系统中最需要关心的。一个一致性系统在所有的节点上看到和返回的数据在同一时间是相同的。如果使用一组机器来组成集群，它们还需要互相发送消息来保持同步，但是发送消息可能失败，这样一些节点就会因为不一致而不可达。</p>
+<p>一致性有多个模型，在分布式系统最常用的是强一致性，弱一致性和最终一致性。一般来说，一致性要求越低，系统可以工作的更快，但是返回的数据不一定是最新的。</p>
+<p>系统中的数据需要是一致的，但是到底是怎样的一致？对于一些系统，需要强一致性，比如一次支付必须是强一致的存储下来。对于没那么重要的部分，最终一致性是可以考虑的权衡。比如列出最近的交易。</p>
+<h2 id="数据持久性"><a href="#数据持久性" class="headerlink" title="数据持久性"></a>数据持久性</h2><p>持久性表示一旦数据成功添加到数据存储，它就永远可以访问到。不同的分布式数据库拥有不同级别的数据持久性。一般使用副本来增加数据持久性。</p>
+<p>对于支付系统来说，数据不允许丢失。我们构建的分布式数据存储需要支持集群级别的数据持久型。目前Cassandra, MongoDB, HDFS和Dynamodb 都支持多种级别的数据持久性。</p>
+<h1 id="消息保持与持久性"><a href="#消息保持与持久性" class="headerlink" title="消息保持与持久性"></a>消息保持与持久性</h1><p>分布式系统中的节点执行计算，存储数据，互相发送消息。发送消息的关键是消息的可靠到达。对于关键系统，经常需要消息零丢失。</p>
+<p>对于分布式系统，发送消息一般石油分布式消息服务发送，如RabbitMQ，Kafka。这些消息服务支持不同级别的消息投递可靠性。</p>
+<p>消息保持表示当节点处理消息失败时，在错误被解决前消息一直被保持着。消息的持久性一般在消息队列层被使用。如果在消息发送的时候队列或节点下线了，那在它们重新上线是还能接收到消息。</p>
+<p>在支付系统中我们需要每一条消息投递一次，在构建系统中保证投递一次和投递至少一次在实现上是有区别的。最后我们使用了kafka来保证投递至少一次。</p>
+<h2 id="幂等性"><a href="#幂等性" class="headerlink" title="幂等性"></a>幂等性</h2><p>在分布式系统中，很多东西都可能出错，连接会丢包或超时，客户端经常会重试这些请求。一个幂等的系统保证无论多少特定的请求被执行，一个请求实际的操作只会执行一次。比如支付请求，如果客户端请求支付并且请求已经成功，但是客户端超时了，客户端是能够重试相同的请求的。对于一个幂等的系统，一个个人的支付是不能被收取两次的。</p>
+<p>对幂等的设计，分布式系统需要某种分布式锁机制。假设我们想要使用乐观锁来实现幂等性，这时系统需要强一致性的锁来执行操作，我们可以使用同一个版本的乐观锁来检查是否有启动了额外的操作。</p>
+<p>根据系统的一致性和操作的类型，有很多方式来实现幂等性。在设计分布式系统时，幂等性时最容易忽略的。在支付系统中，幂等操作时最重要的，它避免了双花和双收问题。消息系统已经保证了消息至少消费一次，我们只需要保证所有重复的消息保证幂等性即可。我们选择使用乐观锁，并使用强一致性存储作为乐观锁的数据源。</p>
+<h2 id="分片和法定人数"><a href="#分片和法定人数" class="headerlink" title="分片和法定人数"></a>分片和法定人数</h2><p>分布式系统经常需要存储大量的数据，远超一台节点的容量。一般的解决方案时使用分片，数据使用某种hash算法被水平分区。尽管很多分布式数据库屏蔽了分片的实现，但是分片还是挺有意思的，特别是关于重新分片。</p>
+<p>许多分布式系统在多个拥有数据和统计信息。为保证对数据操作的一致性，使用基于投票的方式是不行的，只有超过一定数量的节点操作成功，这个操作才是成功的，这个叫做法定人数。</p>
+<h2 id="Actor模型"><a href="#Actor模型" class="headerlink" title="Actor模型"></a>Actor模型</h2><p>描述分布式系统最普遍的做法是使用Actor模型，还有一种方法是CSP。</p>
+<p>Actor模型基于actor互相发送消息并作出回应。每一个actor只能做少量的动作，创建其他actors, 发送消息或者决定如何处理下个消息。通过这些简单的规则，复杂的分布式系统可以被准确描述，可以在actor崩溃后自我修复。</p>
+<p>使用akka提供了标准的分布式模型，避免我们重复造轮子。</p>
+<h2 id="反应式架构"><a href="#反应式架构" class="headerlink" title="反应式架构"></a>反应式架构</h2><p>当构建大型分布式系统时，目标常常是它们的弹性，伸缩性，和扩展性。反应式架构是在这个领域最流行和最通用的方案。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    <div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-11-11T02:00:00.000Z">2018-11-11</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/算法/">算法</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/算法/字符串/">字符串</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    6 分钟 read (About 948 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2018/11/11/2018-11-11-lcs/">再谈最长公共子串</a>
+            
+        </h1>
+        <div class="content">
+            <h3 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h3><p>这次遇到贝壳花名的需求，需要使用最长公共子串对花名做校验。这种算法在面试题中算是必会题，各种四层循环，三层循环，两层循环的代码在我脑中闪过，但是今天就是要带你实现不一样的最长公共子串！</p>
+<h3 id="教科书式实现"><a href="#教科书式实现" class="headerlink" title="教科书式实现"></a>教科书式实现</h3><p>使用动态规划，两层循环，使用二维数组存储状态，时间复杂度O(n^2^)，空间复杂度O(n^2^)或O(2n)</p>
+<p>一张图解释原理：</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">                  先 横 向 处 理</span><br><span class="line">         +---------------------------&gt;</span><br><span class="line"></span><br><span class="line">           e   a   b   c   b   c   f</span><br><span class="line">  +      +---+---+---+---+---+---+---+</span><br><span class="line">  |    a | 0 | 1 | 0 | 0 | 0 | 0 | 0 |</span><br><span class="line">纵 |      +---------------------------+</span><br><span class="line">向 |    b | 0 | 0 | 2 | 0 | 1 | 0 | 0 |</span><br><span class="line">累 |      +---------------------------+</span><br><span class="line">加 |    c | 0 | 0 | 0 | 3 | 0 | 2 | 0 |</span><br><span class="line">  |      +---------------------------+</span><br><span class="line">  |    d | 0 | 0 | 0 | 0 | 0 | 0 | 0 |</span><br><span class="line">  |      +---------------------------+</span><br><span class="line">  |    e | 1 | 0 | 0 | 0 | 0 | 0 | 0 |</span><br><span class="line">  v      +---+---+---+---+---+---+---+</span><br><span class="line">           e   a   b   c   b   c   f</span><br></pre></td></tr></table></figure>
+
+<h3 id="优化空间复杂度至O-1"><a href="#优化空间复杂度至O-1" class="headerlink" title="优化空间复杂度至O(1)"></a>优化空间复杂度至O(1)</h3><p>从上图可以发现，在纵向累加时实际只需要左上方的计数器即可, O(n^2^)的空间白白被浪费了,最优的空间复杂度应该是O(1)。那么该如何处理呢？</p>
+<p>一张图解释原理：</p>
+<pre><code>                                 e   a   b   c   b   c   f
+  +---+                        +---+---+---+---+---+---+---+
+a | 0 |                            | 1 | 0 | 0 | 0 | 0 | 0 | a
+  +-------+                        +-----------------------+
+b | 0 | 0 |                            | 2 | 0 | 1 | 0 | 0 | b
+  +-----------+                        --------------------+
+c | 0 | 0 | 0 |                            | 3 | 0 | 2 | 0 | c
+  +---------------+                        ----------------+
+d | 0 | 0 | 0 | 0 |                            | 0 | 0 | 0 | d
+  +-------------------+                        +-----------+
+e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
+  +---+---+---+---+---+-------+                    +---+---+
+    e   a   b   c   b   c   f</code></pre><p>答案就是沿着等长对着线处理。</p>
+<h3 id="有意思的代码抽象"><a href="#有意思的代码抽象" class="headerlink" title="有意思的代码抽象"></a>有意思的代码抽象</h3><p>大家可以根据上面思路写一下，一般会把算法分成两部分：处理长方形的左下部分和处理长方形的右上部分，两部分都是双层循环，时间复杂度和空间负载度已经变为了O(n^2^) ，O(1)。</p>
+<p>肯定有人已经发现自己的代码处理左下角的代码和处理右上角的代码不能复用，一个是从中间向左下角处理，一个是从中间向右上角处理，明明很类似，但是就是没发合并。</p>
+<p>那么有没有方法把这两部分处理抽象成公共代码呢？不卖关子了，直接上图：</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">                                                         +</span><br><span class="line">                                                       e |</span><br><span class="line">                                                         +--+</span><br><span class="line">  e   a   b   c   b   c   f                            a | 1|</span><br><span class="line">+---+---+---+---+---+---+---+                            +-----+</span><br><span class="line">    | 1 | 0 | 0 | 0 | 0 | 0 | a                        b | 0| 2|</span><br><span class="line">    +-----------------------+                            +--------+</span><br><span class="line">        | 2 | 0 | 1 | 0 | 0 | b                        c | 0| 0| 3|</span><br><span class="line">        --------------------+         翻      折           +-----------+</span><br><span class="line">            | 3 | 0 | 2 | 0 | c     +------------&gt;     b | 0| 1| 0| 0|</span><br><span class="line">            ----------------+                            +--------------+</span><br><span class="line">                | 0 | 0 | 0 | d                        c | 0| 0| 2| 0| 0|</span><br><span class="line">                +-----------+                            +--------------+</span><br><span class="line">                    | 0 | 0 | e                        f | 0| 0| 0| 0| 0|</span><br><span class="line">                    +---+---+                            +--------------+</span><br><span class="line">                                                           a  b  c  d  e</span><br></pre></td></tr></table></figure>
+
+<p>如果你想使用公共代码同时实现处理左下角和右上角是不可能的了。所以你需要把右上角的三角翻折，然后你就得到了两个三角：</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">                                      +</span><br><span class="line">                                    e |</span><br><span class="line">                                      +--+</span><br><span class="line">                                    a | 1|</span><br><span class="line">  +---+                               +-----+</span><br><span class="line">a | 0 |                             b | 0| 2|</span><br><span class="line">  +-------+                           +--------+</span><br><span class="line">b | 0 | 0 |                         c | 0| 0| 3|</span><br><span class="line">  +-----------+                       +-----------+</span><br><span class="line">c | 0 | 0 | 0 |                     b | 0| 1| 0| 0|</span><br><span class="line">  +---------------+                   +--------------+</span><br><span class="line">d | 0 | 0 | 0 | 0 |                 c | 0| 0| 2| 0| 0|</span><br><span class="line">  +-------------------+               +--------------+</span><br><span class="line">e | 1 | 0 | 0 | 0 | 0 |             f | 0| 0| 0| 0| 0|</span><br><span class="line">  +---+---+---+---+---+------         +--------------+</span><br><span class="line">    e   a   b   c   b   c   f           a  b  c  d  e</span><br></pre></td></tr></table></figure>
+
+<p>这样就变成了处理两遍左下角了，代码也可以完美复用！！！</p>
+<h3 id="最终实现"><a href="#最终实现" class="headerlink" title="最终实现"></a>最终实现</h3><p>我的完整思考过程已经分析完毕，这样沿对着线处理还有一个小小的优点：提前结束搜索。这一点大家可以自行思考，这里不做过多解释。</p>
+<p>直接干货上场：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> A: A string</span></span><br><span class="line"><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> B: A string</span></span><br><span class="line"><span class="hljs-comment">     * <span class="hljs-doctag">@return</span>: the length of the longest common substring.</span></span><br><span class="line"><span class="hljs-comment">     */</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">longestCommonSubstring</span><span class="hljs-params">(String A, String B)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-comment">// write your code here</span></span><br><span class="line">        <span class="hljs-keyword">char</span>[] achars = A.toCharArray(), bchars = B.toCharArray();</span><br><span class="line">        <span class="hljs-keyword">return</span> getMaxLength(bchars, achars, getMaxLength(achars, bchars, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>), <span class="hljs-number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getMaxLength</span><span class="hljs-params">(<span class="hljs-keyword">char</span>[] s1, <span class="hljs-keyword">char</span>[] s2, <span class="hljs-keyword">int</span> maxLength, <span class="hljs-keyword">int</span> startIndex)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> start = startIndex; start &lt; s1.length; start++) &#123;</span><br><span class="line">            <span class="hljs-keyword">int</span> upper = Math.min(s2.length, s1.length - start);</span><br><span class="line">            <span class="hljs-comment">// if (upper &lt;= maxLength) break; //提前结束搜索</span></span><br><span class="line">            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> currentLineLength = <span class="hljs-number">0</span>, x = <span class="hljs-number">0</span>, y = start; x &lt; upper; x++, y++) &#123;</span><br><span class="line">                <span class="hljs-keyword">if</span> (s1[y] == s2[x])</span><br><span class="line">                    maxLength = Math.max(maxLength, ++currentLineLength);</span><br><span class="line">                <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">                    <span class="hljs-comment">// if (upper - x - 1 &lt;= maxLength) break; //提前结束搜索</span></span><br><span class="line">                    currentLineLength = <span class="hljs-number">0</span>;</span><br><span class="line">                &#125;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">return</span> maxLength;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>怎么样，经历这次优化过程是否感觉自己对最长公共子串的认识又更深了一步呢？虽然不能保证是首创（也可能是首创？），但是这次一步一步真切思考优化直到获得成果让我无比兴奋。</p>
+<p>说了这么多，我就是要给我们贝壳招聘开发组打个广告&gt;_&gt;，期待更多爱思考优秀的同学加入！</p>
+<p>![](/Users/sage/Desktop/屏幕快照 2018-11-10 13.33.20.png)</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    <div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-11-06T02:00:00.000Z">2018-11-06</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/工作/">工作</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    8 分钟 read (About 1159 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2018/11/06/2018-11-06-biz/">根据权限查询时避免角色切换的一种思路</a>
+            
+        </h1>
+        <div class="content">
+            <h2 id="1-问题背景"><a href="#1-问题背景" class="headerlink" title="1. 问题背景"></a>1. 问题背景</h2><h3 id="权限系统现状"><a href="#权限系统现状" class="headerlink" title="权限系统现状"></a>权限系统现状</h3><p>UC权限系统基于角色访问控制技术RBAC（Role Based Access Control） 。具体来说，就是赋予用户某个角色，角色给与角色对应的权限能访问及操作不同范围的资源。</p>
+<h3 id="什么是数据权限"><a href="#什么是数据权限" class="headerlink" title="什么是数据权限"></a>什么是数据权限</h3><p>代表一个角色对应某个权限所能操作的数据范围，比如gitlab组管理员能看到组下的所有项目代码，我们可以这样配置：</p>
+<ol>
+<li>创建组管理员</li>
+<li>分配给组管理员查看项目代码的权限</li>
+<li>查看项目代码权限设置约束条件，约束为自己组下的项目</li>
+<li></li>
+</ol>
+<h3 id="实际产生遇到的问题"><a href="#实际产生遇到的问题" class="headerlink" title="实际产生遇到的问题"></a>实际产生遇到的问题</h3><p>对绝大多数简单的系统来说一个用户对应一个系统只会有一个角色，一个角色只有一个数据权限范围（即使有多个，也可以合并成一个）。但是随着产品的功能迭代，用户的变更和系统设计的原因，总有一些特殊且重要的用户在同一个系统中拥有多个角色。在多角色和数据权限的组合下，一个用户可以拥有复数的数据权限范围。</p>
+<p>考虑到实现复杂性，大多数系统选择使用<strong>角色切换</strong>的手段简化系统实现，同时对用户暴露出了他们不熟悉的角色这一概念，造成这些用户在系统使用中的各种不便。</p>
+<p>本文重点讨论在避免角色切换的前提下，进行多角色数据范围查询的一种思路。</p>
+<h3 id="具体需要解决的需求"><a href="#具体需要解决的需求" class="headerlink" title="具体需要解决的需求"></a>具体需要解决的需求</h3><p>我们的数据报表后台，不同的角色拥有不同的数据查看范围（不同角色所能看到的员工数据字段也各不相同），例如：</p>
+<ul>
+<li>薪酬管理员：查看非高职级员工数据</li>
+<li>高级薪酬管理员： 查看高职级员工数据</li>
+<li>长期激励管理员：查看有长期激励员工数据</li>
+<li>等等</li>
+</ul>
+<p>简单来说，拥有长期激励管理员和高级薪酬管理员的用户能否直接看到高职级员工数据和长期激励员工数据？至少在直觉上是可行的。</p>
+<h2 id="2-多角色数据范围查询"><a href="#2-多角色数据范围查询" class="headerlink" title="2.多角色数据范围查询"></a>2.多角色数据范围查询</h2><h3 id="直觉的做法"><a href="#直觉的做法" class="headerlink" title="直觉的做法"></a>直觉的做法</h3><p>单角色单数据范围可以使用一句sql查询出结果，那多角色多数据范围是不是使用多句sql查询出结果合并就可以了？</p>
+<h3 id="深入思考-多角色数据范围对行的影响"><a href="#深入思考-多角色数据范围对行的影响" class="headerlink" title="深入思考 多角色数据范围对行的影响"></a>深入思考 多角色数据范围对行的影响</h3><ol>
+<li>查询条件合并还是结果合并？ —-结果合并</li>
+<li>如何排序？ —–外部排序，或先内部排序,limit,再外部排序</li>
+<li>有重复数据怎么办？ —-使用groupby去重</li>
+<li>查询性能有影响吗？—-有</li>
+</ol>
+<p>具体体现：</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select * from (</span><br><span class="line">(select id, sortvalue from table_1 where t_name = &apos;a&apos; order by sortvalue desc limit 20)  -- 先内部排序,limit</span><br><span class="line">union all -- 结果合并</span><br><span class="line">(select id, sortvalue from table_1 where t_name = &apos;b&apos; order by sortvalue desc limit 20)  -- 先内部排序,limit</span><br><span class="line">order by sortvalue desc  -- 外部排序</span><br><span class="line">) a group by id -- 使用groupby去重</span><br><span class="line">limit 10, 10</span><br></pre></td></tr></table></figure>
+
+<h3 id="深入思考-多角色数据范围对列的影响"><a href="#深入思考-多角色数据范围对列的影响" class="headerlink" title="深入思考 多角色数据范围对列的影响"></a>深入思考 多角色数据范围对列的影响</h3><ul>
+<li>薪酬管理员： 查看员工薪酬字段</li>
+<li>长期激励管理员：查看员工长期激励字段</li>
+</ul>
+<p>如何解决？方法有很多！</p>
+<h3 id="综合思考，给出一种解决方案"><a href="#综合思考，给出一种解决方案" class="headerlink" title="综合思考，给出一种解决方案"></a>综合思考，给出一种解决方案</h3><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">   A(查询行及角色信息) --&gt; B(根据角色查询对应列字段)</span><br><span class="line">   B --&gt; C(结果)</span><br></pre></td></tr></table></figure>
+
+<p>步骤：</p>
+<ol>
+<li>查询多角色数据范围下的数据，附带角色信息</li>
+</ol>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select id, GROUP_CONCAT(a.role) as roles from (</span><br><span class="line">(select id, &apos;role_a&apos; as role from table_1 where sortvalue &gt; 10 order by `sortvalue` desc limit 2)</span><br><span class="line">union all</span><br><span class="line">(select id, &apos;role_b&apos; as role from table_1 where sortvalue &gt; 20 order by `sortvalue` desc limit 2) </span><br><span class="line">order by `sortvalue` desc </span><br><span class="line">) a group by id</span><br><span class="line">limit 0, 2</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<table>
+<thead>
+<tr>
+<th align="center">id</th>
+<th align="center">roles</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">薪酬管理员</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">薪酬管理员，长期激励管理员</td>
+</tr>
+</tbody></table>
+<ol start="2">
+<li>根据每一行不同的角色，查询出可见的字段，例如id=1的行只能查看ROLE_B对应字段，而id=5的行可以看到ROLE_A,ROLE_B对应的两个角色的字段</li>
+<li></li>
+</ol>
+<h2 id="3-总结和延伸"><a href="#3-总结和延伸" class="headerlink" title="3.总结和延伸"></a>3.总结和延伸</h2><h3 id="多角色数据范围写操作？"><a href="#多角色数据范围写操作？" class="headerlink" title="多角色数据范围写操作？"></a>多角色数据范围写操作？</h3><p>遍历角色直到找到满足条件的权限即可。</p>
+<h3 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h3><p>自己不行动，等于等着被别人安排哈哈</p>
+<h3 id="还有疑问？"><a href="#还有疑问？" class="headerlink" title="还有疑问？"></a>还有疑问？</h3><p>自己想。<a href="mailto:jinyufeng@ke.com?subject=问题" target="_blank" rel="noopener">还可以点这里</a></p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+    
+<div class="card card-transparent">
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+        <div class="pagination-previous">
+            <a class="is-flex-grow has-text-black-ter" href="/page/5/">Previous</a>
+        </div>
+        <div class="pagination-next">
+            <a class="is-flex-grow has-text-black-ter" href="/page/7/">Next</a>
+        </div>
+        <ul class="pagination-list is-hidden-mobile">
+            
+            <li><a class="pagination-link has-text-black-ter" href="/">1</a></li>
+            
+            <li><span class="pagination-ellipsis has-text-black-ter">&hellip;</span></li>
+            
+            <li><a class="pagination-link has-text-black-ter" href="/page/5/">5</a></li>
+            
+            <li><a class="pagination-link is-current" href="/page/6/">6</a></li>
+            
+            <li><a class="pagination-link has-text-black-ter" href="/page/7/">7</a></li>
+            
+        </ul>
+    </nav>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="sage417">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        sage417
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Take Your Time
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>China/Shanghai</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        Posts
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        21
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        Categories
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        15
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        Tags
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        13
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="http://github.com/sage417" target="_blank">
+                Follow</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="http://github.com/sage417">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="http://facebook.com">
+                
+                <i class="fab fa-facebook"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Twitter" href="http://twitter.com">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Dribbble" href="http://dribbble.com">
+                
+                <i class="fab fa-dribbble"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="RSS" href="/">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            Links
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://hexo.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Hexo</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">hexo.io</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">PPOffice</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="http://luck-cheng.github.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">luck-cheng</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">luck-cheng.github.io</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                Categories
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Java基础/">
+            <span class="level-start">
+                <span class="level-item">Java基础</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Java并发/">
+            <span class="level-start">
+                <span class="level-item">Java并发</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Java框架/">
+            <span class="level-start">
+                <span class="level-item">Java框架</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/Java框架/Mybatis/">
+            <span class="level-start">
+                <span class="level-item">Mybatis</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">4</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Java框架/Spring/">
+            <span class="level-start">
+                <span class="level-item">Spring</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/中间件/">
+            <span class="level-start">
+                <span class="level-item">中间件</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/中间件/resilience4j/">
+            <span class="level-start">
+                <span class="level-item">resilience4j</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/中间件/搜索引擎/">
+            <span class="level-start">
+                <span class="level-item">搜索引擎</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/工作/">
+            <span class="level-start">
+                <span class="level-item">工作</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">3</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/工作/总结/">
+            <span class="level-start">
+                <span class="level-item">总结</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/工作/挑战/">
+            <span class="level-start">
+                <span class="level-item">挑战</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/算法/">
+            <span class="level-start">
+                <span class="level-item">算法</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/算法/二叉树/">
+            <span class="level-start">
+                <span class="level-item">二叉树</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/算法/字符串/">
+            <span class="level-start">
+                <span class="level-item">字符串</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/读书/">
+            <span class="level-start">
+                <span class="level-item">读书</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            Tag Cloud
+        </h3>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18.33px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.67px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 16.67px;">工作</a> <a href="/tags/感悟/" style="font-size: 11.67px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/算法/" style="font-size: 11.67px;">算法</a> <a href="/tags/读书/" style="font-size: 15px;">读书</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            Recent
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/06/24/hello-world/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Hello World">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-24T05:35:59.966Z">2019-06-24</time></div>
+                    <a href="/2019/06/24/hello-world/" class="has-link-black-ter is-size-6">Hello World</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/06/15/2019-06-15树算法/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/06/21/5d0c50a86f44253662.jpg" alt="LeetCode二叉树基础算法">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-15T02:00:00.000Z">2019-06-15</time></div>
+                    <a href="/2019/06/15/2019-06-15树算法/" class="has-link-black-ter is-size-6">LeetCode二叉树基础算法</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/二叉树/">二叉树</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/05/20/IO-Modle/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/BingWallpaper-2019-05-20.jpg" alt="IO Modle">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-20T07:39:56.000Z">2019-05-20</time></div>
+                    <a href="/2019/05/20/IO-Modle/" class="has-link-black-ter is-size-6">IO Modle</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java基础/">Java基础</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="[项目] 根据权限查询时避免角色切换遇到的坑">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-17T02:00:00.000Z">2019-05-17</time></div>
+                    <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="has-link-black-ter is-size-6">[项目] 根据权限查询时避免角色切换遇到的坑</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/04/18/resilience4j-retry源码阅读/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="resilience4j-retry源码阅读">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-04-18T02:00:00.000Z">2019-04-18</time></div>
+                    <a href="/2019/04/18/resilience4j-retry源码阅读/" class="has-link-black-ter is-size-6">resilience4j-retry源码阅读</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/resilience4j/">resilience4j</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            Archives
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                Tags
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/aop/">
+                        <span class="tag">aop</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/java/">
+                        <span class="tag">java</span>
+                        <span class="tag is-grey">11</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linux/">
+                        <span class="tag">linux</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mybatis/">
+                        <span class="tag">mybatis</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/redis/">
+                        <span class="tag">redis</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/spring/">
+                        <span class="tag">spring</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/代码/">
+                        <span class="tag">代码</span>
+                        <span class="tag is-grey">15</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/团队/">
+                        <span class="tag">团队</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/工作/">
+                        <span class="tag">工作</span>
+                        <span class="tag is-grey">7</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/感悟/">
+                        <span class="tag">感悟</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/搜索/">
+                        <span class="tag">搜索</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/算法/">
+                        <span class="tag">算法</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/读书/">
+                        <span class="tag">读书</span>
+                        <span class="tag is-grey">5</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            Recent
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/06/24/hello-world/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Hello World">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-24T05:35:59.966Z">2019-06-24</time></div>
+                    <a href="/2019/06/24/hello-world/" class="has-link-black-ter is-size-6">Hello World</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/06/15/2019-06-15树算法/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/06/21/5d0c50a86f44253662.jpg" alt="LeetCode二叉树基础算法">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-15T02:00:00.000Z">2019-06-15</time></div>
+                    <a href="/2019/06/15/2019-06-15树算法/" class="has-link-black-ter is-size-6">LeetCode二叉树基础算法</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/二叉树/">二叉树</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/05/20/IO-Modle/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/BingWallpaper-2019-05-20.jpg" alt="IO Modle">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-20T07:39:56.000Z">2019-05-20</time></div>
+                    <a href="/2019/05/20/IO-Modle/" class="has-link-black-ter is-size-6">IO Modle</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java基础/">Java基础</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="[项目] 根据权限查询时避免角色切换遇到的坑">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-17T02:00:00.000Z">2019-05-17</time></div>
+                    <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="has-link-black-ter is-size-6">[项目] 根据权限查询时避免角色切换遇到的坑</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/04/18/resilience4j-retry源码阅读/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="resilience4j-retry源码阅读">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-04-18T02:00:00.000Z">2019-04-18</time></div>
+                    <a href="/2019/04/18/resilience4j-retry源码阅读/" class="has-link-black-ter is-size-6">resilience4j-retry源码阅读</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/resilience4j/">resilience4j</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            Archives
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                Tags
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/aop/">
+                        <span class="tag">aop</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/java/">
+                        <span class="tag">java</span>
+                        <span class="tag is-grey">11</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linux/">
+                        <span class="tag">linux</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mybatis/">
+                        <span class="tag">mybatis</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/redis/">
+                        <span class="tag">redis</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/spring/">
+                        <span class="tag">spring</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/代码/">
+                        <span class="tag">代码</span>
+                        <span class="tag is-grey">15</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/团队/">
+                        <span class="tag">团队</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/工作/">
+                        <span class="tag">工作</span>
+                        <span class="tag is-grey">7</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/感悟/">
+                        <span class="tag">感悟</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/搜索/">
+                        <span class="tag">搜索</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/算法/">
+                        <span class="tag">算法</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/读书/">
+                        <span class="tag">读书</span>
+                        <span class="tag is-grey">5</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.svg" alt="塑料内存" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 NightWish417&nbsp;
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-cn");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="Back to Top" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

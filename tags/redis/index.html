@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>Tag: redis - 塑料内存</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="随笔">
+<meta property="og:type" content="website">
+<meta property="og:title" content="塑料内存">
+<meta property="og:url" content="http://blog.yamato.moe/tags/redis/index.html">
+<meta property="og:site_name" content="塑料内存">
+<meta property="og:description" content="随笔">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://blog.yamato.moe/images/og_image.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="塑料内存">
+<meta name="twitter:description" content="随笔">
+<meta name="twitter:image" content="http://blog.yamato.moe/images/og_image.png">
+
+
+
+
+
+
+
+<link rel="icon" href="/images/favicon.svg">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.svg" alt="塑料内存" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">Home</a>
+                
+                <a class="navbar-item" href="/archives">Archives</a>
+                
+                <a class="navbar-item" href="/categories">Categories</a>
+                
+                <a class="navbar-item" href="/tags">Tags</a>
+                
+                <a class="navbar-item" href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/sage417/sage417.github.io">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="Search" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    <div class="card-content">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="/tags">Tags</a></li>
+            <li class="is-active"><a href="#" aria-current="page">redis</a></li>
+        </ul>
+        </nav>
+    </div>
+</div>
+
+    <div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-03-11T09:57:57.000Z">2019-03-11</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/搜索引擎/">搜索引擎</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    9 分钟 read (About 1336 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/03/11/[片段]使用redis创建简易搜索引擎（核心篇）/">[片段] 使用redis创建简易搜索引擎（核心篇）</a>
+            
+        </h1>
+        <div class="content">
+            <p>支持and查询、多选、多字段排序分页，缺少的功能：or 条件</p>
+<p>核心类，有一些测试代码，将就一下。另外需要spring-data-redis 2.0版本以上</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> app.pooi.redissearch.search;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.redissearch.search.anno.CreateIndex;</span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.redissearch.search.anno.Field;</span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.collect.Lists;</span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.collect.Sets;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.Data;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.commons.lang3.ArrayUtils;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.dao.DataAccessException;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.data.redis.connection.RedisZSetCommands;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.data.redis.core.*;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.data.redis.hash.Jackson2HashMapper;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.web.bind.annotation.*;</span><br><span class="line"><span class="hljs-keyword">import</span> reactor.util.function.Tuple2;</span><br><span class="line"><span class="hljs-keyword">import</span> reactor.util.function.Tuples;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.util.*;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Consumer;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Function;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.regex.Matcher;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.regex.Pattern;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.stream.Stream;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> app.pooi.redissearch.search.SearchCore.Util.*;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@RestController</span></span><br><span class="line"><span class="hljs-meta">@Service</span></span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SearchCore</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> StringRedisTemplate redisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> Jackson2HashMapper hashMapper = <span class="hljs-keyword">new</span> Jackson2HashMapper(<span class="hljs-keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Data</span></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">private</span> Long id;</span><br><span class="line">        <span class="hljs-keyword">private</span> String name;</span><br><span class="line">        <span class="hljs-keyword">private</span> Integer age;</span><br><span class="line">        <span class="hljs-keyword">private</span> Long ctime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/person"</span>)</span><br><span class="line">    <span class="hljs-meta">@CreateIndex</span>(</span><br><span class="line">            index = <span class="hljs-string">"person"</span>,</span><br><span class="line">            documentId = <span class="hljs-string">"#p0.id"</span>,</span><br><span class="line">            fields = &#123;</span><br><span class="line">                    <span class="hljs-meta">@Field</span>(propertyName = <span class="hljs-string">"name"</span>, value = <span class="hljs-string">"#p0.name"</span>),</span><br><span class="line">                    <span class="hljs-meta">@Field</span>(propertyName = <span class="hljs-string">"age"</span>, value = <span class="hljs-string">"#p0.age"</span>, sort = <span class="hljs-keyword">true</span>),</span><br><span class="line">                    <span class="hljs-meta">@Field</span>(propertyName = <span class="hljs-string">"ctime"</span>, value = <span class="hljs-string">"#p0.ctime"</span>, sort = <span class="hljs-keyword">true</span>)</span><br><span class="line">            &#125;)</span><br><span class="line">    <span class="hljs-function">Person <span class="hljs-title">addPerson</span><span class="hljs-params">(Person person)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> person;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">SearchCore</span><span class="hljs-params">(StringRedisTemplate redisTemplate)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.redisTemplate = redisTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">indexMeta</span><span class="hljs-params">(String index, Map&lt;String, FieldMeta&gt; fieldMeta)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.redisTemplate.opsForHash().putAll(genIdxMetaName(index), hashMapper.toHash(fieldMeta));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/index"</span>)</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">indexDocument</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String index,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String field,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String documentId,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String document)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.indexDocument(index, field, documentId, document, doc -&gt; Lists.newArrayList(doc.split(<span class="hljs-string">""</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">indexDocument</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String index,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String field,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String documentId,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String document,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> Function&lt;String, List&lt;String&gt;&gt; tokenizer)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; tokens = tokenizer != <span class="hljs-keyword">null</span> ?</span><br><span class="line">                tokenizer.apply(document) :</span><br><span class="line">                Collections.singletonList(document);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> String docKey = genDocIdxName(index, documentId);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;Object&gt; results = redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;Integer&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-function"><span class="hljs-keyword">public</span> Integer <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> StringRedisTemplate template = (StringRedisTemplate) operations;</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">final</span> String[] idxs = tokens.stream()</span><br><span class="line">                        .map(word -&gt; genIdxName(index, field, word))</span><br><span class="line">                        .peek(idx -&gt; ((StringRedisTemplate) operations).opsForSet().add(idx, documentId))</span><br><span class="line">                        .toArray(String[]::<span class="hljs-keyword">new</span>);</span><br><span class="line"></span><br><span class="line">                template.opsForSet().add(docKey, idxs);</span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="hljs-keyword">return</span> results.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">indexSortField</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String index,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String field,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String documentId,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> Double document)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> String docKey = genDocIdxName(index, documentId);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;Object&gt; results = redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;Integer&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-function"><span class="hljs-keyword">public</span> Integer <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> StringRedisTemplate template = (StringRedisTemplate) operations;</span><br><span class="line">                <span class="hljs-keyword">final</span> String idxName = genSortIdxName(index, field);</span><br><span class="line">                template.opsForZSet().add(idxName, documentId, document);</span><br><span class="line">                template.opsForSet().add(docKey, idxName);</span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="hljs-keyword">return</span> results.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@DeleteMapping</span>(<span class="hljs-string">"/index"</span>)</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">deleteDocumentIndex</span><span class="hljs-params">(<span class="hljs-keyword">final</span> String index, <span class="hljs-keyword">final</span> String documentId)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> String docKey = genDocIdxName(index, documentId);</span><br><span class="line">        <span class="hljs-keyword">final</span> Boolean hasKey = redisTemplate.hasKey(docKey);</span><br><span class="line">        <span class="hljs-keyword">if</span> (!hasKey) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;Object&gt; results = redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;Integer&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-function"><span class="hljs-keyword">public</span> Integer <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> Set&lt;String&gt; idx = redisTemplate.opsForSet().members(docKey);</span><br><span class="line">                ((StringRedisTemplate) operations).delete(idx);</span><br><span class="line">                ((StringRedisTemplate) operations).delete(docKey);</span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="hljs-keyword">return</span> results.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@PatchMapping</span>(<span class="hljs-string">"/index"</span>)</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">updateDocumentIndex</span><span class="hljs-params">(<span class="hljs-keyword">final</span> String index, <span class="hljs-keyword">final</span> String field, <span class="hljs-keyword">final</span> String documentId, <span class="hljs-keyword">final</span> String document)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.deleteDocumentIndex(index, documentId);</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.indexDocument(index, field, documentId, document);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">updateSortField</span><span class="hljs-params">(<span class="hljs-keyword">final</span> String index, <span class="hljs-keyword">final</span> String field, <span class="hljs-keyword">final</span> String documentId, <span class="hljs-keyword">final</span> Double document)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.deleteDocumentIndex(index, documentId);</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.indexSortField(index, field, documentId, document);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> Consumer&lt;SetOperations&lt;String, String&gt;&gt; operateAndStore(String method, String key, Collection&lt;String&gt; keys, String destKey) &#123;</span><br><span class="line">        <span class="hljs-keyword">switch</span> (method) &#123;</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"intersectAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.intersectAndStore(key, keys, destKey);</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"unionAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.unionAndStore(key, keys, destKey);</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"differenceAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.differenceAndStore(key, keys, destKey);</span><br><span class="line">            <span class="hljs-keyword">default</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> so -&gt; &#123;</span><br><span class="line">                &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> Consumer&lt;ZSetOperations&lt;String, String&gt;&gt; zOperateAndStore(String method, String key, Collection&lt;String&gt; keys, String destKey, <span class="hljs-keyword">final</span> RedisZSetCommands.Weights weights) &#123;</span><br><span class="line">        <span class="hljs-keyword">switch</span> (method) &#123;</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"intersectAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.intersectAndStore(key, keys, destKey, RedisZSetCommands.Aggregate.SUM, weights);</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"unionAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.unionAndStore(key, keys, destKey, RedisZSetCommands.Aggregate.SUM, weights);</span><br><span class="line">            <span class="hljs-keyword">default</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> so -&gt; &#123;</span><br><span class="line">                &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">common</span><span class="hljs-params">(String index, String method, List&lt;String&gt; keys, <span class="hljs-keyword">long</span> ttl)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> String destKey = Util.genQueryIdxName(index);</span><br><span class="line"></span><br><span class="line">        redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;String&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-keyword">public</span> &lt;K, V&gt; <span class="hljs-function">String <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations&lt;K, V&gt; operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                operateAndStore(method,</span><br><span class="line">                        keys.stream().limit(<span class="hljs-number">1L</span>).findFirst().get(),</span><br><span class="line">                        keys.stream().skip(<span class="hljs-number">1L</span>).collect(Collectors.toList()),</span><br><span class="line">                        destKey)</span><br><span class="line">                        .accept(((StringRedisTemplate) operations).opsForSet());</span><br><span class="line">                ((StringRedisTemplate) operations).expire(destKey, ttl, TimeUnit.SECONDS);</span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="hljs-keyword">return</span> destKey;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">intersect</span><span class="hljs-params">(String index, List&lt;String&gt; keys, <span class="hljs-keyword">long</span> ttl)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> common(index, <span class="hljs-string">"intersectAndStore"</span>, keys, ttl);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">union</span><span class="hljs-params">(String index, List&lt;String&gt; keys, <span class="hljs-keyword">long</span> ttl)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> common(index, <span class="hljs-string">"unionAndStore"</span>, keys, ttl);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">diff</span><span class="hljs-params">(String index, List&lt;String&gt; keys, <span class="hljs-keyword">long</span> ttl)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> common(index, <span class="hljs-string">"differenceAndStore"</span>, keys, ttl);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Tuple2&lt;Set&lt;Tuple2&lt;String, String&gt;&gt;, Set&lt;Tuple2&lt;String, String&gt;&gt;&gt; parse(String query) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Pattern pattern = Pattern.compile(<span class="hljs-string">"[+-]?([\\w\\d]+):(\\S+)"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Matcher matcher = pattern.matcher(query);</span><br><span class="line"></span><br><span class="line">        Set&lt;Tuple2&lt;String, String&gt;&gt; unwant = Sets.newHashSet();</span><br><span class="line">        Set&lt;Tuple2&lt;String, String&gt;&gt; want = Sets.newHashSet();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">while</span> (matcher.find()) &#123;</span><br><span class="line">            String word = matcher.group();</span><br><span class="line"></span><br><span class="line">            String prefix = <span class="hljs-keyword">null</span>;</span><br><span class="line">            <span class="hljs-keyword">if</span> (word.length() &gt; <span class="hljs-number">1</span>) &#123;</span><br><span class="line">                prefix = word.substring(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="hljs-keyword">final</span> Tuple2&lt;String, String&gt; t = Tuples.of(matcher.group(<span class="hljs-number">1</span>), matcher.group(<span class="hljs-number">2</span>));</span><br><span class="line">            <span class="hljs-keyword">if</span> (<span class="hljs-string">"-"</span>.equals(prefix)) &#123;</span><br><span class="line">                unwant.add(t);</span><br><span class="line">            &#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">                want.add(t);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">return</span> Tuples.of(want, unwant);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">query</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            String index,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            String query)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Tuple2&lt;Set&lt;Tuple2&lt;String, String&gt;&gt;, Set&lt;Tuple2&lt;String, String&gt;&gt;&gt; parseResult = parse(query);</span><br><span class="line">        <span class="hljs-keyword">final</span> Set&lt;Tuple2&lt;String, String&gt;&gt; want = parseResult.getT1();</span><br><span class="line">        <span class="hljs-keyword">final</span> Set&lt;Tuple2&lt;String, String&gt;&gt; unwant = parseResult.getT2();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (want.isEmpty()) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Map&lt;String, FieldMeta&gt; entries = (Map&lt;String, FieldMeta&gt;) hashMapper.fromHash(redisTemplate.&lt;String, Object&gt;opsForHash().entries(genIdxMetaName(index)));</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">// union</span></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;Tuple2&lt;String, String&gt;&gt; unionFields = want.stream()</span><br><span class="line">                .filter(w -&gt; w.getT2().contains(<span class="hljs-string">","</span>))</span><br><span class="line">                .filter(w -&gt; <span class="hljs-string">"true"</span>.equals(entries.get(w.getT1()).getSort()))</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; unionIdx = unionFields.stream()</span><br><span class="line">                .flatMap(w -&gt; Arrays.stream(w.getT2().split(<span class="hljs-string">","</span>)).map(value -&gt; Tuples.of(w.getT1(), value)))</span><br><span class="line">                .map(w -&gt; genIdxName(index, w.getT1(), w.getT2()))</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> String unionResultId = unionIdx.isEmpty() ? <span class="hljs-string">""</span> : <span class="hljs-keyword">this</span>.union(index, unionIdx, <span class="hljs-number">30L</span>);</span><br><span class="line"></span><br><span class="line">        want.removeAll(unionFields);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">// intersect</span></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; intersectIdx = want.stream()</span><br><span class="line">                .flatMap(t -&gt; &#123;</span><br><span class="line">                    <span class="hljs-keyword">if</span> (<span class="hljs-string">"true"</span>.equals(entries.get(t.getT1()).getSort()))</span><br><span class="line">                        <span class="hljs-keyword">return</span> Stream.of(t);</span><br><span class="line">                    <span class="hljs-keyword">return</span> Arrays.stream(t.getT2().split(<span class="hljs-string">""</span>)).map(value -&gt; Tuples.of(t.getT1(), value));</span><br><span class="line">                &#125;)</span><br><span class="line">                .map(w -&gt; genIdxName(index, w.getT1(), w.getT2()))</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (!unionResultId.isEmpty())</span><br><span class="line">            intersectIdx.add(unionResultId);</span><br><span class="line"></span><br><span class="line">        String intersectResult = <span class="hljs-keyword">this</span>.intersect(index, intersectIdx, <span class="hljs-number">30L</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">// diff</span></span><br><span class="line">        <span class="hljs-keyword">return</span> unwant.isEmpty() ?</span><br><span class="line">                intersectResult :</span><br><span class="line">                <span class="hljs-keyword">this</span>.diff(index, Stream.concat(Stream.of(intersectResult), unwant.stream().map(w -&gt; genIdxName(index, w.getT1(), w.getT2()))).collect(Collectors.toList()), <span class="hljs-number">30L</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/query/&#123;index&#125;"</span>)</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Set&lt;String&gt; <span class="hljs-title">queryAndSort</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            @PathVariable(<span class="hljs-string">"index"</span>)</span> String index,</span></span><br><span class="line"><span class="hljs-function">            @<span class="hljs-title">RequestParam</span><span class="hljs-params">(<span class="hljs-string">"param"</span>)</span> String query,</span></span><br><span class="line"><span class="hljs-function">            @<span class="hljs-title">RequestParam</span><span class="hljs-params">(<span class="hljs-string">"sort"</span>)</span> String sort,</span></span><br><span class="line"><span class="hljs-function">            Integer start,</span></span><br><span class="line"><span class="hljs-function">            Integer stop</span></span><br><span class="line"><span class="hljs-function">    ) </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> String[] sorts = sort.split(<span class="hljs-string">" "</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Map&lt;String, Integer&gt; map = Arrays.stream(sorts).collect(</span><br><span class="line">                Collectors.toMap(f -&gt; &#123;</span><br><span class="line">                    <span class="hljs-keyword">if</span> (f.startsWith(<span class="hljs-string">"+"</span>) || f.startsWith(<span class="hljs-string">"-"</span>)) &#123;</span><br><span class="line">                        f = f.substring(<span class="hljs-number">1</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="hljs-keyword">return</span> genSortIdxName(<span class="hljs-string">"person"</span>, f);</span><br><span class="line">                &#125;, field -&gt; field.startsWith(<span class="hljs-string">"-"</span>) ? -<span class="hljs-number">1</span> : <span class="hljs-number">1</span>)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] weights = map.values()</span><br><span class="line">                .stream()</span><br><span class="line">                .mapToInt(Integer::intValue)</span><br><span class="line">                .toArray();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//        if (!sort.startsWith("+") &amp;&amp; !sort.startsWith("-")) &#123;</span></span><br><span class="line"><span class="hljs-comment">//            sort = "+" + sort;</span></span><br><span class="line"><span class="hljs-comment">//        &#125;</span></span><br><span class="line"><span class="hljs-comment">//        boolean desc = sort.startsWith("-");</span></span><br><span class="line"><span class="hljs-comment">//        sort = sort.substring(1);</span></span><br><span class="line"></span><br><span class="line">        String queryId = <span class="hljs-keyword">this</span>.query(index, query);</span><br><span class="line">        Long size;</span><br><span class="line">        <span class="hljs-keyword">if</span> (queryId.length() == <span class="hljs-number">0</span> || (size = redisTemplate.opsForSet().size(queryId)) == <span class="hljs-keyword">null</span> || size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> Collections.emptySet();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> String resultId = genQueryIdxName(index);</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//        String sortField = sort;</span></span><br><span class="line"></span><br><span class="line">        redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;Object&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-keyword">public</span> &lt;K, V&gt; <span class="hljs-function">Object <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations&lt;K, V&gt; operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> StringRedisTemplate template = (StringRedisTemplate) operations;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//                template.opsForZSet().intersectAndStore(genSortIdxName(index, sortField), queryId, resultId);</span></span><br><span class="line"></span><br><span class="line">                SearchCore.<span class="hljs-keyword">this</span>.zOperateAndStore(<span class="hljs-string">"intersectAndStore"</span>,</span><br><span class="line">                        map.keySet().stream().limit(<span class="hljs-number">1L</span>).findFirst().get(),</span><br><span class="line">                        Stream.concat(map.keySet().stream().skip(<span class="hljs-number">1L</span>), Stream.of(queryId)).collect(Collectors.toList()),</span><br><span class="line">                        resultId, RedisZSetCommands.Weights.of(ArrayUtils.add(weights, <span class="hljs-number">0</span>))).accept(template.opsForZSet());</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//                template.opsForZSet().size(resultId);</span></span><br><span class="line">                template.expire(resultId, <span class="hljs-number">30L</span>, TimeUnit.SECONDS);</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">// sort</span></span><br><span class="line">        <span class="hljs-keyword">return</span> redisTemplate.opsForZSet().range(resultId, start, stop);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Util</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Util</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genIdxMetaName</span><span class="hljs-params">(String index)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"meta:idx:%s"</span>, index);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genIdxName</span><span class="hljs-params">(String index, String field, String value)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"idx:%s:%s:%s"</span>, index, field, value);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genSortIdxName</span><span class="hljs-params">(String index, String field)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"idx:%s:%s"</span>, index, field);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genQueryIdxName</span><span class="hljs-params">(String index)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"idx:%s:q:%s"</span>, index, UUID.randomUUID().toString());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genDocIdxName</span><span class="hljs-params">(String index, String documentId)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"doc:%s:%s"</span>, index, documentId);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>辅助类</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Data</span></span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FieldMeta</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> String sort = <span class="hljs-string">"false"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> String splitFun = <span class="hljs-string">""</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">FieldMeta</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">FieldMeta</span><span class="hljs-params">(<span class="hljs-keyword">boolean</span> sort)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.sort = Boolean.toString(sort);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>做一个轻量级的搜索还是可以的。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="sage417">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        sage417
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Take Your Time
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>China/Shanghai</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        Posts
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        21
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        Categories
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        15
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        Tags
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        13
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="http://github.com/sage417" target="_blank">
+                Follow</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="http://github.com/sage417">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="http://facebook.com">
+                
+                <i class="fab fa-facebook"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Twitter" href="http://twitter.com">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Dribbble" href="http://dribbble.com">
+                
+                <i class="fab fa-dribbble"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="RSS" href="/">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            Links
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://hexo.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Hexo</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">hexo.io</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">PPOffice</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="http://luck-cheng.github.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">luck-cheng</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">luck-cheng.github.io</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                Categories
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Java基础/">
+            <span class="level-start">
+                <span class="level-item">Java基础</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Java并发/">
+            <span class="level-start">
+                <span class="level-item">Java并发</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Java框架/">
+            <span class="level-start">
+                <span class="level-item">Java框架</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/Java框架/Mybatis/">
+            <span class="level-start">
+                <span class="level-item">Mybatis</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">4</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Java框架/Spring/">
+            <span class="level-start">
+                <span class="level-item">Spring</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/中间件/">
+            <span class="level-start">
+                <span class="level-item">中间件</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/中间件/resilience4j/">
+            <span class="level-start">
+                <span class="level-item">resilience4j</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/中间件/搜索引擎/">
+            <span class="level-start">
+                <span class="level-item">搜索引擎</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/工作/">
+            <span class="level-start">
+                <span class="level-item">工作</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">3</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/工作/总结/">
+            <span class="level-start">
+                <span class="level-item">总结</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/工作/挑战/">
+            <span class="level-start">
+                <span class="level-item">挑战</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/算法/">
+            <span class="level-start">
+                <span class="level-item">算法</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/算法/二叉树/">
+            <span class="level-start">
+                <span class="level-item">二叉树</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/算法/字符串/">
+            <span class="level-start">
+                <span class="level-item">字符串</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/读书/">
+            <span class="level-start">
+                <span class="level-item">读书</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            Tag Cloud
+        </h3>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18.33px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.67px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 16.67px;">工作</a> <a href="/tags/感悟/" style="font-size: 11.67px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/算法/" style="font-size: 11.67px;">算法</a> <a href="/tags/读书/" style="font-size: 15px;">读书</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            Recent
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/06/24/hello-world/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Hello World">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-24T05:35:59.966Z">2019-06-24</time></div>
+                    <a href="/2019/06/24/hello-world/" class="has-link-black-ter is-size-6">Hello World</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/06/15/2019-06-15树算法/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/06/21/5d0c50a86f44253662.jpg" alt="LeetCode二叉树基础算法">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-15T02:00:00.000Z">2019-06-15</time></div>
+                    <a href="/2019/06/15/2019-06-15树算法/" class="has-link-black-ter is-size-6">LeetCode二叉树基础算法</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/二叉树/">二叉树</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/05/20/IO-Modle/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/BingWallpaper-2019-05-20.jpg" alt="IO Modle">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-20T07:39:56.000Z">2019-05-20</time></div>
+                    <a href="/2019/05/20/IO-Modle/" class="has-link-black-ter is-size-6">IO Modle</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java基础/">Java基础</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="[项目] 根据权限查询时避免角色切换遇到的坑">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-17T02:00:00.000Z">2019-05-17</time></div>
+                    <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="has-link-black-ter is-size-6">[项目] 根据权限查询时避免角色切换遇到的坑</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/04/18/resilience4j-retry源码阅读/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="resilience4j-retry源码阅读">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-04-18T02:00:00.000Z">2019-04-18</time></div>
+                    <a href="/2019/04/18/resilience4j-retry源码阅读/" class="has-link-black-ter is-size-6">resilience4j-retry源码阅读</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/resilience4j/">resilience4j</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            Archives
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                Tags
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/aop/">
+                        <span class="tag">aop</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/java/">
+                        <span class="tag">java</span>
+                        <span class="tag is-grey">11</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linux/">
+                        <span class="tag">linux</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mybatis/">
+                        <span class="tag">mybatis</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/redis/">
+                        <span class="tag">redis</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/spring/">
+                        <span class="tag">spring</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/代码/">
+                        <span class="tag">代码</span>
+                        <span class="tag is-grey">15</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/团队/">
+                        <span class="tag">团队</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/工作/">
+                        <span class="tag">工作</span>
+                        <span class="tag is-grey">7</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/感悟/">
+                        <span class="tag">感悟</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/搜索/">
+                        <span class="tag">搜索</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/算法/">
+                        <span class="tag">算法</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/读书/">
+                        <span class="tag">读书</span>
+                        <span class="tag is-grey">5</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            Recent
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/06/24/hello-world/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Hello World">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-24T05:35:59.966Z">2019-06-24</time></div>
+                    <a href="/2019/06/24/hello-world/" class="has-link-black-ter is-size-6">Hello World</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/06/15/2019-06-15树算法/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/06/21/5d0c50a86f44253662.jpg" alt="LeetCode二叉树基础算法">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-15T02:00:00.000Z">2019-06-15</time></div>
+                    <a href="/2019/06/15/2019-06-15树算法/" class="has-link-black-ter is-size-6">LeetCode二叉树基础算法</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/二叉树/">二叉树</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/05/20/IO-Modle/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/BingWallpaper-2019-05-20.jpg" alt="IO Modle">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-20T07:39:56.000Z">2019-05-20</time></div>
+                    <a href="/2019/05/20/IO-Modle/" class="has-link-black-ter is-size-6">IO Modle</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java基础/">Java基础</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="[项目] 根据权限查询时避免角色切换遇到的坑">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-17T02:00:00.000Z">2019-05-17</time></div>
+                    <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="has-link-black-ter is-size-6">[项目] 根据权限查询时避免角色切换遇到的坑</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/04/18/resilience4j-retry源码阅读/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="resilience4j-retry源码阅读">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-04-18T02:00:00.000Z">2019-04-18</time></div>
+                    <a href="/2019/04/18/resilience4j-retry源码阅读/" class="has-link-black-ter is-size-6">resilience4j-retry源码阅读</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/resilience4j/">resilience4j</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            Archives
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                Tags
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/aop/">
+                        <span class="tag">aop</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/java/">
+                        <span class="tag">java</span>
+                        <span class="tag is-grey">11</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linux/">
+                        <span class="tag">linux</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mybatis/">
+                        <span class="tag">mybatis</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/redis/">
+                        <span class="tag">redis</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/spring/">
+                        <span class="tag">spring</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/代码/">
+                        <span class="tag">代码</span>
+                        <span class="tag is-grey">15</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/团队/">
+                        <span class="tag">团队</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/工作/">
+                        <span class="tag">工作</span>
+                        <span class="tag is-grey">7</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/感悟/">
+                        <span class="tag">感悟</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/搜索/">
+                        <span class="tag">搜索</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/算法/">
+                        <span class="tag">算法</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/读书/">
+                        <span class="tag">读书</span>
+                        <span class="tag is-grey">5</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.svg" alt="塑料内存" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 NightWish417&nbsp;
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-cn");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="Back to Top" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>
