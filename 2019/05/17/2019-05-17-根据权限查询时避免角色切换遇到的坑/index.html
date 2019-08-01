@@ -16,7 +16,7 @@
 <meta property="og:description" content="前情概要 1. 问题背景使用多个角色查询列表时，会遇到两个维度的不同点：  行维度：多个角色能够看到行的并集，sql需要多次查询取并集，之后还要去重分页排序 列维度：如果不同角色可见列不同，计算出当前行能看到列的并集  举一个例子： 假设存在一个登录员工拥有两个角色：  长期激励负责人：能看到拥有长期激励的人（行维度），能看到基本信息和长期激励信息（列维度） 薪酬负责人：能看到低职级的人（行维度）">
 <meta property="og:locale" content="zh-cn">
 <meta property="og:image" content="http://blog.yamato.moe/images/og_image.png">
-<meta property="og:updated_time" content="2019-07-02T06:01:00.919Z">
+<meta property="og:updated_time" content="2019-08-01T11:45:38.728Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[项目] 根据权限查询时避免角色切换遇到的坑">
 <meta name="twitter:description" content="前情概要 1. 问题背景使用多个角色查询列表时，会遇到两个维度的不同点：  行维度：多个角色能够看到行的并集，sql需要多次查询取并集，之后还要去重分页排序 列维度：如果不同角色可见列不同，计算出当前行能看到列的并集  举一个例子： 假设存在一个登录员工拥有两个角色：  长期激励负责人：能看到拥有长期激励的人（行维度），能看到基本信息和长期激励信息（列维度） 薪酬负责人：能看到低职级的人（行维度）">
@@ -332,7 +332,7 @@
                         Posts
                     </p>
                     <p class="title has-text-weight-normal">
-                        22
+                        23
                     </p>
                 </div>
             </div>
@@ -530,7 +530,7 @@
                 <span class="level-item">工作</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">4</span>
+                <span class="level-item tag">5</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/工作/总结/">
@@ -546,7 +546,7 @@
                 <span class="level-item">挑战</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">2</span>
+                <span class="level-item tag">3</span>
             </span>
         </a></li></ul></li><li>
         <a class="level is-marginless" href="/categories/算法/">
@@ -628,6 +628,25 @@
         
         <article class="media">
             
+            <a href="/2019/07/29/2019-09-27多角色权限展示数据的一种实现/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="[项目] 多角色权限展示数据的一种实现">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-07-29T02:00:00.000Z">2019-07-29</time></div>
+                    <a href="/2019/07/29/2019-09-27多角色权限展示数据的一种实现/" class="has-link-black-ter is-size-6">[项目] 多角色权限展示数据的一种实现</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/06/15/2019-06-15树算法/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2019/06/21/5d0c50a86f44253662.jpg" alt="LeetCode二叉树基础算法">
@@ -683,25 +702,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="[项目] 根据权限查询时避免角色切换遇到的坑">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-17T02:00:00.000Z">2019-05-17</time></div>
-                    <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="has-link-black-ter is-size-6">[项目] 根据权限查询时避免角色切换遇到的坑</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -718,6 +718,17 @@
             <a class="level is-marginless" href="/archives/2019/09/">
                 <span class="level-start">
                     <span class="level-item">九月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -858,7 +869,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/java/">
                         <span class="tag">java</span>
-                        <span class="tag is-grey">11</span>
+                        <span class="tag is-grey">12</span>
                     </a>
                 </div>
                 
@@ -893,7 +904,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">16</span>
+                        <span class="tag is-grey">17</span>
                     </a>
                 </div>
                 
@@ -907,7 +918,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">9</span>
+                        <span class="tag is-grey">10</span>
                     </a>
                 </div>
                 
@@ -983,6 +994,25 @@
         
         <article class="media">
             
+            <a href="/2019/07/29/2019-09-27多角色权限展示数据的一种实现/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="[项目] 多角色权限展示数据的一种实现">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-07-29T02:00:00.000Z">2019-07-29</time></div>
+                    <a href="/2019/07/29/2019-09-27多角色权限展示数据的一种实现/" class="has-link-black-ter is-size-6">[项目] 多角色权限展示数据的一种实现</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/06/15/2019-06-15树算法/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2019/06/21/5d0c50a86f44253662.jpg" alt="LeetCode二叉树基础算法">
@@ -1038,25 +1068,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="[项目] 根据权限查询时避免角色切换遇到的坑">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-17T02:00:00.000Z">2019-05-17</time></div>
-                    <a href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/" class="has-link-black-ter is-size-6">[项目] 根据权限查询时避免角色切换遇到的坑</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -1073,6 +1084,17 @@
             <a class="level is-marginless" href="/archives/2019/09/">
                 <span class="level-start">
                     <span class="level-item">九月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1213,7 +1235,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/java/">
                         <span class="tag">java</span>
-                        <span class="tag is-grey">11</span>
+                        <span class="tag is-grey">12</span>
                     </a>
                 </div>
                 
@@ -1248,7 +1270,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">16</span>
+                        <span class="tag is-grey">17</span>
                     </a>
                 </div>
                 
@@ -1262,7 +1284,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">9</span>
+                        <span class="tag is-grey">10</span>
                     </a>
                 </div>
                 
