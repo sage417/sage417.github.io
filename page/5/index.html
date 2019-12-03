@@ -136,17 +136,17 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-03-11T09:57:57.000Z">2019-03-11</time>
+                <time class="level-item has-text-grey" datetime="2019-04-18T02:00:00.000Z">2019-04-18</time>
                 
                 <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/搜索引擎/">搜索引擎</a>
+                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/resilience4j/">resilience4j</a>
                 </div>
                 
                 
                 <span class="level-item has-text-grey">
                     
                     
-                    9 分钟 read (About 1336 words)
+                    3 分钟 read (About 431 words)
                 </span>
                 
                 
@@ -155,18 +155,25 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2019/03/11/[片段]使用redis创建简易搜索引擎（核心篇）/">[片段] 使用redis创建简易搜索引擎（核心篇）</a>
+                <a class="has-link-black-ter" href="/2019/04/18/resilience4j-retry源码阅读/">resilience4j-retry源码阅读</a>
             
         </h1>
         <div class="content">
-            <p>支持and查询、多选、多字段排序分页，缺少的功能：or 条件</p>
-<p>核心类，有一些测试代码，将就一下。另外需要spring-data-redis 2.0版本以上</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> app.pooi.redissearch.search;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.redissearch.search.anno.CreateIndex;</span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.redissearch.search.anno.Field;</span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.collect.Lists;</span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.collect.Sets;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.Data;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.commons.lang3.ArrayUtils;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.dao.DataAccessException;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.data.redis.connection.RedisZSetCommands;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.data.redis.core.*;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.data.redis.hash.Jackson2HashMapper;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="hljs-keyword">import</span> org.springframework.web.bind.annotation.*;</span><br><span class="line"><span class="hljs-keyword">import</span> reactor.util.function.Tuple2;</span><br><span class="line"><span class="hljs-keyword">import</span> reactor.util.function.Tuples;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.util.*;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Consumer;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Function;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.regex.Matcher;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.regex.Pattern;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.stream.Stream;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> app.pooi.redissearch.search.SearchCore.Util.*;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@RestController</span></span><br><span class="line"><span class="hljs-meta">@Service</span></span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SearchCore</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> StringRedisTemplate redisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> Jackson2HashMapper hashMapper = <span class="hljs-keyword">new</span> Jackson2HashMapper(<span class="hljs-keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Data</span></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">private</span> Long id;</span><br><span class="line">        <span class="hljs-keyword">private</span> String name;</span><br><span class="line">        <span class="hljs-keyword">private</span> Integer age;</span><br><span class="line">        <span class="hljs-keyword">private</span> Long ctime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/person"</span>)</span><br><span class="line">    <span class="hljs-meta">@CreateIndex</span>(</span><br><span class="line">            index = <span class="hljs-string">"person"</span>,</span><br><span class="line">            documentId = <span class="hljs-string">"#p0.id"</span>,</span><br><span class="line">            fields = &#123;</span><br><span class="line">                    <span class="hljs-meta">@Field</span>(propertyName = <span class="hljs-string">"name"</span>, value = <span class="hljs-string">"#p0.name"</span>),</span><br><span class="line">                    <span class="hljs-meta">@Field</span>(propertyName = <span class="hljs-string">"age"</span>, value = <span class="hljs-string">"#p0.age"</span>, sort = <span class="hljs-keyword">true</span>),</span><br><span class="line">                    <span class="hljs-meta">@Field</span>(propertyName = <span class="hljs-string">"ctime"</span>, value = <span class="hljs-string">"#p0.ctime"</span>, sort = <span class="hljs-keyword">true</span>)</span><br><span class="line">            &#125;)</span><br><span class="line">    <span class="hljs-function">Person <span class="hljs-title">addPerson</span><span class="hljs-params">(Person person)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> person;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">SearchCore</span><span class="hljs-params">(StringRedisTemplate redisTemplate)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.redisTemplate = redisTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">indexMeta</span><span class="hljs-params">(String index, Map&lt;String, FieldMeta&gt; fieldMeta)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.redisTemplate.opsForHash().putAll(genIdxMetaName(index), hashMapper.toHash(fieldMeta));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/index"</span>)</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">indexDocument</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String index,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String field,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String documentId,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String document)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.indexDocument(index, field, documentId, document, doc -&gt; Lists.newArrayList(doc.split(<span class="hljs-string">""</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">indexDocument</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String index,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String field,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String documentId,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String document,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> Function&lt;String, List&lt;String&gt;&gt; tokenizer)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; tokens = tokenizer != <span class="hljs-keyword">null</span> ?</span><br><span class="line">                tokenizer.apply(document) :</span><br><span class="line">                Collections.singletonList(document);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> String docKey = genDocIdxName(index, documentId);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;Object&gt; results = redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;Integer&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-function"><span class="hljs-keyword">public</span> Integer <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> StringRedisTemplate template = (StringRedisTemplate) operations;</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">final</span> String[] idxs = tokens.stream()</span><br><span class="line">                        .map(word -&gt; genIdxName(index, field, word))</span><br><span class="line">                        .peek(idx -&gt; ((StringRedisTemplate) operations).opsForSet().add(idx, documentId))</span><br><span class="line">                        .toArray(String[]::<span class="hljs-keyword">new</span>);</span><br><span class="line"></span><br><span class="line">                template.opsForSet().add(docKey, idxs);</span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="hljs-keyword">return</span> results.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">indexSortField</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String index,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String field,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> String documentId,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            <span class="hljs-keyword">final</span> Double document)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> String docKey = genDocIdxName(index, documentId);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;Object&gt; results = redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;Integer&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-function"><span class="hljs-keyword">public</span> Integer <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> StringRedisTemplate template = (StringRedisTemplate) operations;</span><br><span class="line">                <span class="hljs-keyword">final</span> String idxName = genSortIdxName(index, field);</span><br><span class="line">                template.opsForZSet().add(idxName, documentId, document);</span><br><span class="line">                template.opsForSet().add(docKey, idxName);</span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="hljs-keyword">return</span> results.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@DeleteMapping</span>(<span class="hljs-string">"/index"</span>)</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">deleteDocumentIndex</span><span class="hljs-params">(<span class="hljs-keyword">final</span> String index, <span class="hljs-keyword">final</span> String documentId)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> String docKey = genDocIdxName(index, documentId);</span><br><span class="line">        <span class="hljs-keyword">final</span> Boolean hasKey = redisTemplate.hasKey(docKey);</span><br><span class="line">        <span class="hljs-keyword">if</span> (!hasKey) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;Object&gt; results = redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;Integer&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-function"><span class="hljs-keyword">public</span> Integer <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> Set&lt;String&gt; idx = redisTemplate.opsForSet().members(docKey);</span><br><span class="line">                ((StringRedisTemplate) operations).delete(idx);</span><br><span class="line">                ((StringRedisTemplate) operations).delete(docKey);</span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="hljs-keyword">return</span> results.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@PatchMapping</span>(<span class="hljs-string">"/index"</span>)</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">updateDocumentIndex</span><span class="hljs-params">(<span class="hljs-keyword">final</span> String index, <span class="hljs-keyword">final</span> String field, <span class="hljs-keyword">final</span> String documentId, <span class="hljs-keyword">final</span> String document)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.deleteDocumentIndex(index, documentId);</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.indexDocument(index, field, documentId, document);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">updateSortField</span><span class="hljs-params">(<span class="hljs-keyword">final</span> String index, <span class="hljs-keyword">final</span> String field, <span class="hljs-keyword">final</span> String documentId, <span class="hljs-keyword">final</span> Double document)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.deleteDocumentIndex(index, documentId);</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.indexSortField(index, field, documentId, document);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> Consumer&lt;SetOperations&lt;String, String&gt;&gt; operateAndStore(String method, String key, Collection&lt;String&gt; keys, String destKey) &#123;</span><br><span class="line">        <span class="hljs-keyword">switch</span> (method) &#123;</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"intersectAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.intersectAndStore(key, keys, destKey);</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"unionAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.unionAndStore(key, keys, destKey);</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"differenceAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.differenceAndStore(key, keys, destKey);</span><br><span class="line">            <span class="hljs-keyword">default</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> so -&gt; &#123;</span><br><span class="line">                &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> Consumer&lt;ZSetOperations&lt;String, String&gt;&gt; zOperateAndStore(String method, String key, Collection&lt;String&gt; keys, String destKey, <span class="hljs-keyword">final</span> RedisZSetCommands.Weights weights) &#123;</span><br><span class="line">        <span class="hljs-keyword">switch</span> (method) &#123;</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"intersectAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.intersectAndStore(key, keys, destKey, RedisZSetCommands.Aggregate.SUM, weights);</span><br><span class="line">            <span class="hljs-keyword">case</span> <span class="hljs-string">"unionAndStore"</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> (so) -&gt; so.unionAndStore(key, keys, destKey, RedisZSetCommands.Aggregate.SUM, weights);</span><br><span class="line">            <span class="hljs-keyword">default</span>:</span><br><span class="line">                <span class="hljs-keyword">return</span> so -&gt; &#123;</span><br><span class="line">                &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">common</span><span class="hljs-params">(String index, String method, List&lt;String&gt; keys, <span class="hljs-keyword">long</span> ttl)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> String destKey = Util.genQueryIdxName(index);</span><br><span class="line"></span><br><span class="line">        redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;String&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-keyword">public</span> &lt;K, V&gt; <span class="hljs-function">String <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations&lt;K, V&gt; operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                operateAndStore(method,</span><br><span class="line">                        keys.stream().limit(<span class="hljs-number">1L</span>).findFirst().get(),</span><br><span class="line">                        keys.stream().skip(<span class="hljs-number">1L</span>).collect(Collectors.toList()),</span><br><span class="line">                        destKey)</span><br><span class="line">                        .accept(((StringRedisTemplate) operations).opsForSet());</span><br><span class="line">                ((StringRedisTemplate) operations).expire(destKey, ttl, TimeUnit.SECONDS);</span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="hljs-keyword">return</span> destKey;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">intersect</span><span class="hljs-params">(String index, List&lt;String&gt; keys, <span class="hljs-keyword">long</span> ttl)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> common(index, <span class="hljs-string">"intersectAndStore"</span>, keys, ttl);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">union</span><span class="hljs-params">(String index, List&lt;String&gt; keys, <span class="hljs-keyword">long</span> ttl)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> common(index, <span class="hljs-string">"unionAndStore"</span>, keys, ttl);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">diff</span><span class="hljs-params">(String index, List&lt;String&gt; keys, <span class="hljs-keyword">long</span> ttl)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> common(index, <span class="hljs-string">"differenceAndStore"</span>, keys, ttl);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Tuple2&lt;Set&lt;Tuple2&lt;String, String&gt;&gt;, Set&lt;Tuple2&lt;String, String&gt;&gt;&gt; parse(String query) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Pattern pattern = Pattern.compile(<span class="hljs-string">"[+-]?([\\w\\d]+):(\\S+)"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Matcher matcher = pattern.matcher(query);</span><br><span class="line"></span><br><span class="line">        Set&lt;Tuple2&lt;String, String&gt;&gt; unwant = Sets.newHashSet();</span><br><span class="line">        Set&lt;Tuple2&lt;String, String&gt;&gt; want = Sets.newHashSet();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">while</span> (matcher.find()) &#123;</span><br><span class="line">            String word = matcher.group();</span><br><span class="line"></span><br><span class="line">            String prefix = <span class="hljs-keyword">null</span>;</span><br><span class="line">            <span class="hljs-keyword">if</span> (word.length() &gt; <span class="hljs-number">1</span>) &#123;</span><br><span class="line">                prefix = word.substring(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="hljs-keyword">final</span> Tuple2&lt;String, String&gt; t = Tuples.of(matcher.group(<span class="hljs-number">1</span>), matcher.group(<span class="hljs-number">2</span>));</span><br><span class="line">            <span class="hljs-keyword">if</span> (<span class="hljs-string">"-"</span>.equals(prefix)) &#123;</span><br><span class="line">                unwant.add(t);</span><br><span class="line">            &#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">                want.add(t);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">return</span> Tuples.of(want, unwant);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">query</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            String index,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            String query)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Tuple2&lt;Set&lt;Tuple2&lt;String, String&gt;&gt;, Set&lt;Tuple2&lt;String, String&gt;&gt;&gt; parseResult = parse(query);</span><br><span class="line">        <span class="hljs-keyword">final</span> Set&lt;Tuple2&lt;String, String&gt;&gt; want = parseResult.getT1();</span><br><span class="line">        <span class="hljs-keyword">final</span> Set&lt;Tuple2&lt;String, String&gt;&gt; unwant = parseResult.getT2();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (want.isEmpty()) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Map&lt;String, FieldMeta&gt; entries = (Map&lt;String, FieldMeta&gt;) hashMapper.fromHash(redisTemplate.&lt;String, Object&gt;opsForHash().entries(genIdxMetaName(index)));</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">// union</span></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;Tuple2&lt;String, String&gt;&gt; unionFields = want.stream()</span><br><span class="line">                .filter(w -&gt; w.getT2().contains(<span class="hljs-string">","</span>))</span><br><span class="line">                .filter(w -&gt; <span class="hljs-string">"true"</span>.equals(entries.get(w.getT1()).getSort()))</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; unionIdx = unionFields.stream()</span><br><span class="line">                .flatMap(w -&gt; Arrays.stream(w.getT2().split(<span class="hljs-string">","</span>)).map(value -&gt; Tuples.of(w.getT1(), value)))</span><br><span class="line">                .map(w -&gt; genIdxName(index, w.getT1(), w.getT2()))</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> String unionResultId = unionIdx.isEmpty() ? <span class="hljs-string">""</span> : <span class="hljs-keyword">this</span>.union(index, unionIdx, <span class="hljs-number">30L</span>);</span><br><span class="line"></span><br><span class="line">        want.removeAll(unionFields);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">// intersect</span></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; intersectIdx = want.stream()</span><br><span class="line">                .flatMap(t -&gt; &#123;</span><br><span class="line">                    <span class="hljs-keyword">if</span> (<span class="hljs-string">"true"</span>.equals(entries.get(t.getT1()).getSort()))</span><br><span class="line">                        <span class="hljs-keyword">return</span> Stream.of(t);</span><br><span class="line">                    <span class="hljs-keyword">return</span> Arrays.stream(t.getT2().split(<span class="hljs-string">""</span>)).map(value -&gt; Tuples.of(t.getT1(), value));</span><br><span class="line">                &#125;)</span><br><span class="line">                .map(w -&gt; genIdxName(index, w.getT1(), w.getT2()))</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (!unionResultId.isEmpty())</span><br><span class="line">            intersectIdx.add(unionResultId);</span><br><span class="line"></span><br><span class="line">        String intersectResult = <span class="hljs-keyword">this</span>.intersect(index, intersectIdx, <span class="hljs-number">30L</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">// diff</span></span><br><span class="line">        <span class="hljs-keyword">return</span> unwant.isEmpty() ?</span><br><span class="line">                intersectResult :</span><br><span class="line">                <span class="hljs-keyword">this</span>.diff(index, Stream.concat(Stream.of(intersectResult), unwant.stream().map(w -&gt; genIdxName(index, w.getT1(), w.getT2()))).collect(Collectors.toList()), <span class="hljs-number">30L</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/query/&#123;index&#125;"</span>)</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Set&lt;String&gt; <span class="hljs-title">queryAndSort</span><span class="hljs-params">(</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">            @PathVariable(<span class="hljs-string">"index"</span>)</span> String index,</span></span><br><span class="line"><span class="hljs-function">            @<span class="hljs-title">RequestParam</span><span class="hljs-params">(<span class="hljs-string">"param"</span>)</span> String query,</span></span><br><span class="line"><span class="hljs-function">            @<span class="hljs-title">RequestParam</span><span class="hljs-params">(<span class="hljs-string">"sort"</span>)</span> String sort,</span></span><br><span class="line"><span class="hljs-function">            Integer start,</span></span><br><span class="line"><span class="hljs-function">            Integer stop</span></span><br><span class="line"><span class="hljs-function">    ) </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> String[] sorts = sort.split(<span class="hljs-string">" "</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Map&lt;String, Integer&gt; map = Arrays.stream(sorts).collect(</span><br><span class="line">                Collectors.toMap(f -&gt; &#123;</span><br><span class="line">                    <span class="hljs-keyword">if</span> (f.startsWith(<span class="hljs-string">"+"</span>) || f.startsWith(<span class="hljs-string">"-"</span>)) &#123;</span><br><span class="line">                        f = f.substring(<span class="hljs-number">1</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="hljs-keyword">return</span> genSortIdxName(<span class="hljs-string">"person"</span>, f);</span><br><span class="line">                &#125;, field -&gt; field.startsWith(<span class="hljs-string">"-"</span>) ? -<span class="hljs-number">1</span> : <span class="hljs-number">1</span>)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] weights = map.values()</span><br><span class="line">                .stream()</span><br><span class="line">                .mapToInt(Integer::intValue)</span><br><span class="line">                .toArray();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//        if (!sort.startsWith("+") &amp;&amp; !sort.startsWith("-")) &#123;</span></span><br><span class="line"><span class="hljs-comment">//            sort = "+" + sort;</span></span><br><span class="line"><span class="hljs-comment">//        &#125;</span></span><br><span class="line"><span class="hljs-comment">//        boolean desc = sort.startsWith("-");</span></span><br><span class="line"><span class="hljs-comment">//        sort = sort.substring(1);</span></span><br><span class="line"></span><br><span class="line">        String queryId = <span class="hljs-keyword">this</span>.query(index, query);</span><br><span class="line">        Long size;</span><br><span class="line">        <span class="hljs-keyword">if</span> (queryId.length() == <span class="hljs-number">0</span> || (size = redisTemplate.opsForSet().size(queryId)) == <span class="hljs-keyword">null</span> || size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> Collections.emptySet();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> String resultId = genQueryIdxName(index);</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//        String sortField = sort;</span></span><br><span class="line"></span><br><span class="line">        redisTemplate.executePipelined(<span class="hljs-keyword">new</span> SessionCallback&lt;Object&gt;() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-keyword">public</span> &lt;K, V&gt; <span class="hljs-function">Object <span class="hljs-title">execute</span><span class="hljs-params">(RedisOperations&lt;K, V&gt; operations)</span> <span class="hljs-keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> StringRedisTemplate template = (StringRedisTemplate) operations;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//                template.opsForZSet().intersectAndStore(genSortIdxName(index, sortField), queryId, resultId);</span></span><br><span class="line"></span><br><span class="line">                SearchCore.<span class="hljs-keyword">this</span>.zOperateAndStore(<span class="hljs-string">"intersectAndStore"</span>,</span><br><span class="line">                        map.keySet().stream().limit(<span class="hljs-number">1L</span>).findFirst().get(),</span><br><span class="line">                        Stream.concat(map.keySet().stream().skip(<span class="hljs-number">1L</span>), Stream.of(queryId)).collect(Collectors.toList()),</span><br><span class="line">                        resultId, RedisZSetCommands.Weights.of(ArrayUtils.add(weights, <span class="hljs-number">0</span>))).accept(template.opsForZSet());</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//                template.opsForZSet().size(resultId);</span></span><br><span class="line">                template.expire(resultId, <span class="hljs-number">30L</span>, TimeUnit.SECONDS);</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">// sort</span></span><br><span class="line">        <span class="hljs-keyword">return</span> redisTemplate.opsForZSet().range(resultId, start, stop);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Util</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Util</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genIdxMetaName</span><span class="hljs-params">(String index)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"meta:idx:%s"</span>, index);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genIdxName</span><span class="hljs-params">(String index, String field, String value)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"idx:%s:%s:%s"</span>, index, field, value);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genSortIdxName</span><span class="hljs-params">(String index, String field)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"idx:%s:%s"</span>, index, field);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genQueryIdxName</span><span class="hljs-params">(String index)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"idx:%s:q:%s"</span>, index, UUID.randomUUID().toString());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">genDocIdxName</span><span class="hljs-params">(String index, String documentId)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> String.format(<span class="hljs-string">"doc:%s:%s"</span>, index, documentId);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            <p>resilience4j 源码还是比较清晰简单的，比较适合阅读。</p>
+<p>放一张主要类的结构图：</p>
+<p><img src="https://i.loli.net/2019/04/18/5cb7e40673fcf.png" alt></p>
+<h4 id="Retry入口"><a href="#Retry入口" class="headerlink" title="Retry入口"></a>Retry入口</h4><p>Retry接口是提供重试功能的入口，主要提供了方法模版，具体校验结构，失败后处理由Context子类实现。</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * Creates a retryable supplier.</span></span><br><span class="line"><span class="hljs-comment"> *</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> retry    the retry context</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> supplier the original function</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> &lt;T&gt;      the type of results supplied by this supplier</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@return</span> a retryable function</span></span><br><span class="line"><span class="hljs-comment"> */</span></span><br><span class="line"><span class="hljs-keyword">static</span> &lt;T&gt; <span class="hljs-function">Supplier&lt;T&gt; <span class="hljs-title">decorateSupplier</span><span class="hljs-params">(Retry retry, Supplier&lt;T&gt; supplier)</span> </span>&#123;</span><br><span class="line">	<span class="hljs-keyword">return</span> () -&gt; &#123;</span><br><span class="line">		Retry.Context&lt;T&gt; context = retry.context();</span><br><span class="line">		<span class="hljs-keyword">do</span> <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">			T result = supplier.get();</span><br><span class="line">			<span class="hljs-keyword">final</span> <span class="hljs-keyword">boolean</span> validationOfResult = context.onResult(result);</span><br><span class="line">			<span class="hljs-keyword">if</span> (!validationOfResult) &#123;</span><br><span class="line">				context.onSuccess();</span><br><span class="line">				<span class="hljs-keyword">return</span> result;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="hljs-keyword">catch</span> (RuntimeException runtimeException) &#123;</span><br><span class="line">			context.onRuntimeError(runtimeException);</span><br><span class="line">		&#125; <span class="hljs-keyword">while</span> (<span class="hljs-keyword">true</span>);</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>辅助类</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Data</span></span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FieldMeta</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> String sort = <span class="hljs-string">"false"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> String splitFun = <span class="hljs-string">""</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">FieldMeta</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">FieldMeta</span><span class="hljs-params">(<span class="hljs-keyword">boolean</span> sort)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.sort = Boolean.toString(sort);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里摘抄了一段核心代码，作用是循环直到context.onResult(result)返回true为止，需要留意context.onResult/onRuntimeError/onError可能执行多次， onSuccess只会执行一次，这里每次进入重试都是一个新的context对象。</p>
+<h4 id="Retry-ContextImpl"><a href="#Retry-ContextImpl" class="headerlink" title="Retry.ContextImpl"></a>Retry.ContextImpl</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">onResult</span><span class="hljs-params">(T result)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">null</span> != resultPredicate &amp;&amp; resultPredicate.test(result)) &#123;</span><br><span class="line">        <span class="hljs-keyword">int</span> currentNumOfAttempts = numOfAttempts.incrementAndGet();</span><br><span class="line">        <span class="hljs-keyword">if</span> (currentNumOfAttempts &gt;= maxAttempts) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;</span><br><span class="line">        &#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">            waitIntervalAfterFailure(currentNumOfAttempts, <span class="hljs-keyword">null</span>);</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onRuntimeError</span><span class="hljs-params">(RuntimeException runtimeException)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (exceptionPredicate.test(runtimeException)) &#123;</span><br><span class="line">        lastRuntimeException.set(runtimeException);</span><br><span class="line">        throwOrSleepAfterRuntimeException();</span><br><span class="line">    &#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">        failedWithoutRetryCounter.increment();</span><br><span class="line">        publishRetryEvent(() -&gt; <span class="hljs-keyword">new</span> RetryOnIgnoredErrorEvent(getName(), runtimeException));</span><br><span class="line">        <span class="hljs-keyword">throw</span> runtimeException;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>做一个轻量级的搜索还是可以的。</p>
+<p>先关注onResult，它负责判断是否需要继续重试，如果通过校验或者重试超过此数，会停止重试。</p>
+<p>onRuntimeError/onError, 负责把catch的异常存储在lastRuntimeException中。</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onSuccess</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">	<span class="hljs-keyword">int</span> currentNumOfAttempts = numOfAttempts.get();</span><br><span class="line">	<span class="hljs-keyword">if</span> (currentNumOfAttempts &gt; <span class="hljs-number">0</span>) &#123;</span><br><span class="line">		succeededAfterRetryCounter.increment();</span><br><span class="line">		Throwable throwable = Option.of(lastException.get()).getOrElse(lastRuntimeException.get());</span><br><span class="line">		publishRetryEvent(() -&gt; <span class="hljs-keyword">new</span> RetryOnSuccessEvent(getName(), currentNumOfAttempts, throwable));</span><br><span class="line">	&#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">		succeededWithoutRetryCounter.increment();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>onSuccess负责统计和发送事件。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>总体来说retry比较简单，需要注意的点有一个如果设置了结果校验，如果一直校验不通过，将返回未通过的结果，而不是返回失败。</p>
 
         </div>
         
@@ -189,60 +196,7 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-02-26T02:00:00.000Z">2019-02-26</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Java基础/">Java基础</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    1 分钟 read (About 197 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/02/26/2019-02-26-java-genic-type/">[片段]使用TypeToken在运行期保存泛型信息</a>
-            
-        </h1>
-        <div class="content">
-            <p>一般来说可以使用getGenericSuperclass 获取子类范型信息，但是泛型有嵌套的话想获取完整信息还是有点复杂的。例如：Message&lt;List<t>&gt; 有两个泛型信息。</t></p>
-<p>guava中有强大的TypeToken帮助你保存复杂泛型信息，可以参考：</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ParameterizedTypeReference&lt;Message&lt;T&gt;&gt; responseTypeRef = </span><br><span class="line">	ParameterizedTypeReferenceBuilder.fromTypeToken(</span><br><span class="line">        <span class="hljs-keyword">new</span> TypeToken&lt;Message&lt;T&gt;&gt;() &#123;&#125;.where(<span class="hljs-keyword">new</span> TypeParameter&lt;T&gt;() &#123;&#125;, <span class="hljs-keyword">new</span> TypeToken&lt;List&lt;OrgSugVOV1&gt;&gt;() &#123;&#125;));</span><br></pre></td></tr></table></figure>
-
-<p>如果需要在spring框架中使用，需要一个适配器：</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ParameterizedTypeReferenceBuilder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; <span class="hljs-function">ParameterizedTypeReference&lt;T&gt; <span class="hljs-title">fromTypeToken</span><span class="hljs-params">(TypeToken&lt;T&gt; typeToken)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TypeTokenParameterizedTypeReference&lt;&gt;(typeToken);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TypeTokenParameterizedTypeReference</span>&lt;<span class="hljs-title">T</span>&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title">ParameterizedTypeReference</span>&lt;<span class="hljs-title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Type type;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">TypeTokenParameterizedTypeReference</span><span class="hljs-params">(TypeToken&lt;T&gt; typeToken)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">this</span>.type = typeToken.getType();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">getType</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> type;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">equals</span><span class="hljs-params">(Object obj)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span> == obj || (obj <span class="hljs-keyword">instanceof</span> ParameterizedTypeReference &amp;&amp;</span><br><span class="line">                    <span class="hljs-keyword">this</span>.type.equals(((ParameterizedTypeReference&lt;?&gt;) obj).getType())));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">hashCode</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.type.hashCode();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">toString</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-string">"ParameterizedTypeReference&lt;"</span> + <span class="hljs-keyword">this</span>.type + <span class="hljs-string">"&gt;"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>关于java的泛型我就不多做吐槽了。</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
-    
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-02-11T02:00:00.000Z">2019-02-11</time>
+                <time class="level-item has-text-grey" datetime="2019-04-04T02:00:00.000Z">2019-04-04</time>
                 
                 <div class="level-item">
                 <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
@@ -252,7 +206,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    2 分钟 read (About 227 words)
+                    3 分钟 read (About 515 words)
                 </span>
                 
                 
@@ -261,16 +215,74 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2019/02/11/【片段】@CreatedBy  @ModifiedBy/">[片段] @CreatedBy / @ModifiedBy 拦截器实现</a>
+                <a class="has-link-black-ter" href="/2019/04/04/Mybatis ResultSetHandler_2019-04-04 续/">[片段] Mybatis ResultSetHandler 实践-续</a>
             
         </h1>
         <div class="content">
-            <p>拦截器实现：</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> app.pooi.common.entity;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.common.entity.anno.CreatedBy;</span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.common.entity.anno.ModifiedBy;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.Data;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.executor.Executor;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.mapping.MappedStatement;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.plugin.Intercepts;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.plugin.Invocation;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.plugin.Plugin;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.plugin.Signature;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.Properties;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Supplier;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Data</span></span><br><span class="line"><span class="hljs-meta">@Intercepts</span>(&#123;</span><br><span class="line">        <span class="hljs-meta">@Signature</span>(type = Executor.class, method = <span class="hljs-string">"update"</span>, args = &#123;MappedStatement.class, Object.class&#125;),</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EntityInterceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">org</span>.<span class="hljs-title">apache</span>.<span class="hljs-title">ibatis</span>.<span class="hljs-title">plugin</span>.<span class="hljs-title">Interceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> Supplier&lt;Long&gt; auditorAware;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">intercept</span><span class="hljs-params">(Invocation invocation)</span> <span class="hljs-keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        Executor executor = (Executor) invocation.getTarget();</span><br><span class="line"></span><br><span class="line">        MappedStatement ms = (MappedStatement) invocation.getArgs()[<span class="hljs-number">0</span>];</span><br><span class="line">        Object o = invocation.getArgs()[<span class="hljs-number">1</span>];</span><br><span class="line"></span><br><span class="line">        Arrays.stream(o.getClass().getDeclaredFields())</span><br><span class="line">                .forEach(field -&gt; &#123;</span><br><span class="line">                    <span class="hljs-keyword">final</span> CreatedBy createdBy = field.getAnnotation(CreatedBy.class);</span><br><span class="line">                    <span class="hljs-keyword">final</span> ModifiedBy modifiedBy = field.getAnnotation(ModifiedBy.class);</span><br><span class="line"></span><br><span class="line">                    <span class="hljs-keyword">if</span> (createdBy != <span class="hljs-keyword">null</span> || modifiedBy != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">                        field.setAccessible(<span class="hljs-keyword">true</span>);</span><br><span class="line">                        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">                            field.set(o, auditorAware.get());</span><br><span class="line">                        &#125; <span class="hljs-keyword">catch</span> (IllegalAccessException ignore) &#123;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">return</span> invocation.proceed();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">plugin</span><span class="hljs-params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> Plugin.wrap(target, <span class="hljs-keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setProperties</span><span class="hljs-params">(Properties properties)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            <p>这次拦截的方法是handleResultSets(Statement stmt)，用来批量解密用@Encrypted注解的String字段。</p>
+<p>上次的局限是只能批量解密一个对象的所有加密字段，对批量数据来说稍显不足，这个主要改进了这一点。</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">@Override</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Object&gt; <span class="hljs-title">handleResultSets</span><span class="hljs-params">(Statement stmt)</span> <span class="hljs-keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">  ErrorContext.instance().activity(<span class="hljs-string">"handling results"</span>).object(mappedStatement.getId());</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">final</span> List&lt;Object&gt; multipleResults = <span class="hljs-keyword">new</span> ArrayList&lt;Object&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">int</span> resultSetCount = <span class="hljs-number">0</span>;</span><br><span class="line">  ResultSetWrapper rsw = getFirstResultSet(stmt);</span><br><span class="line"></span><br><span class="line">  List&lt;ResultMap&gt; resultMaps = mappedStatement.getResultMaps();</span><br><span class="line">  <span class="hljs-keyword">int</span> resultMapCount = resultMaps.size();</span><br><span class="line">  validateResultMapsCount(rsw, resultMapCount);</span><br><span class="line">  <span class="hljs-keyword">while</span> (rsw != <span class="hljs-keyword">null</span> &amp;&amp; resultMapCount &gt; resultSetCount) &#123;</span><br><span class="line">    ResultMap resultMap = resultMaps.get(resultSetCount);</span><br><span class="line">    handleResultSet(rsw, resultMap, multipleResults, <span class="hljs-keyword">null</span>);</span><br><span class="line">    rsw = getNextResultSet(stmt);</span><br><span class="line">    cleanUpAfterHandlingResultSet();</span><br><span class="line">    resultSetCount++;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  String[] resultSets = mappedStatement.getResultSets();</span><br><span class="line">  <span class="hljs-keyword">if</span> (resultSets != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">    <span class="hljs-keyword">while</span> (rsw != <span class="hljs-keyword">null</span> &amp;&amp; resultSetCount &lt; resultSets.length) &#123;</span><br><span class="line">      ResultMapping parentMapping = nextResultMaps.get(resultSets[resultSetCount]);</span><br><span class="line">      <span class="hljs-keyword">if</span> (parentMapping != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">        String nestedResultMapId = parentMapping.getNestedResultMapId();</span><br><span class="line">        ResultMap resultMap = configuration.getResultMap(nestedResultMapId);</span><br><span class="line">        handleResultSet(rsw, resultMap, <span class="hljs-keyword">null</span>, parentMapping);</span><br><span class="line">      &#125;</span><br><span class="line">      rsw = getNextResultSet(stmt);</span><br><span class="line">      cleanUpAfterHandlingResultSet();</span><br><span class="line">      resultSetCount++;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span> collapseSingleResultList(multipleResults);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>配置：</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">@Configuration</span></span><br><span class="line"><span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MybatisInterceptorConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Bean</span></span><br><span class="line">    <span class="hljs-keyword">public</span> Interceptor[] configurationCustomizer(CipherSpi cipherSpi) &#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> EntityInterceptor entityInterceptor = <span class="hljs-keyword">new</span> EntityInterceptor();</span><br><span class="line"></span><br><span class="line">        entityInterceptor.setAuditorAware(() -&gt; &#123;</span><br><span class="line">            <span class="hljs-keyword">final</span> String header = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader(XHeaders.LOGIN_USER_ID);</span><br><span class="line">            <span class="hljs-keyword">return</span> Long.valueOf(header);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Interceptor[]&#123;<span class="hljs-keyword">new</span> DecryptInterceptor(cipherSpi), entityInterceptor&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> app.pooi.common.encrypt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.common.encrypt.anno.CipherSpi;</span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.common.encrypt.anno.Encrypted;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.Getter;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.executor.resultset.ResultSetHandler;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.plugin.*;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.reflection.MetaObject;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.reflection.SystemMetaObject;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="hljs-keyword">import</span> java.sql.Statement;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.*;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Function;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.logging.Logger;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Intercepts</span>(&#123;</span><br><span class="line">        <span class="hljs-meta">@Signature</span>(type = ResultSetHandler.class, method = <span class="hljs-string">"handleResultSets"</span>, args = &#123;Statement.class&#125;),</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DecryptInterceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Interceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Logger logger = Logger.getLogger(DecryptInterceptor.class.getName());</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> CipherSpi cipherSpi;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DecryptInterceptor</span><span class="hljs-params">(CipherSpi cipherSpi)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.cipherSpi = cipherSpi;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">intercept</span><span class="hljs-params">(Invocation invocation)</span> <span class="hljs-keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Object proceed = invocation.proceed();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (proceed == <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> proceed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        List&lt;?&gt; results = (List&lt;?&gt;) proceed;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (results.isEmpty()) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> proceed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Object first = results.iterator().next();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Class&lt;?&gt; modelClazz = first.getClass();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; decryptFields = getDecryptFields(modelClazz);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (decryptFields.isEmpty()) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> proceed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;List&lt;String&gt;&gt; secret = Flux.fromIterable(results)</span><br><span class="line">                .map(SystemMetaObject::forObject)</span><br><span class="line">                .flatMapIterable(mo -&gt; decryptFields.stream().map(mo::getValue).collect(Collectors.toList()))</span><br><span class="line">                .cast(String.class)</span><br><span class="line">                .buffer(<span class="hljs-number">1000</span>)</span><br><span class="line">                .collectList()</span><br><span class="line">                .block();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Map&lt;String, String&gt; secretMap = secret.stream()</span><br><span class="line">                .map(secrets -&gt; &#123;</span><br><span class="line">                    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">                        <span class="hljs-keyword">return</span> cipherSpi.batchDecrypt(secrets);</span><br><span class="line">                    &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                        <span class="hljs-keyword">return</span> Maps.&lt;String, String&gt;newHashMap();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).reduce(Maps.newHashMap(), (m1, m2) -&gt; &#123;</span><br><span class="line">                    m1.putAll(m2);</span><br><span class="line">                    <span class="hljs-keyword">return</span> m1;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        secretMap.put(<span class="hljs-string">""</span>, <span class="hljs-string">"0"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">for</span> (Object r : results) &#123;</span><br><span class="line">            <span class="hljs-keyword">final</span> MetaObject metaObject = SystemMetaObject.forObject(r);</span><br><span class="line">            decryptFields.forEach(f -&gt; metaObject.setValue(f, secretMap.get(metaObject.getValue(f))));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">return</span> results;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@NotNull</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> List&lt;String&gt; <span class="hljs-title">getDecryptFields</span><span class="hljs-params">(Class&lt;?&gt; modelClazz)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> Arrays.stream(modelClazz.getDeclaredFields())</span><br><span class="line">                .filter(f -&gt; f.getAnnotation(Decrypted.class) != <span class="hljs-keyword">null</span>)</span><br><span class="line">                .filter(f -&gt; &#123;</span><br><span class="line">                    <span class="hljs-keyword">boolean</span> isString = f.getType() == String.class;</span><br><span class="line">                    <span class="hljs-keyword">if</span> (!isString) &#123;</span><br><span class="line">                        logger.warning(f.getName() + <span class="hljs-string">"is not String, actual type is "</span> + f.getType().getSimpleName() + <span class="hljs-string">" ignored"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="hljs-keyword">return</span> isString;</span><br><span class="line">                &#125;)</span><br><span class="line">                .map(Field::getName)</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">plugin</span><span class="hljs-params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> Plugin.wrap(target, <span class="hljs-keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setProperties</span><span class="hljs-params">(Properties properties)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Getter</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tuple2</span>&lt;<span class="hljs-title">T1</span>, <span class="hljs-title">T2</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> T1 t1;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> T2 t2;</span><br><span class="line"></span><br><span class="line">    Tuple2(T1 t1, T2 t2) &#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.t1 = t1;</span><br><span class="line">        <span class="hljs-keyword">this</span>.t2 = t2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">static</span> &lt;T1, T2&gt; <span class="hljs-function">Tuple2&lt;T1, T2&gt; <span class="hljs-title">of</span><span class="hljs-params">(T1 t1, T2 t2)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Tuple2&lt;&gt;(t1, t2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-04-01T02:00:00.000Z">2019-04-01</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/读书/">读书</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    4 分钟 read (About 639 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/04/01/2019-04-01-[项目感悟] 读《再谈敏捷开发与延期风控》/">[项目感悟] 读《再谈敏捷开发与延期风控》</a>
+            
+        </h1>
+        <div class="content">
+            <p>本人本身不太喜欢方法论，感觉都是套路，生搬硬套不适合自己，敏捷开发就是其中让我保持谨慎态度的方法论之一。</p>
+<h4 id="敏捷开发与Scrum"><a href="#敏捷开发与Scrum" class="headerlink" title="敏捷开发与Scrum"></a>敏捷开发与Scrum</h4><p>对于一个项目来说，能够即快又好地完成当然是非常棒的，但是众所周知，受限于项目管理三要素：时间、质量、成本，只能折衷选择。因此「敏捷」作为一种方法论（虽然Agile自称为Culture）被提出，其中Scrum(/skrʌm/，一种球类比赛)是比较知名的实现类之一。</p>
+<p>在Scum中，它主要强调将瀑布式开发流程转为多阶段小迭代，可以理解为CPU的多级流水线(Instruction pipeline)设计，流水线设计将CPU的计算逻辑拆分，实现了复用计算模块，进而提高了时钟频率，同时也引入了寄存器/分支预测等管理模块增加了复杂度。</p>
+<p>类似于CPU流水线机制，敏捷开发本质是在保持时间、质量不变的情况下，通过投入管理成本降低开发过程的空转成本，进而提高时钟周期的方法。</p>
+<p>用白话来说，可以把软件开放比作流水车间，把PM，SE比作流水线工人。</p>
+<h4 id="我见过的的假敏捷"><a href="#我见过的的假敏捷" class="headerlink" title="我见过的的假敏捷"></a>我见过的的假敏捷</h4><p>然而到了现实，由于各种原因，却很容易成为假敏捷</p>
+<ul>
+<li>将工位的隔栏拆开变成网吧“敏捷岛”</li>
+<li>强行将Release计划拆成一个月一版，将Sprint拆成2周就看作快速迭代，照着人月神话反着搞</li>
+<li>招聘一堆无责任心的开发让你去“敏捷”，永远无法实现“全功能部队”</li>
+<li>客户难沟通，PO低估工作量，SE设计缺陷，编码质量低等原因，最终导致延期<br>上述任何一个问题，都可能导致最终项目一锅粥，导致高层焦虑，中层跑路，底层混日子的结果。</li>
+</ul>
+<p>敏捷能够提供强大高效的方法论，但是前提是需要本身基础过硬的团队，敏捷只能帮助存在进步瓶颈的团队。如果项目已经空心化，债务多，这不是敏捷方法论应该解决的问题。</p>
 
         </div>
         
@@ -310,7 +322,7 @@
             
             <li><span class="pagination-ellipsis has-text-black-ter">&hellip;</span></li>
             
-            <li><a class="pagination-link has-text-black-ter" href="/page/9/">9</a></li>
+            <li><a class="pagination-link has-text-black-ter" href="/page/10/">10</a></li>
             
         </ul>
     </nav>
@@ -360,7 +372,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            25
+                            29
                         </p>
                     </a>
                 </div>
@@ -372,7 +384,7 @@
                     </p>
                     <a href="/categories">
                         <p class="title has-text-weight-normal">
-                            16
+                            19
                         </p>
                     </a>
                 </div>
@@ -384,7 +396,7 @@
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
-                            13
+                            16
                         </p>
                     </a>
                 </div>
@@ -586,6 +598,30 @@
                 <span class="level-item tag">3</span>
             </span>
         </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/架构/">
+            <span class="level-start">
+                <span class="level-item">架构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">4</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/架构/nosql/">
+            <span class="level-start">
+                <span class="level-item">nosql</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/架构/缓存/">
+            <span class="level-start">
+                <span class="level-item">缓存</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">3</span>
+            </span>
+        </a></li></ul></li><li>
         <a class="level is-marginless" href="/categories/算法/">
             <span class="level-start">
                 <span class="level-item">算法</span>
@@ -636,7 +672,7 @@
         <h3 class="menu-label">
             Tag Cloud
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18.57px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14.29px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.43px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.57px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.86px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/算法/" style="font-size: 15.71px;">算法</a> <a href="/tags/读书/" style="font-size: 17.14px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.5px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.75px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 13.75px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.75px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.5px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 12.5px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.25px;">读书</a>
     </div>
 </div>
     
@@ -648,6 +684,82 @@
         <h3 class="menu-label">
             Recent
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="Write Through（读穿 写穿）策略">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/PzE62RftLeOGNAr.jpg" alt="NoSql相对于关系型数据库的优势">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="title has-link-black-ter is-size-6 has-text-weight-normal">NoSql相对于关系型数据库的优势</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/nosql/">nosql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -668,82 +780,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/09/24/2019-06-24自我时间管理/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/oLf2uA3Mbp9IqWP.jpg" alt="季度总结 如何管理自我时间">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-24T02:00:00.000Z">2019-09-24</time></div>
-                    <a href="/2019/09/24/2019-06-24自我时间管理/" class="title has-link-black-ter is-size-6 has-text-weight-normal">季度总结 如何管理自我时间</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/总结/">总结</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/08/10/2019-08-10序列算法 - 最长回文子串/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/RBUb2LH4AQNhdnK.jpg" alt="LeetCode 最长回文子串算法">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-10T02:00:00.000Z">2019-08-10</time></div>
-                    <a href="/2019/08/10/2019-08-10序列算法 - 最长回文子串/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LeetCode 最长回文子串算法</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/字符串/">字符串</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/07/29/2019-07-29多角色权限展示数据的一种实现/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/rK1i4uDs6WEzLc7.jpg" alt="[项目] 多角色权限展示数据的一种实现">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-07-29T02:00:00.000Z">2019-07-29</time></div>
-                    <a href="/2019/07/29/2019-07-29多角色权限展示数据的一种实现/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[项目] 多角色权限展示数据的一种实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/06/15/2019-06-30树算法 - 二叉排序树/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/06/21/5d0c50a86f44253662.jpg" alt="LeetCode二叉树排序树基础算法">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-15T02:00:00.000Z">2019-06-15</time></div>
-                    <a href="/2019/06/15/2019-06-30树算法 - 二叉排序树/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LeetCode二叉树排序树基础算法</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/二叉树/">二叉树</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -754,6 +790,17 @@
             Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2019/11/">
@@ -972,6 +1019,13 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/分布式/">
+                        <span class="tag">分布式</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/团队/">
                         <span class="tag">团队</span>
                         <span class="tag is-grey">1</span>
@@ -981,7 +1035,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">12</span>
+                        <span class="tag is-grey">16</span>
                     </a>
                 </div>
                 
@@ -1000,9 +1054,23 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/数据库/">
+                        <span class="tag">数据库</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/算法/">
                         <span class="tag">算法</span>
                         <span class="tag is-grey">5</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/缓存/">
+                        <span class="tag">缓存</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
@@ -1037,6 +1105,82 @@
         
         <article class="media">
             
+            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="Write Through（读穿 写穿）策略">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/PzE62RftLeOGNAr.jpg" alt="NoSql相对于关系型数据库的优势">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="title has-link-black-ter is-size-6 has-text-weight-normal">NoSql相对于关系型数据库的优势</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/nosql/">nosql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2019/11/21/2ReFJAMZNc9CBaf.jpg" alt="LeetCode两个经典的排序算法">
@@ -1054,82 +1198,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/09/24/2019-06-24自我时间管理/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/oLf2uA3Mbp9IqWP.jpg" alt="季度总结 如何管理自我时间">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-24T02:00:00.000Z">2019-09-24</time></div>
-                    <a href="/2019/09/24/2019-06-24自我时间管理/" class="title has-link-black-ter is-size-6 has-text-weight-normal">季度总结 如何管理自我时间</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/总结/">总结</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/08/10/2019-08-10序列算法 - 最长回文子串/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/RBUb2LH4AQNhdnK.jpg" alt="LeetCode 最长回文子串算法">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-10T02:00:00.000Z">2019-08-10</time></div>
-                    <a href="/2019/08/10/2019-08-10序列算法 - 最长回文子串/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LeetCode 最长回文子串算法</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/字符串/">字符串</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/07/29/2019-07-29多角色权限展示数据的一种实现/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/rK1i4uDs6WEzLc7.jpg" alt="[项目] 多角色权限展示数据的一种实现">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-07-29T02:00:00.000Z">2019-07-29</time></div>
-                    <a href="/2019/07/29/2019-07-29多角色权限展示数据的一种实现/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[项目] 多角色权限展示数据的一种实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/06/15/2019-06-30树算法 - 二叉排序树/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/06/21/5d0c50a86f44253662.jpg" alt="LeetCode二叉树排序树基础算法">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-15T02:00:00.000Z">2019-06-15</time></div>
-                    <a href="/2019/06/15/2019-06-30树算法 - 二叉排序树/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LeetCode二叉树排序树基础算法</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/二叉树/">二叉树</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1140,6 +1208,17 @@
             Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2019/11/">
@@ -1358,6 +1437,13 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/分布式/">
+                        <span class="tag">分布式</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/团队/">
                         <span class="tag">团队</span>
                         <span class="tag is-grey">1</span>
@@ -1367,7 +1453,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">12</span>
+                        <span class="tag is-grey">16</span>
                     </a>
                 </div>
                 
@@ -1386,9 +1472,23 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/数据库/">
+                        <span class="tag">数据库</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/算法/">
                         <span class="tag">算法</span>
                         <span class="tag is-grey">5</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/缓存/">
+                        <span class="tag">缓存</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
