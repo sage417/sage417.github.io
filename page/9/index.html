@@ -136,6 +136,90 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-11-19T02:00:00.000Z">2018-11-19</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/读书/">读书</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    13 分钟 read (About 1895 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2018/11/19/Distributed architecture concepts I learned while building a large payments system/">构建大型支付系统时分布式架构的关键点</a>
+            
+        </h1>
+        <div class="content">
+            <h2 id="SLA"><a href="#SLA" class="headerlink" title="SLA"></a>SLA</h2><p>在构建大型系统时，常常会遇到各种错误。在计划构建一个系统时，定义系统的“健康状态”十分重要。</p>
+<p>“健康状态”必须是可度量的，一般做法是使用SLAs来度量系统的“健康状态”。最常见的SLA为</p>
+<ul>
+<li><p>可达性 </p>
+<p>从时间维度衡量（99.999%可达性，每年下线50分钟）</p>
+</li>
+<li><p>准确性</p>
+<p>对于数据的丢失或失真是否可以接受？可以达到多少百分比？对于支付系统来说，不接受任何数据的丢失和失真</p>
+</li>
+<li><p>容量</p>
+<p>系统支持并发</p>
+</li>
+<li><p>延迟</p>
+<p>响应延迟，一般衡量95%请求的响应时间和99%请求响应时间</p>
+</li>
+</ul>
+<p>确保新系统比被替代系统“更好”，可以使用上面四个SLA指标来衡量，可达性是最重要的需求。</p>
+<h2 id="水平和垂直伸缩"><a href="#水平和垂直伸缩" class="headerlink" title="水平和垂直伸缩"></a>水平和垂直伸缩</h2><p>随着新业务的增长，负载也会增加。最常见的伸缩策略是垂直和水平伸缩。</p>
+<p>水平伸缩就是增加更多的机器或节点，对于分布式系统来说水平伸缩是最常有的方式。</p>
+<p>垂直伸缩基本上就是买更大/好的机器。</p>
+<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><p>可达性对于任何系统都是很重要的，但是分布式系统一般都构建在低可达性的机器上（比如：服务的可达性要求99.999% 机器的可达性为99.9%）。简单的做法是维护一组机器组成集群，这样服务的可达性不依赖单独的机器。</p>
+<p>一致性是在高可用系统中最需要关心的。一个一致性系统在所有的节点上看到和返回的数据在同一时间是相同的。如果使用一组机器来组成集群，它们还需要互相发送消息来保持同步，但是发送消息可能失败，这样一些节点就会因为不一致而不可达。</p>
+<p>一致性有多个模型，在分布式系统最常用的是强一致性，弱一致性和最终一致性。一般来说，一致性要求越低，系统可以工作的更快，但是返回的数据不一定是最新的。</p>
+<p>系统中的数据需要是一致的，但是到底是怎样的一致？对于一些系统，需要强一致性，比如一次支付必须是强一致的存储下来。对于没那么重要的部分，最终一致性是可以考虑的权衡。比如列出最近的交易。</p>
+<h2 id="数据持久性"><a href="#数据持久性" class="headerlink" title="数据持久性"></a>数据持久性</h2><p>持久性表示一旦数据成功添加到数据存储，它就永远可以访问到。不同的分布式数据库拥有不同级别的数据持久性。一般使用副本来增加数据持久性。</p>
+<p>对于支付系统来说，数据不允许丢失。我们构建的分布式数据存储需要支持集群级别的数据持久型。目前Cassandra, MongoDB, HDFS和Dynamodb 都支持多种级别的数据持久性。</p>
+<h1 id="消息保持与持久性"><a href="#消息保持与持久性" class="headerlink" title="消息保持与持久性"></a>消息保持与持久性</h1><p>分布式系统中的节点执行计算，存储数据，互相发送消息。发送消息的关键是消息的可靠到达。对于关键系统，经常需要消息零丢失。</p>
+<p>对于分布式系统，发送消息一般石油分布式消息服务发送，如RabbitMQ，Kafka。这些消息服务支持不同级别的消息投递可靠性。</p>
+<p>消息保持表示当节点处理消息失败时，在错误被解决前消息一直被保持着。消息的持久性一般在消息队列层被使用。如果在消息发送的时候队列或节点下线了，那在它们重新上线是还能接收到消息。</p>
+<p>在支付系统中我们需要每一条消息投递一次，在构建系统中保证投递一次和投递至少一次在实现上是有区别的。最后我们使用了kafka来保证投递至少一次。</p>
+<h2 id="幂等性"><a href="#幂等性" class="headerlink" title="幂等性"></a>幂等性</h2><p>在分布式系统中，很多东西都可能出错，连接会丢包或超时，客户端经常会重试这些请求。一个幂等的系统保证无论多少特定的请求被执行，一个请求实际的操作只会执行一次。比如支付请求，如果客户端请求支付并且请求已经成功，但是客户端超时了，客户端是能够重试相同的请求的。对于一个幂等的系统，一个个人的支付是不能被收取两次的。</p>
+<p>对幂等的设计，分布式系统需要某种分布式锁机制。假设我们想要使用乐观锁来实现幂等性，这时系统需要强一致性的锁来执行操作，我们可以使用同一个版本的乐观锁来检查是否有启动了额外的操作。</p>
+<p>根据系统的一致性和操作的类型，有很多方式来实现幂等性。在设计分布式系统时，幂等性时最容易忽略的。在支付系统中，幂等操作时最重要的，它避免了双花和双收问题。消息系统已经保证了消息至少消费一次，我们只需要保证所有重复的消息保证幂等性即可。我们选择使用乐观锁，并使用强一致性存储作为乐观锁的数据源。</p>
+<h2 id="分片和法定人数"><a href="#分片和法定人数" class="headerlink" title="分片和法定人数"></a>分片和法定人数</h2><p>分布式系统经常需要存储大量的数据，远超一台节点的容量。一般的解决方案时使用分片，数据使用某种hash算法被水平分区。尽管很多分布式数据库屏蔽了分片的实现，但是分片还是挺有意思的，特别是关于重新分片。</p>
+<p>许多分布式系统在多个拥有数据和统计信息。为保证对数据操作的一致性，使用基于投票的方式是不行的，只有超过一定数量的节点操作成功，这个操作才是成功的，这个叫做法定人数。</p>
+<h2 id="Actor模型"><a href="#Actor模型" class="headerlink" title="Actor模型"></a>Actor模型</h2><p>描述分布式系统最普遍的做法是使用Actor模型，还有一种方法是CSP。</p>
+<p>Actor模型基于actor互相发送消息并作出回应。每一个actor只能做少量的动作，创建其他actors, 发送消息或者决定如何处理下个消息。通过这些简单的规则，复杂的分布式系统可以被准确描述，可以在actor崩溃后自我修复。</p>
+<p>使用akka提供了标准的分布式模型，避免我们重复造轮子。</p>
+<h2 id="反应式架构"><a href="#反应式架构" class="headerlink" title="反应式架构"></a>反应式架构</h2><p>当构建大型分布式系统时，目标常常是它们的弹性，伸缩性，和扩展性。反应式架构是在这个领域最流行和最通用的方案。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2018-11-11T02:00:00.000Z">2018-11-11</time>
                 
                 <div class="level-item">
@@ -321,142 +405,6 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
 
 
 
-    
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-09-08T02:00:00.000Z">2018-09-08</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/读书/">读书</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    6 分钟 read (About 897 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/09/08/2018-9-8-reading/">《重构-改善既有代码设计》读书笔记</a>
-            
-        </h1>
-        <div class="content">
-            <h3 id="1-1-一个简单的例子"><a href="#1-1-一个简单的例子" class="headerlink" title="1.1 一个简单的例子"></a>1.1 一个简单的例子</h3><p>一个计算顾客租赁影片费用的程序，能容易写成面条式的代码（流水账）：顾客类调用影片类和租赁时长计算费用</p>
-<p>对机器来言只要能运行正确没有好代码和坏代码之分，但是对（维护的）人来说很难找到修改点，容易引入bug</p>
-<h3 id="1-2重构前先写测试保证重构结果"><a href="#1-2重构前先写测试保证重构结果" class="headerlink" title="1.2重构前先写测试保证重构结果"></a>1.2重构前先写测试保证重构结果</h3><p>利用单元测试保证重构正确性</p>
-<h3 id="1-3以微小的步伐修改程序，保证问题快速发现解决"><a href="#1-3以微小的步伐修改程序，保证问题快速发现解决" class="headerlink" title="1.3以微小的步伐修改程序，保证问题快速发现解决"></a>1.3以微小的步伐修改程序，保证问题快速发现解决</h3><p>不要为修改变量名感到羞耻，只有写出人能理解的代码才是好程序员</p>
-<p>重构完可能 性能变差，但同时会带来更多的机会来优化</p>
-<h3 id="1-4干货－用多态代替switch"><a href="#1-4干货－用多态代替switch" class="headerlink" title="1.4干货－用多态代替switch"></a>1.4干货－用多态代替switch</h3><p>switch需要关心具体条件，多态具有switch不具备的优势：不需要关心具体类型</p>
-<h3 id="2-1重构的定义"><a href="#2-1重构的定义" class="headerlink" title="2.1重构的定义"></a>2.1重构的定义</h3><p>重构：不改变运行结果下 提高理解性 降低修改成本</p>
-<h3 id="2-2重构的原因"><a href="#2-2重构的原因" class="headerlink" title="2.2重构的原因"></a>2.2重构的原因</h3><ul>
-<li><p>代码结构的流失是累积性的，越难看懂代码设计意图，越难保护其设计</p>
-</li>
-<li><p>消除重复代码，方便修改</p>
-</li>
-<li><p>我们编写代码时很容易忘记读者的感受，造成他人时间的浪费</p>
-</li>
-<li><p>重构时犯错可以加深对代码意图的理解，可以帮助发现bug</p>
-</li>
-<li><p>好的结构设计是加速开发的根本</p>
-</li>
-</ul>
-<h3 id="2-3重构的时机"><a href="#2-3重构的时机" class="headerlink" title="2.3重构的时机"></a>2.3重构的时机</h3><ul>
-<li><p>添加功能时重构，在修改过程中把结构理清，也可以更简单的添加功能</p>
-</li>
-<li><p>修复错误时重构 </p>
-</li>
-<li><p>复审代码时重构</p>
-</li>
-</ul>
-<h3 id="2-4-重构的价值"><a href="#2-4-重构的价值" class="headerlink" title="2.4 重构的价值"></a>2.4 重构的价值</h3><p>程序有两面价值，今天可以为你做什么和明天可以为你做什么为了满足明天的需要，你会遇到：</p>
-<ul>
-<li>难以阅读，逻辑重复</li>
-<li>添加新功能许修改以前代码</li>
-<li>复杂的条件逻辑等代码</li>
-</ul>
-<p>而你希望看到的是：</p>
-<ul>
-<li>容易阅读，所有逻辑在唯一指定地点，</li>
-<li>新的修改不会危及现有行为</li>
-<li>尽可能简单表达逻辑条件</li>
-</ul>
-<p><strong>重构</strong>就是把程序转变为这些特征的工具</p>
-<h3 id="2-5如何告诉（对付）经理"><a href="#2-5如何告诉（对付）经理" class="headerlink" title="2.5如何告诉（对付）经理"></a>2.5如何告诉（对付）经理</h3><p>很多经理都是进度驱动，所以更加需要重构带来的好处，所以不要告诉他们 他们不会理解的</p>
-<h4 id="2-5-1引入间接层与重构的关系"><a href="#2-5-1引入间接层与重构的关系" class="headerlink" title="2.5.1引入间接层与重构的关系"></a>2.5.1引入间接层与重构的关系</h4><p>间接层优点：</p>
-<ul>
-<li><p>允许逻辑共享</p>
-</li>
-<li><p>增加解释意图和实现的机会－多了类名和函数名</p>
-</li>
-<li><p>隔离变化</p>
-</li>
-<li><p>多态封装条件逻辑</p>
-</li>
-</ul>
-<h4 id="2-5-2何时不应该重构"><a href="#2-5-2何时不应该重构" class="headerlink" title="2.5.2何时不应该重构"></a>2.5.2何时不应该重构</h4><ul>
-<li>软件根本不工作</li>
-<li>最后期限已近</li>
-</ul>
-<p>未完成的重构可以称之为债务，迟早要还</p>
-<h4 id="2-5-3重构与预先设计的关系"><a href="#2-5-3重构与预先设计的关系" class="headerlink" title="2.5.3重构与预先设计的关系"></a>2.5.3重构与预先设计的关系</h4><p>重构可以节约不必要的时间精力花在预先设计上，让软件设计向简化发展</p>
-<h3 id="3代码的坏味道"><a href="#3代码的坏味道" class="headerlink" title="3代码的坏味道"></a>3代码的坏味道</h3><ul>
-<li><p>重复代码</p>
-</li>
-<li><p>过长函数</p>
-</li>
-<li><p>过大类，过长参数</p>
-</li>
-<li><p>修改一处程序的原因过多/一个原因修改过多的程序</p>
-</li>
-<li><p>数据依赖过多</p>
-</li>
-<li><p>重复的字段和参数</p>
-</li>
-<li><p>总是放在一起的字段</p>
-</li>
-<li><p>switch语句</p>
-</li>
-<li><p>平行继承关系</p>
-</li>
-<li><p>不是所有分支下都需要的临时变量</p>
-</li>
-<li><p>过度耦合调用链</p>
-</li>
-<li><p>不必要的委托</p>
-</li>
-<li><p>失血数据类</p>
-</li>
-<li><p>频繁重写父类方法</p>
-</li>
-<li><p>过多注释</p>
-</li>
-</ul>
-<h3 id="4-12具体如何做"><a href="#4-12具体如何做" class="headerlink" title="4~12具体如何做"></a>4~12具体如何做</h3><p>自己看书吧</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -527,7 +475,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            29
+                            30
                         </p>
                     </a>
                 </div>
@@ -686,7 +634,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <span class="level-item">Java框架</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">5</span>
+                <span class="level-item tag">6</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/Java框架/Mybatis/">
@@ -694,7 +642,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <span class="level-item">Mybatis</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">4</span>
+                <span class="level-item tag">5</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/Java框架/Spring/">
@@ -827,7 +775,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <h3 class="menu-label">
             Tag Cloud
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.5px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.75px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 13.75px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.75px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.5px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 12.5px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.25px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.5px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 15px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 13.75px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.75px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.5px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 12.5px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.25px;">读书</a>
     </div>
 </div>
     
@@ -842,37 +790,18 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         
         <article class="media">
             
-            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+            <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-06T02:00:00.000Z">2019-12-06</time></div>
+                    <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                        <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
                     </p>
                 </div>
             </div>
@@ -890,6 +819,25 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
                     <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
@@ -918,18 +866,18 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         
         <article class="media">
             
-            <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="media-left">
+            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/2ReFJAMZNc9CBaf.jpg" alt="LeetCode两个经典的排序算法">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-20T02:00:00.000Z">2019-11-20</time></div>
-                    <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LeetCode两个经典的排序算法</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/排序/">排序</a>
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
                 </div>
             </div>
@@ -952,7 +900,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">4</span>
+                    <span class="level-item tag">5</span>
                 </span>
             </a>
         </li>
@@ -1134,7 +1082,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/java/">
                         <span class="tag">java</span>
-                        <span class="tag is-grey">12</span>
+                        <span class="tag is-grey">13</span>
                     </a>
                 </div>
                 
@@ -1148,7 +1096,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/mybatis/">
                         <span class="tag">mybatis</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">5</span>
                     </a>
                 </div>
                 
@@ -1169,7 +1117,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">19</span>
+                        <span class="tag is-grey">20</span>
                     </a>
                 </div>
                 
@@ -1260,37 +1208,18 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         
         <article class="media">
             
-            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+            <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-06T02:00:00.000Z">2019-12-06</time></div>
+                    <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                        <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
                     </p>
                 </div>
             </div>
@@ -1308,6 +1237,25 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
                     <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
@@ -1336,18 +1284,18 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         
         <article class="media">
             
-            <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="media-left">
+            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/2ReFJAMZNc9CBaf.jpg" alt="LeetCode两个经典的排序算法">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-20T02:00:00.000Z">2019-11-20</time></div>
-                    <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LeetCode两个经典的排序算法</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/排序/">排序</a>
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
                 </div>
             </div>
@@ -1370,7 +1318,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">4</span>
+                    <span class="level-item tag">5</span>
                 </span>
             </a>
         </li>
@@ -1552,7 +1500,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/java/">
                         <span class="tag">java</span>
-                        <span class="tag is-grey">12</span>
+                        <span class="tag is-grey">13</span>
                     </a>
                 </div>
                 
@@ -1566,7 +1514,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/mybatis/">
                         <span class="tag">mybatis</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">5</span>
                     </a>
                 </div>
                 
@@ -1587,7 +1535,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">19</span>
+                        <span class="tag is-grey">20</span>
                     </a>
                 </div>
                 

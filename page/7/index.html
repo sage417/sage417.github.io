@@ -136,6 +136,59 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-02-26T02:00:00.000Z">2019-02-26</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Java基础/">Java基础</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    1 分钟 read (About 197 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/02/26/2019-02-26-java-genic-type/">[片段]使用TypeToken在运行期保存泛型信息</a>
+            
+        </h1>
+        <div class="content">
+            <p>一般来说可以使用getGenericSuperclass 获取子类范型信息，但是泛型有嵌套的话想获取完整信息还是有点复杂的。例如：Message&lt;List<t>&gt; 有两个泛型信息。</t></p>
+<p>guava中有强大的TypeToken帮助你保存复杂泛型信息，可以参考：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ParameterizedTypeReference&lt;Message&lt;T&gt;&gt; responseTypeRef = </span><br><span class="line">	ParameterizedTypeReferenceBuilder.fromTypeToken(</span><br><span class="line">        <span class="hljs-keyword">new</span> TypeToken&lt;Message&lt;T&gt;&gt;() &#123;&#125;.where(<span class="hljs-keyword">new</span> TypeParameter&lt;T&gt;() &#123;&#125;, <span class="hljs-keyword">new</span> TypeToken&lt;List&lt;OrgSugVOV1&gt;&gt;() &#123;&#125;));</span><br></pre></td></tr></table></figure>
+
+<p>如果需要在spring框架中使用，需要一个适配器：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ParameterizedTypeReferenceBuilder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; <span class="hljs-function">ParameterizedTypeReference&lt;T&gt; <span class="hljs-title">fromTypeToken</span><span class="hljs-params">(TypeToken&lt;T&gt; typeToken)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TypeTokenParameterizedTypeReference&lt;&gt;(typeToken);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TypeTokenParameterizedTypeReference</span>&lt;<span class="hljs-title">T</span>&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title">ParameterizedTypeReference</span>&lt;<span class="hljs-title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Type type;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">TypeTokenParameterizedTypeReference</span><span class="hljs-params">(TypeToken&lt;T&gt; typeToken)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">this</span>.type = typeToken.getType();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">getType</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> type;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">equals</span><span class="hljs-params">(Object obj)</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span> == obj || (obj <span class="hljs-keyword">instanceof</span> ParameterizedTypeReference &amp;&amp;</span><br><span class="line">                    <span class="hljs-keyword">this</span>.type.equals(((ParameterizedTypeReference&lt;?&gt;) obj).getType())));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">hashCode</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.type.hashCode();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-meta">@Override</span></span><br><span class="line">        <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">toString</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-string">"ParameterizedTypeReference&lt;"</span> + <span class="hljs-keyword">this</span>.type + <span class="hljs-string">"&gt;"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于java的泛型我就不多做吐槽了。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-02-11T02:00:00.000Z">2019-02-11</time>
                 
                 <div class="level-item">
@@ -230,56 +283,6 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-01-09T02:00:00.000Z">2019-01-09</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    3 分钟 read (About 497 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/01/09/Mybatis ResultSetHandler_2019-01-09/">[片段] Mybatis ResultSetHandler 实践</a>
-            
-        </h1>
-        <div class="content">
-            <p>这次拦截的方法是handleResultSets(Statement stmt)，用来批量解密用@Encrypted注解的String字段，可能还有一些坑。</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">@Override</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Object&gt; <span class="hljs-title">handleResultSets</span><span class="hljs-params">(Statement stmt)</span> <span class="hljs-keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">  ErrorContext.instance().activity(<span class="hljs-string">"handling results"</span>).object(mappedStatement.getId());</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">final</span> List&lt;Object&gt; multipleResults = <span class="hljs-keyword">new</span> ArrayList&lt;Object&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">int</span> resultSetCount = <span class="hljs-number">0</span>;</span><br><span class="line">  ResultSetWrapper rsw = getFirstResultSet(stmt);</span><br><span class="line"></span><br><span class="line">  List&lt;ResultMap&gt; resultMaps = mappedStatement.getResultMaps();</span><br><span class="line">  <span class="hljs-keyword">int</span> resultMapCount = resultMaps.size();</span><br><span class="line">  validateResultMapsCount(rsw, resultMapCount);</span><br><span class="line">  <span class="hljs-keyword">while</span> (rsw != <span class="hljs-keyword">null</span> &amp;&amp; resultMapCount &gt; resultSetCount) &#123;</span><br><span class="line">    ResultMap resultMap = resultMaps.get(resultSetCount);</span><br><span class="line">    handleResultSet(rsw, resultMap, multipleResults, <span class="hljs-keyword">null</span>);</span><br><span class="line">    rsw = getNextResultSet(stmt);</span><br><span class="line">    cleanUpAfterHandlingResultSet();</span><br><span class="line">    resultSetCount++;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  String[] resultSets = mappedStatement.getResultSets();</span><br><span class="line">  <span class="hljs-keyword">if</span> (resultSets != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">    <span class="hljs-keyword">while</span> (rsw != <span class="hljs-keyword">null</span> &amp;&amp; resultSetCount &lt; resultSets.length) &#123;</span><br><span class="line">      ResultMapping parentMapping = nextResultMaps.get(resultSets[resultSetCount]);</span><br><span class="line">      <span class="hljs-keyword">if</span> (parentMapping != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">        String nestedResultMapId = parentMapping.getNestedResultMapId();</span><br><span class="line">        ResultMap resultMap = configuration.getResultMap(nestedResultMapId);</span><br><span class="line">        handleResultSet(rsw, resultMap, <span class="hljs-keyword">null</span>, parentMapping);</span><br><span class="line">      &#125;</span><br><span class="line">      rsw = getNextResultSet(stmt);</span><br><span class="line">      cleanUpAfterHandlingResultSet();</span><br><span class="line">      resultSetCount++;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span> collapseSingleResultList(multipleResults);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> app.pooi.common.encrypt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.common.encrypt.anno.CipherSpi;</span><br><span class="line"><span class="hljs-keyword">import</span> app.pooi.common.encrypt.anno.Encrypted;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.Getter;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.executor.resultset.ResultSetHandler;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.plugin.*;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.reflection.MetaObject;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.reflection.SystemMetaObject;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="hljs-keyword">import</span> java.sql.Statement;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.*;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Function;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.logging.Logger;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Intercepts</span>(&#123;</span><br><span class="line">        <span class="hljs-meta">@Signature</span>(type = ResultSetHandler.class, method = <span class="hljs-string">"handleResultSets"</span>, args = &#123;Statement.class&#125;),</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EncryptInterceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Interceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Logger logger = Logger.getLogger(EncryptInterceptor.class.getName());</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> CipherSpi cipherSpi;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">EncryptInterceptor</span><span class="hljs-params">(CipherSpi cipherSpi)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.cipherSpi = cipherSpi;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">intercept</span><span class="hljs-params">(Invocation invocation)</span> <span class="hljs-keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Object proceed = invocation.proceed();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (proceed == <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> proceed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        List&lt;?&gt; results = (List&lt;?&gt;) proceed;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">if</span> (results.isEmpty()) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> proceed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Object first = results.iterator().next();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> Class&lt;?&gt; modelClazz = first.getClass();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; fieldsNeedDecrypt = Arrays.stream(modelClazz.getDeclaredFields())</span><br><span class="line">                .filter(f -&gt; f.getAnnotation(Encrypted.class) != <span class="hljs-keyword">null</span>)</span><br><span class="line">                .filter(f -&gt; &#123;</span><br><span class="line">                    <span class="hljs-keyword">boolean</span> isString = f.getType() == String.class;</span><br><span class="line">                    <span class="hljs-keyword">if</span> (!isString) &#123;</span><br><span class="line">                        logger.warning(f.getName() + <span class="hljs-string">"is not String, actual type is "</span> + f.getType().getSimpleName() + <span class="hljs-string">" ignored"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="hljs-keyword">return</span> isString;</span><br><span class="line">                &#125;)</span><br><span class="line">                .map(Field::getName)</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;List&lt;String&gt;&gt; partition = partition(fieldsNeedDecrypt, <span class="hljs-number">20</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">for</span> (Object r : results) &#123;</span><br><span class="line">            <span class="hljs-keyword">final</span> MetaObject metaObject = SystemMetaObject.forObject(r);</span><br><span class="line"></span><br><span class="line">            <span class="hljs-keyword">for</span> (List&lt;String&gt; fields : partition) &#123;</span><br><span class="line">                <span class="hljs-keyword">final</span> Map&lt;String, String&gt; fieldValueMap = fields.stream().collect(Collectors.toMap(Function.identity(), f -&gt; (String) metaObject.getValue(f)));</span><br><span class="line">                <span class="hljs-keyword">final</span> ArrayList&lt;String&gt; values = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;(fieldValueMap.values());</span><br><span class="line">                Map&lt;String, String&gt; decryptValues = cipherSpi.decrypt(values);</span><br><span class="line"></span><br><span class="line">                fieldValueMap.entrySet()</span><br><span class="line">                        .stream()</span><br><span class="line">                        .map(e -&gt; Tuple2.of(e.getKey(), decryptValues.getOrDefault(e.getValue(), <span class="hljs-string">""</span>)))</span><br><span class="line">                        .forEach(e -&gt; metaObject.setValue(e.getT1(), e.getT2()));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">return</span> results;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> &lt;T&gt; List&lt;List&lt;T&gt;&gt; partition(List&lt;T&gt; list, <span class="hljs-keyword">int</span> batchCount) &#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (!(batchCount &gt; <span class="hljs-number">0</span>)) &#123;</span><br><span class="line">            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalArgumentException(<span class="hljs-string">"batch count must greater than zero"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        List&lt;List&lt;T&gt;&gt; partitionList = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;(list.size() / (batchCount + <span class="hljs-number">1</span>));</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; list.size(); i += batchCount) &#123;</span><br><span class="line">            partitionList.add(list.stream().skip(i).limit(batchCount).collect(Collectors.toList()));</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">return</span> partitionList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">plugin</span><span class="hljs-params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> Plugin.wrap(target, <span class="hljs-keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setProperties</span><span class="hljs-params">(Properties properties)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Getter</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tuple2</span>&lt;<span class="hljs-title">T1</span>, <span class="hljs-title">T2</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> T1 t1;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> T2 t2;</span><br><span class="line"></span><br><span class="line">    Tuple2(T1 t1, T2 t2) &#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.t1 = t1;</span><br><span class="line">        <span class="hljs-keyword">this</span>.t2 = t2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">static</span> &lt;T1, T2&gt; <span class="hljs-function">Tuple2&lt;T1, T2&gt; <span class="hljs-title">of</span><span class="hljs-params">(T1 t1, T2 t2)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Tuple2&lt;&gt;(t1, t2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -354,7 +357,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            29
+                            30
                         </p>
                     </a>
                 </div>
@@ -513,7 +516,7 @@
                 <span class="level-item">Java框架</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">5</span>
+                <span class="level-item tag">6</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/Java框架/Mybatis/">
@@ -521,7 +524,7 @@
                 <span class="level-item">Mybatis</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">4</span>
+                <span class="level-item tag">5</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/Java框架/Spring/">
@@ -654,7 +657,7 @@
         <h3 class="menu-label">
             Tag Cloud
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.5px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.75px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 13.75px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.75px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.5px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 12.5px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.25px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.5px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 15px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 13.75px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.75px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.5px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 12.5px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.25px;">读书</a>
     </div>
 </div>
     
@@ -669,37 +672,18 @@
         
         <article class="media">
             
-            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+            <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-06T02:00:00.000Z">2019-12-06</time></div>
+                    <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                        <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
                     </p>
                 </div>
             </div>
@@ -717,6 +701,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
                     <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
@@ -745,18 +748,18 @@
         
         <article class="media">
             
-            <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="media-left">
+            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/2ReFJAMZNc9CBaf.jpg" alt="LeetCode两个经典的排序算法">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-20T02:00:00.000Z">2019-11-20</time></div>
-                    <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LeetCode两个经典的排序算法</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/排序/">排序</a>
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
                 </div>
             </div>
@@ -779,7 +782,7 @@
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">4</span>
+                    <span class="level-item tag">5</span>
                 </span>
             </a>
         </li>
@@ -961,7 +964,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/java/">
                         <span class="tag">java</span>
-                        <span class="tag is-grey">12</span>
+                        <span class="tag is-grey">13</span>
                     </a>
                 </div>
                 
@@ -975,7 +978,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/mybatis/">
                         <span class="tag">mybatis</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">5</span>
                     </a>
                 </div>
                 
@@ -996,7 +999,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">19</span>
+                        <span class="tag is-grey">20</span>
                     </a>
                 </div>
                 
@@ -1087,37 +1090,18 @@
         
         <article class="media">
             
-            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+            <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-06T02:00:00.000Z">2019-12-06</time></div>
+                    <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                        <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
                     </p>
                 </div>
             </div>
@@ -1135,6 +1119,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
                     <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
@@ -1163,18 +1166,18 @@
         
         <article class="media">
             
-            <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="media-left">
+            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/11/21/2ReFJAMZNc9CBaf.jpg" alt="LeetCode两个经典的排序算法">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-20T02:00:00.000Z">2019-11-20</time></div>
-                    <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LeetCode两个经典的排序算法</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/算法/">算法</a> / <a class="has-link-grey -link" href="/categories/算法/排序/">排序</a>
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
                 </div>
             </div>
@@ -1197,7 +1200,7 @@
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">4</span>
+                    <span class="level-item tag">5</span>
                 </span>
             </a>
         </li>
@@ -1379,7 +1382,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/java/">
                         <span class="tag">java</span>
-                        <span class="tag is-grey">12</span>
+                        <span class="tag is-grey">13</span>
                     </a>
                 </div>
                 
@@ -1393,7 +1396,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/mybatis/">
                         <span class="tag">mybatis</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">5</span>
                     </a>
                 </div>
                 
@@ -1414,7 +1417,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">19</span>
+                        <span class="tag is-grey">20</span>
                     </a>
                 </div>
                 
