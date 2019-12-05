@@ -207,8 +207,8 @@
 <div class="card">
     
     <div class="card-image">
-        <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
+        <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="缓存专题(三) Write Through（读穿 写穿）策略">
         </a>
     </div>
     
@@ -216,7 +216,7 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time>
+                <time class="level-item has-text-grey" datetime="2019-11-30T19:00:00.000Z">2019-12-01</time>
                 
                 <div class="level-item">
                 <a class="has-link-grey -link" href="/categories/架构/">架构</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
@@ -226,7 +226,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    13 分钟 read (About 1925 words)
+                    9 分钟 read (About 1415 words)
                 </span>
                 
                 
@@ -235,11 +235,77 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/">Cache Aside（旁路缓存）策略</a>
+                <a class="has-link-black-ter" href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/">缓存专题(三) Write Through（读穿 写穿）策略</a>
             
         </h1>
         <div class="content">
-            <h3 id="Cache-Aside（旁路缓存）策略"><a href="#Cache-Aside（旁路缓存）策略" class="headerlink" title="Cache Aside（旁路缓存）策略"></a>Cache Aside（旁路缓存）策略</h3><p>我们来考虑一种最简单的业务场景，比方说在你的电商系统中有一个用户表，表中只有 ID 和年龄两个字段，缓存中我们以 ID 为 Key 存储用户的年龄信息。那么当我们要把 ID 为 1 的用户的年龄从 19 变更为 20，要如何做呢？</p>
+            <p>这个策略的核心原则是用户只与缓存打交道，由缓存和数据库通信，写入或者读取数据。这就好比你在汇报工作的时候只对你的直接上级汇报，再由你的直接上级汇报给他的上级，你是不能越级汇报的。</p>
+<p>Write Through 的策略是这样的：先查询要写入的数据在缓存中是否已经存在，如果已经存在，则更新缓存中的数据，并且由缓存组件同步更新到数据库中，如果缓存中数据不存在，我们把这种情况叫做“Write Miss（写失效）”。</p>
+<p>一般来说，我们可以选择两种“Write Miss”方式：一个是“Write Allocate（按写分配）”，做法是写入缓存相应位置，再由缓存组件同步更新到数据库中；另一个是“No-write allocate（不按写分配）”，做法是不写入缓存中，而是直接更新到数据库中。</p>
+<p>在 Write Through 策略中，我们一般选择“No-write allocate”方式，原因是无论采用哪种“Write Miss”方式，我们都需要同步将数据更新到数据库中，而“No-write allocate”方式相比“Write Allocate”还减少了一次缓存的写入，能够提升写入的性能。</p>
+<p>Read Through 策略就简单一些，它的步骤是这样的：先查询缓存中数据是否存在，如果存在则直接返回，如果不存在，则由缓存组件负责从数据库中同步加载数据。</p>
+<p>下面是 Read Through/Write Through 策略的示意图：</p>
+<p><img src="https://i.loli.net/2019/12/01/d1yQH5oLSxmR8vn.jpg" alt="cache_through1.jpg"></p>
+<p>Read Through/Write Through 策略的特点是由缓存节点而非用户来和数据库打交道，在我们开发过程中相比 Cache Aside 策略要少见一些，原因是我们经常使用的分布式缓存组件，无论是 Memcached 还是 Redis 都不提供写入数据库，或者自动加载数据库中的数据的功能。而我们在使用本地缓存的时候可以考虑使用这种策略，比如说在上一节中提到的本地缓存 Guava Cache 中的 Loading Cache 就有 Read Through 策略的影子。</p>
+<p>我们看到 Write Through 策略中写数据库是同步的，这对于性能来说会有比较大的影响，因为相比于写缓存，同步写数据库的延迟就要高很多了。那么我们可否异步地更新数据库？这就是我们接下来要提到的“Write Back”策略。</p>
+<h2 id="Write-Back（写回）策略"><a href="#Write-Back（写回）策略" class="headerlink" title="Write Back（写回）策略"></a>Write Back（写回）策略</h2><p>这个策略的核心思想是在写入数据时只写入缓存，并且把缓存块儿标记为“脏”的。而脏块儿只有被再次使用时才会将其中的数据写入到后端存储中。</p>
+<p><strong>需要注意的是，</strong>在“Write Miss”的情况下，我们采用的是“Write Allocate”的方式，也就是在写入后端存储的同时要写入缓存，这样我们在之后的写请求中都只需要更新缓存即可，而无需更新后端存储了，我将 Write back 策略的示意图放在了下面：</p>
+<p><img src="https://i.loli.net/2019/12/01/zDNSafhPnkI2ri6.jpg" alt="cache_through3jpg.jpg"></p>
+<p><strong>发现了吗？</strong>其实这种策略不能被应用到我们常用的数据库和缓存的场景中，它是计算机体系结构中的设计，比如我们在向磁盘中写数据时采用的就是这种策略。无论是操作系统层面的 Page Cache，还是日志的异步刷盘，亦或是消息队列中消息的异步写入磁盘，大多采用了这种策略。因为这个策略在性能上的优势毋庸置疑，它避免了直接写磁盘造成的随机写问题，毕竟写内存和写磁盘的随机 I/O 的延迟相差了几个数量级呢。</p>
+<p>但因为缓存一般使用内存，而内存是非持久化的，所以一旦缓存机器掉电，就会造成原本缓存中的脏块儿数据丢失。所以你会发现系统在掉电之后，之前写入的文件会有部分丢失，就是因为 Page Cache 还没有来得及刷盘造成的。</p>
+<p><strong>当然，你依然可以在一些场景下使用这个策略，在使用时，我想给你的落地建议是：</strong>你在向低速设备写入数据的时候，可以在内存里先暂存一段时间的数据，甚至做一些统计汇总，然后定时地刷新到低速设备上。比如说，你在统计你的接口响应时间的时候，需要将每次请求的响应时间打印到日志中，然后监控系统收集日志后再做统计。但是如果每次请求都打印日志无疑会增加磁盘 I/O，那么不如把一段时间的响应时间暂存起来，经过简单的统计平均耗时，每个耗时区间的请求数量等等，然后定时地，批量地打印到日志中。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
+        <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="缓存专题(二) Cache Aside（旁路缓存）策略">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-11-30T18:00:00.000Z">2019-12-01</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/架构/">架构</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    13 分钟 read (About 1915 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/">缓存专题(二) Cache Aside（旁路缓存）策略</a>
+            
+        </h1>
+        <div class="content">
+            <p>我们来考虑一种最简单的业务场景，比方说在你的电商系统中有一个用户表，表中只有 ID 和年龄两个字段，缓存中我们以 ID 为 Key 存储用户的年龄信息。那么当我们要把 ID 为 1 的用户的年龄从 19 变更为 20，要如何做呢？</p>
 <p><strong>你可能会产生这样的思路：</strong>先更新数据库中 ID 为 1 的记录，再更新缓存中 Key 为 1 的数据。</p>
 <p><img src="https://i.loli.net/2019/12/01/zfuJVOd7oCUs2Tv.jpg" alt="cache_aside1.jpg"></p>
 <p><strong>这个思路会造成缓存和数据库中的数据不一致。</strong>比如，A 请求将数据库中 ID 为 1 的用户年龄从 19 变更为 20，与此同时，请求 B 也开始更新 ID 为 1 的用户数据，它把数据库中记录的年龄变更为 21，然后变更缓存中的用户年龄为 21。紧接着，A 请求开始更新缓存数据，它会把缓存中的年龄变更为 20。此时，数据库中用户年龄是 21，而缓存中的用户年龄却是 20。</p>
@@ -291,69 +357,15 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/11/20/2019-11-20 两个经典的排序算法/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2019/11/21/2ReFJAMZNc9CBaf.jpg" alt="LeetCode两个经典的排序算法">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-11-20T02:00:00.000Z">2019-11-20</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/算法/">算法</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/算法/排序/">排序</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    2 分钟 read (About 287 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/11/20/2019-11-20 两个经典的排序算法/">LeetCode两个经典的排序算法</a>
-            
-        </h1>
-        <div class="content">
-            <h4 id="LeetCode两个经典的排序算法"><a href="#LeetCode两个经典的排序算法" class="headerlink" title="LeetCode两个经典的排序算法"></a>LeetCode两个经典的排序算法</h4><p>这回是标题党， 记录下两个分而治之的排序算法（手写），分而治之的算法很容易改造成并行算法，肯定是未来的潮流， leetcode已通过， 两个算法都使用了原地(inplace)更新。</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">sortArray</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-comment">// merge(nums, 0, nums.length - 1);</span></span><br><span class="line">        sort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);</span><br><span class="line">        <span class="hljs-keyword">return</span> IntStream.of(nums).boxed().collect(Collectors.toList());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="hljs-comment">//-------------------归并排序-------------------//</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">merge</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (start &gt;= end) <span class="hljs-keyword">return</span>;</span><br><span class="line">        <span class="hljs-keyword">int</span> midIdx = start + (end - start) / <span class="hljs-number">2</span>;</span><br><span class="line">        merge(nums, start, midIdx);</span><br><span class="line">        merge(nums, midIdx+<span class="hljs-number">1</span>, end);</span><br><span class="line">        concat(nums, start, midIdx, end);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">concat</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">int</span> midIdx, <span class="hljs-keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">int</span>[] tmp = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[end - start + <span class="hljs-number">1</span>];</span><br><span class="line">        <span class="hljs-keyword">int</span> lp = start, rp = midIdx + <span class="hljs-number">1</span>, i = <span class="hljs-number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">while</span> (lp &lt;= midIdx &amp;&amp; rp &lt;= end) &#123;</span><br><span class="line">            tmp[i++] = nums[lp] &lt; nums[rp] ? nums[lp++] : nums[rp++];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">while</span> (lp &lt;= midIdx) &#123;</span><br><span class="line">            tmp[i++] = nums[lp++];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">while</span> (rp &lt;= end) &#123;</span><br><span class="line">            tmp[i++] = nums[rp++];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.arraycopy(tmp, <span class="hljs-number">0</span>, nums, start, tmp.length);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="hljs-comment">//-------------------快速排序-------------------//</span></span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">sort</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (start &gt;= end) <span class="hljs-keyword">return</span>;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">int</span> bIdx = partition(nums, start, end);</span><br><span class="line">        sort(nums, start, bIdx - <span class="hljs-number">1</span>);</span><br><span class="line">        sort(nums, bIdx + <span class="hljs-number">1</span>, end);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> <span class="hljs-title">partition</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">int</span> idx = start, base = nums[end];</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = start; i &lt; end; i++) &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (nums[i] &lt; base) &#123;</span><br><span class="line">                swap(nums, idx++, i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        swap(nums, idx, end);</span><br><span class="line">        <span class="hljs-keyword">return</span> idx;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">int</span> tmp = nums[i];</span><br><span class="line">        nums[i] = nums[j];</span><br><span class="line">        nums[j] = tmp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
     <nav class="pagination is-centered" role="navigation" aria-label="pagination">
         <div class="pagination-previous">
-            <a class="is-flex-grow has-text-black-ter" href="/">Previous</a>
+            <a class="is-flex-grow has-text-black-ter" href="/">Anterior</a>
         </div>
         <div class="pagination-next">
-            <a class="is-flex-grow has-text-black-ter" href="/page/3/">Next</a>
+            <a class="is-flex-grow has-text-black-ter" href="/page/3/">Siguiente</a>
         </div>
         <ul class="pagination-list is-hidden-mobile">
             
@@ -365,7 +377,7 @@
             
             <li><span class="pagination-ellipsis has-text-black-ter">&hellip;</span></li>
             
-            <li><a class="pagination-link has-text-black-ter" href="/page/10/">10</a></li>
+            <li><a class="pagination-link has-text-black-ter" href="/page/11/">11</a></li>
             
         </ul>
     </nav>
@@ -411,11 +423,11 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Posts
+                        Entradas
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            30
+                            32
                         </p>
                     </a>
                 </div>
@@ -423,7 +435,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categories
+                        Categorias
                     </p>
                     <a href="/categories">
                         <p class="title has-text-weight-normal">
@@ -435,7 +447,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Tags
+                        Etiquetas
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
@@ -448,7 +460,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="http://github.com/sage417" target="_blank">
-                Follow</a>
+                SEGUIR</a>
         </div>
         
         
@@ -549,7 +561,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categories
+                Categorias
             </h3>
             <ul class="menu-list">
             <li>
@@ -646,7 +658,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">4</span>
+                <span class="level-item tag">6</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -662,7 +674,7 @@
                 <span class="level-item">缓存</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">3</span>
+                <span class="level-item tag">5</span>
             </span>
         </a></li></ul></li><li>
         <a class="level is-marginless" href="/categories/算法/">
@@ -713,9 +725,9 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Tag Cloud
+            Nube de etiquetas
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.5px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 15px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 13.75px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.75px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.5px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 12.5px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.25px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.14px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14.29px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.43px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.71px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.57px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.86px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 14.29px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.29px;">缓存</a> <a href="/tags/读书/" style="font-size: 15.71px;">读书</a>
     </div>
 </div>
     
@@ -725,12 +737,50 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
             
-            <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="media-left">
+            <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/aHXFTSVv9hlJb3s.jpg" alt="缓存专题(五) 如何解决缓存穿透">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T18:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(五) 如何解决缓存穿透</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/04/2019-12-04-分布式缓存高可用/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/8YZSFOvUQWpbXnj.jpg" alt="缓存专题(四) 分布式缓存高可用">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T17:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-分布式缓存高可用/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(四) 分布式缓存高可用</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
                 </p>
@@ -738,48 +788,10 @@
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-06T02:00:00.000Z">2019-12-06</time></div>
-                    <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T16:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="Write Through（读穿 写穿）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
                 </div>
             </div>
@@ -806,16 +818,16 @@
         
         <article class="media">
             
-            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
+            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="缓存专题(三) Write Through（读穿 写穿）策略">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-30T19:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(三) Write Through（读穿 写穿）策略</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
@@ -830,7 +842,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -840,7 +852,7 @@
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">5</span>
+                    <span class="level-item tag">7</span>
                 </span>
             </a>
         </li>
@@ -1008,7 +1020,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1064,7 +1076,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/分布式/">
                         <span class="tag">分布式</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">6</span>
                     </a>
                 </div>
                 
@@ -1078,7 +1090,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">16</span>
+                        <span class="tag is-grey">18</span>
                     </a>
                 </div>
                 
@@ -1113,7 +1125,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/缓存/">
                         <span class="tag">缓存</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">5</span>
                     </a>
                 </div>
                 
@@ -1143,12 +1155,50 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
             
-            <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="media-left">
+            <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/aHXFTSVv9hlJb3s.jpg" alt="缓存专题(五) 如何解决缓存穿透">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T18:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(五) 如何解决缓存穿透</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/04/2019-12-04-分布式缓存高可用/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/8YZSFOvUQWpbXnj.jpg" alt="缓存专题(四) 分布式缓存高可用">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T17:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-分布式缓存高可用/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(四) 分布式缓存高可用</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
                 </p>
@@ -1156,48 +1206,10 @@
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-06T02:00:00.000Z">2019-12-06</time></div>
-                    <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T16:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="Write Through（读穿 写穿）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
                 </div>
             </div>
@@ -1224,16 +1236,16 @@
         
         <article class="media">
             
-            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
+            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="缓存专题(三) Write Through（读穿 写穿）策略">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-30T19:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(三) Write Through（读穿 写穿）策略</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
@@ -1248,7 +1260,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -1258,7 +1270,7 @@
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">5</span>
+                    <span class="level-item tag">7</span>
                 </span>
             </a>
         </li>
@@ -1426,7 +1438,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1482,7 +1494,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/分布式/">
                         <span class="tag">分布式</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">6</span>
                     </a>
                 </div>
                 
@@ -1496,7 +1508,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">16</span>
+                        <span class="tag is-grey">18</span>
                     </a>
                 </div>
                 
@@ -1531,7 +1543,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/缓存/">
                         <span class="tag">缓存</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">5</span>
                     </a>
                 </div>
                 
@@ -1713,10 +1725,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
+                POSTS: 'Entradas',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categories',
-                TAGS: 'Tags',
+                CATEGORIES: 'Categorias',
+                TAGS: 'Etiquetas',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/content.json',

@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-<title>Category: Mybatis - 塑料内存</title>
+<title>Categoria: Mybatis - 塑料内存</title>
 
 
     <meta name="description" content="随笔">
@@ -132,7 +132,7 @@
     <div class="card-content">
         <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
-            <li><a href="/categories">Categories</a></li>
+            <li><a href="/categories">Categorias</a></li>
             
             <li><a href="/categories/Java框架/">Java框架</a></li>
             
@@ -146,7 +146,7 @@
 <div class="card">
     
     <div class="card-image">
-        <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="image is-7by1">
+        <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="image is-7by1">
             <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
         </a>
     </div>
@@ -155,7 +155,7 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-12-06T02:00:00.000Z">2019-12-06</time>
+                <time class="level-item has-text-grey" datetime="2019-12-03T16:00:00.000Z">2019-12-04</time>
                 
                 <div class="level-item">
                 <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
@@ -165,7 +165,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    5 分钟 read (About 757 words)
+                    5 分钟 read (About 744 words)
                 </span>
                 
                 
@@ -174,12 +174,12 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/">[片段] Mybatis ParameterHandler 实践</a>
+                <a class="has-link-black-ter" href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/">[片段] Mybatis ParameterHandler 实践</a>
             
         </h1>
         <div class="content">
             <p>用来批量加密用@Decrypted注解的String字段，可能还有一些坑。</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.cache.CacheBuilder;</span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.cache.CacheLoader;</span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.cache.LoadingCache;</span><br><span class="line"><span class="hljs-keyword">import</span> com.ke.zhaopin.manage.server.config.mybatis.interceptor.anno.Decrypted;</span><br><span class="line"><span class="hljs-keyword">import</span> com.lianjia.ctt.kinko.spi.CipherSpi;</span><br><span class="line"><span class="hljs-keyword">import</span> com.sun.istack.internal.NotNull;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.Getter;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.commons.lang3.StringUtils;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.binding.MapperMethod;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.executor.parameter.ParameterHandler;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.plugin.*;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.reflection.MetaObject;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.scripting.defaults.DefaultParameterHandler;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.session.Configuration;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.session.defaults.DefaultSqlSession;</span><br><span class="line"><span class="hljs-keyword">import</span> org.joor.Reflect;</span><br><span class="line"><span class="hljs-keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.lang.reflect.Array;</span><br><span class="line"><span class="hljs-keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="hljs-keyword">import</span> java.sql.PreparedStatement;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.*;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.concurrent.ExecutionException;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Function;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Intercepts</span>(&#123;</span><br><span class="line">        <span class="hljs-meta">@Signature</span>(type = ParameterHandler.class, method = <span class="hljs-string">"setParameters"</span>, args = &#123;PreparedStatement.class&#125;),</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-meta">@Slf</span>4j</span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EncryptInterceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Interceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String COLLECTION_KEY = <span class="hljs-string">"collection"</span>;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String ARRAY_KEY = <span class="hljs-string">"array"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> LoadingCache&lt;Class, List&lt;String&gt;&gt; decryptFieldCaches = CacheBuilder.newBuilder()</span><br><span class="line">            .maximumSize(<span class="hljs-number">200</span>)</span><br><span class="line">            .expireAfterAccess(<span class="hljs-number">10L</span>, TimeUnit.MINUTES)</span><br><span class="line">            .build(<span class="hljs-keyword">new</span> CacheLoader&lt;Class, List&lt;String&gt;&gt;() &#123;</span><br><span class="line">                       <span class="hljs-meta">@Override</span></span><br><span class="line">                       <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;String&gt; <span class="hljs-title">load</span><span class="hljs-params">(Class key)</span> </span>&#123;</span><br><span class="line">                           <span class="hljs-keyword">return</span> Arrays.stream(key.getDeclaredFields())</span><br><span class="line">                                   .filter(f -&gt; f.getAnnotation(Decrypted.class) != <span class="hljs-keyword">null</span>)</span><br><span class="line">                                   .filter(f -&gt; &#123;</span><br><span class="line">                                       <span class="hljs-keyword">boolean</span> isString = f.getType() == String.class;</span><br><span class="line">                                       <span class="hljs-keyword">if</span> (!isString) &#123;</span><br><span class="line">                                           log.warn(f.getName() + <span class="hljs-string">"is not String, actual type is "</span> + f.getType().getSimpleName() + <span class="hljs-string">" ignored"</span>);</span><br><span class="line">                                       &#125;</span><br><span class="line">                                       <span class="hljs-keyword">return</span> isString;</span><br><span class="line">                                   &#125;)</span><br><span class="line">                                   .map(Field::getName)</span><br><span class="line">                                   .collect(Collectors.toList());</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125;</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> CipherSpi cipherSpi;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">EncryptInterceptor</span><span class="hljs-params">(CipherSpi cipherSpi)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.cipherSpi = cipherSpi;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">intercept</span><span class="hljs-params">(Invocation invocation)</span> <span class="hljs-keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        Flux&lt;CryptContext&gt; contextFlux = Flux.empty();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">do</span> &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (!(invocation.getTarget() <span class="hljs-keyword">instanceof</span> DefaultParameterHandler)) <span class="hljs-keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="hljs-keyword">final</span> Reflect parameterHandler = Reflect.on(invocation.getTarget());</span><br><span class="line">            <span class="hljs-keyword">final</span> Object parameterObject = parameterHandler.get(<span class="hljs-string">"parameterObject"</span>);</span><br><span class="line">            <span class="hljs-keyword">final</span> Configuration configuration = parameterHandler.get(<span class="hljs-string">"configuration"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            <span class="hljs-keyword">if</span> (parameterObject <span class="hljs-keyword">instanceof</span> DefaultSqlSession.StrictMap) &#123;</span><br><span class="line">                <span class="hljs-comment">// 单个Collection/Map/Array参数</span></span><br><span class="line">                DefaultSqlSession.StrictMap&lt;?&gt; paramMap = (DefaultSqlSession.StrictMap&lt;?&gt;) parameterObject;</span><br><span class="line"></span><br><span class="line">                Collection&lt;?&gt; collection = <span class="hljs-keyword">null</span>;</span><br><span class="line">                Class&lt;?&gt; componentType = <span class="hljs-keyword">null</span>;</span><br><span class="line">                <span class="hljs-keyword">if</span> (paramMap.containsKey(COLLECTION_KEY)) &#123;</span><br><span class="line">                    collection = (Collection&lt;?&gt;) paramMap.get(COLLECTION_KEY);</span><br><span class="line">                    componentType = collection.iterator().next().getClass();</span><br><span class="line">                &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (paramMap.containsKey(ARRAY_KEY)) &#123;</span><br><span class="line">                    Object[] array = (Object[]) paramMap.get(ARRAY_KEY);</span><br><span class="line">                    componentType = array.getClass().getComponentType();</span><br><span class="line">                    collection = Arrays.asList(array);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">if</span> (!isUserDefinedClass(componentType)) <span class="hljs-keyword">break</span>;</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">final</span> Flux&lt;CryptContext&gt; collectionFlux = collection(configuration, collection, parameterObject.getClass());</span><br><span class="line"></span><br><span class="line">                contextFlux = collectionFlux;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parameterObject <span class="hljs-keyword">instanceof</span> MapperMethod.ParamMap) &#123;</span><br><span class="line">                <span class="hljs-comment">// 多个参数</span></span><br><span class="line">                MapperMethod.ParamMap&lt;?&gt; paramMap = (MapperMethod.ParamMap&lt;?&gt;) parameterObject;</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">final</span> List&lt;?&gt; params = paramMap.values().stream().filter(Objects::nonNull).distinct().collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">for</span> (Object parameter : params) &#123;</span><br><span class="line">                    <span class="hljs-keyword">if</span> (parameter <span class="hljs-keyword">instanceof</span> Collection) &#123;</span><br><span class="line">                        Collection&lt;?&gt; collection = (Collection&lt;?&gt;) parameter;</span><br><span class="line">                        <span class="hljs-keyword">if</span> (collection.isEmpty()) &#123;</span><br><span class="line">                            <span class="hljs-keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        Class&lt;?&gt; componentType = collection.iterator().next().getClass();</span><br><span class="line">                        <span class="hljs-keyword">if</span> (!isUserDefinedClass(componentType)) &#123;</span><br><span class="line">                            <span class="hljs-keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="hljs-keyword">final</span> Flux&lt;CryptContext&gt; collectionFlux = collection(configuration, collection, componentType);</span><br><span class="line">                        contextFlux = contextFlux.concatWith(collectionFlux);</span><br><span class="line"></span><br><span class="line">                    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parameter.getClass().isArray()) &#123;</span><br><span class="line">                        <span class="hljs-keyword">if</span> (Array.getLength(parameter) == <span class="hljs-number">0</span>) <span class="hljs-keyword">continue</span>;</span><br><span class="line">                        <span class="hljs-keyword">final</span> Class&lt;?&gt; componentType = parameter.getClass().getComponentType();</span><br><span class="line">                        <span class="hljs-keyword">if</span> (!isUserDefinedClass(componentType)) &#123;</span><br><span class="line">                            <span class="hljs-keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        Collection&lt;?&gt; collection = Arrays.asList((Object[]) parameter);</span><br><span class="line"></span><br><span class="line">                        <span class="hljs-keyword">final</span> Flux&lt;CryptContext&gt; collectionFlux = collection(configuration, collection, componentType);</span><br><span class="line">                        contextFlux = contextFlux.concatWith(collectionFlux);</span><br><span class="line"></span><br><span class="line">                    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isUserDefinedClass(parameter.getClass())) &#123;</span><br><span class="line">                        <span class="hljs-keyword">final</span> Flux&lt;CryptContext&gt; singleFlux = collection(configuration, Collections.singletonList(parameter), parameter.getClass());</span><br><span class="line">                        contextFlux = contextFlux.concatWith(singleFlux);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isUserDefinedClass(parameterObject.getClass())) &#123;</span><br><span class="line">                <span class="hljs-comment">// 单个非Collection/Map/Array参数</span></span><br><span class="line">                <span class="hljs-keyword">final</span> Flux&lt;CryptContext&gt; singleFlux = collection(configuration, Collections.singletonList(parameterObject), parameterObject.getClass());</span><br><span class="line">                contextFlux = singleFlux;</span><br><span class="line">            &#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">                <span class="hljs-comment">// 不是用interface的情况</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125; <span class="hljs-keyword">while</span> (<span class="hljs-keyword">false</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;CryptContext&gt; cryptContexts = encrypt(contextFlux);</span><br><span class="line"></span><br><span class="line">        invocation.proceed();</span><br><span class="line"></span><br><span class="line">        restore(cryptContexts);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">restore</span><span class="hljs-params">(List&lt;CryptContext&gt; cryptContexts)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">for</span> (CryptContext cryptContext : cryptContexts) &#123;</span><br><span class="line">            cryptContext.metaObject.setValue(cryptContext.fieldName, cryptContext.value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> Flux&lt;CryptContext&gt; <span class="hljs-title">collection</span><span class="hljs-params">(Configuration configuration, Collection&lt;?&gt; collection, Class&lt;?&gt; componentType)</span> <span class="hljs-keyword">throws</span> ExecutionException </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; fieldNames = <span class="hljs-keyword">this</span>.getDecryptFields(componentType);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">return</span> Flux.fromIterable(collection)</span><br><span class="line">                .map(configuration::newMetaObject)</span><br><span class="line">                .flatMapIterable(metaObject -&gt; fieldNames.stream().map(fieldName -&gt; <span class="hljs-keyword">new</span> CryptContext(metaObject, fieldName)).collect(Collectors.toList()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> List&lt;CryptContext&gt; <span class="hljs-title">encrypt</span><span class="hljs-params">(Flux&lt;CryptContext&gt; contextFlux)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> Flux&lt;CryptContext&gt; publish = contextFlux</span><br><span class="line">                .filter(context -&gt; StringUtils.isNotBlank(context.value));</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">return</span> publish.buffer(<span class="hljs-number">1000</span>)</span><br><span class="line">                .doOnNext(contexts -&gt; &#123;</span><br><span class="line">                    Map&lt;String, String&gt; secretMap = Collections.emptyMap();</span><br><span class="line">                    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">                        secretMap = cipherSpi.batchEncrypt(contexts.stream().map(CryptContext::getValue).distinct().collect(Collectors.toList()));</span><br><span class="line">                    &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;</span><br><span class="line"></span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="hljs-keyword">for</span> (CryptContext context : contexts) &#123;</span><br><span class="line">                        context.secret = secretMap.get(context.value);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">                .flatMapIterable(Function.identity())</span><br><span class="line">                .doOnNext(context -&gt; context.metaObject.setValue(context.fieldName, context.secret))</span><br><span class="line">                .collectList()</span><br><span class="line">                .block();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@NotNull</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> List&lt;String&gt; <span class="hljs-title">getDecryptFields</span><span class="hljs-params">(Class&lt;?&gt; modelClazz)</span> <span class="hljs-keyword">throws</span> ExecutionException </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.decryptFieldCaches.get(modelClazz);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isUserDefinedClass</span><span class="hljs-params">(Class&lt;?&gt; clazz)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> !clazz.isPrimitive() &amp;&amp; !clazz.getPackage().getName().startsWith(<span class="hljs-string">"java"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">plugin</span><span class="hljs-params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> Plugin.wrap(target, <span class="hljs-keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setProperties</span><span class="hljs-params">(Properties properties)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Getter</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CryptContext</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    CryptContext(MetaObject metaObject, String fieldName) &#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.metaObject = metaObject;</span><br><span class="line">        <span class="hljs-keyword">this</span>.fieldName = fieldName;</span><br><span class="line">        <span class="hljs-keyword">this</span>.value = (String) metaObject.getValue(fieldName);</span><br><span class="line">        <span class="hljs-keyword">if</span> (StringUtils.isBlank(value)) &#123;</span><br><span class="line">            <span class="hljs-keyword">this</span>.secret = StringUtils.EMPTY;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">final</span> MetaObject metaObject;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">final</span> String fieldName;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">final</span> String value;</span><br><span class="line"></span><br><span class="line">    String secret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.cache.CacheBuilder;</span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.cache.CacheLoader;</span><br><span class="line"><span class="hljs-keyword">import</span> com.google.common.cache.LoadingCache;</span><br><span class="line"><span class="hljs-keyword">import</span> com.ke.zhaopin.manage.server.config.mybatis.interceptor.anno.Decrypted;</span><br><span class="line"><span class="hljs-keyword">import</span> com.lianjia.ctt.kinko.spi.CipherSpi;</span><br><span class="line"><span class="hljs-keyword">import</span> com.sun.istack.internal.NotNull;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.Getter;</span><br><span class="line"><span class="hljs-keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.commons.lang3.StringUtils;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.binding.MapperMethod;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.executor.parameter.ParameterHandler;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.plugin.*;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.reflection.MetaObject;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.scripting.defaults.DefaultParameterHandler;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.session.Configuration;</span><br><span class="line"><span class="hljs-keyword">import</span> org.apache.ibatis.session.defaults.DefaultSqlSession;</span><br><span class="line"><span class="hljs-keyword">import</span> org.joor.Reflect;</span><br><span class="line"><span class="hljs-keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.lang.reflect.Array;</span><br><span class="line"><span class="hljs-keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="hljs-keyword">import</span> java.sql.PreparedStatement;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.*;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.concurrent.ExecutionException;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.function.Function;</span><br><span class="line"><span class="hljs-keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Intercepts</span>(&#123;</span><br><span class="line">        <span class="hljs-meta">@Signature</span>(type = ParameterHandler.class, method = <span class="hljs-string">"setParameters"</span>, args = &#123;PreparedStatement.class&#125;),</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-meta">@Slf</span>4j</span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EncryptInterceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Interceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String COLLECTION_KEY = <span class="hljs-string">"collection"</span>;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String ARRAY_KEY = <span class="hljs-string">"array"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> LoadingCache&lt;Class, List&lt;String&gt;&gt; decryptFieldCaches = CacheBuilder.newBuilder()</span><br><span class="line">            .maximumSize(<span class="hljs-number">200</span>)</span><br><span class="line">            .expireAfterAccess(<span class="hljs-number">10L</span>, TimeUnit.MINUTES)</span><br><span class="line">            .build(<span class="hljs-keyword">new</span> CacheLoader&lt;Class, List&lt;String&gt;&gt;() &#123;</span><br><span class="line">                       <span class="hljs-meta">@Override</span></span><br><span class="line">                       <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;String&gt; <span class="hljs-title">load</span><span class="hljs-params">(Class key)</span> </span>&#123;</span><br><span class="line">                           <span class="hljs-keyword">return</span> Arrays.stream(key.getDeclaredFields())</span><br><span class="line">                                   .filter(f -&gt; f.getAnnotation(Decrypted.class) != <span class="hljs-keyword">null</span>)</span><br><span class="line">                                   .filter(f -&gt; &#123;</span><br><span class="line">                                       <span class="hljs-keyword">boolean</span> isString = f.getType() == String.class;</span><br><span class="line">                                       <span class="hljs-keyword">if</span> (!isString) &#123;</span><br><span class="line">                                           log.warn(f.getName() + <span class="hljs-string">"is not String, actual type is "</span> + f.getType().getSimpleName() + <span class="hljs-string">" ignored"</span>);</span><br><span class="line">                                       &#125;</span><br><span class="line">                                       <span class="hljs-keyword">return</span> isString;</span><br><span class="line">                                   &#125;)</span><br><span class="line">                                   .map(Field::getName)</span><br><span class="line">                                   .collect(Collectors.toList());</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125;</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">private</span> CipherSpi cipherSpi;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">EncryptInterceptor</span><span class="hljs-params">(CipherSpi cipherSpi)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.cipherSpi = cipherSpi;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">intercept</span><span class="hljs-params">(Invocation invocation)</span> <span class="hljs-keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        Flux&lt;CryptContext&gt; contextFlux = Flux.empty();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">do</span> &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (!(invocation.getTarget() <span class="hljs-keyword">instanceof</span> DefaultParameterHandler)) <span class="hljs-keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="hljs-keyword">final</span> Reflect parameterHandler = Reflect.on(invocation.getTarget());</span><br><span class="line">            <span class="hljs-keyword">final</span> Object parameterObject = parameterHandler.get(<span class="hljs-string">"parameterObject"</span>);</span><br><span class="line">            <span class="hljs-keyword">final</span> Configuration configuration = parameterHandler.get(<span class="hljs-string">"configuration"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="hljs-keyword">if</span> (parameterObject <span class="hljs-keyword">instanceof</span> DefaultSqlSession.StrictMap) &#123;</span><br><span class="line">                <span class="hljs-comment">// 单个Collection/Map/Array参数</span></span><br><span class="line">                DefaultSqlSession.StrictMap&lt;?&gt; paramMap = (DefaultSqlSession.StrictMap&lt;?&gt;) parameterObject;</span><br><span class="line"></span><br><span class="line">                Collection&lt;?&gt; collection = <span class="hljs-keyword">null</span>;</span><br><span class="line">                Class&lt;?&gt; componentType = <span class="hljs-keyword">null</span>;</span><br><span class="line">                <span class="hljs-keyword">if</span> (paramMap.containsKey(COLLECTION_KEY)) &#123;</span><br><span class="line">                    collection = (Collection&lt;?&gt;) paramMap.get(COLLECTION_KEY);</span><br><span class="line">                    componentType = collection.iterator().next().getClass();</span><br><span class="line">                &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (paramMap.containsKey(ARRAY_KEY)) &#123;</span><br><span class="line">                    Object[] array = (Object[]) paramMap.get(ARRAY_KEY);</span><br><span class="line">                    componentType = array.getClass().getComponentType();</span><br><span class="line">                    collection = Arrays.asList(array);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">if</span> (!isUserDefinedClass(componentType)) <span class="hljs-keyword">break</span>;</span><br><span class="line"></span><br><span class="line">                contextFlux = collection(configuration, collection, componentType);</span><br><span class="line"></span><br><span class="line">            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parameterObject <span class="hljs-keyword">instanceof</span> MapperMethod.ParamMap) &#123;</span><br><span class="line">                <span class="hljs-comment">// 多个参数</span></span><br><span class="line">                MapperMethod.ParamMap&lt;?&gt; paramMap = (MapperMethod.ParamMap&lt;?&gt;) parameterObject;</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">final</span> List&lt;?&gt; params = paramMap.values().stream().filter(Objects::nonNull).distinct().collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">                <span class="hljs-keyword">for</span> (Object parameter : params) &#123;</span><br><span class="line">                    <span class="hljs-keyword">if</span> (parameter <span class="hljs-keyword">instanceof</span> Collection) &#123;</span><br><span class="line">                        Collection&lt;?&gt; collection = (Collection&lt;?&gt;) parameter;</span><br><span class="line">                        <span class="hljs-keyword">if</span> (collection.isEmpty()) &#123;</span><br><span class="line">                            <span class="hljs-keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        Class&lt;?&gt; componentType = collection.iterator().next().getClass();</span><br><span class="line">                        <span class="hljs-keyword">if</span> (!isUserDefinedClass(componentType)) &#123;</span><br><span class="line">                            <span class="hljs-keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="hljs-keyword">final</span> Flux&lt;CryptContext&gt; collectionFlux = collection(configuration, collection, componentType);</span><br><span class="line">                        contextFlux = contextFlux.concatWith(collectionFlux);</span><br><span class="line"></span><br><span class="line">                    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parameter.getClass().isArray()) &#123;</span><br><span class="line">                        <span class="hljs-keyword">if</span> (Array.getLength(parameter) == <span class="hljs-number">0</span>) <span class="hljs-keyword">continue</span>;</span><br><span class="line">                        <span class="hljs-keyword">final</span> Class&lt;?&gt; componentType = parameter.getClass().getComponentType();</span><br><span class="line">                        <span class="hljs-keyword">if</span> (!isUserDefinedClass(componentType)) &#123;</span><br><span class="line">                            <span class="hljs-keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        Collection&lt;?&gt; collection = Arrays.asList((Object[]) parameter);</span><br><span class="line"></span><br><span class="line">                        <span class="hljs-keyword">final</span> Flux&lt;CryptContext&gt; collectionFlux = collection(configuration, collection, componentType);</span><br><span class="line">                        contextFlux = contextFlux.concatWith(collectionFlux);</span><br><span class="line"></span><br><span class="line">                    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isUserDefinedClass(parameter.getClass())) &#123;</span><br><span class="line">                        <span class="hljs-keyword">final</span> Flux&lt;CryptContext&gt; singleFlux = collection(configuration, Collections.singletonList(parameter), parameter.getClass());</span><br><span class="line">                        contextFlux = contextFlux.concatWith(singleFlux);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isUserDefinedClass(parameterObject.getClass())) &#123;</span><br><span class="line">                <span class="hljs-comment">// 单个非Collection/Map/Array参数</span></span><br><span class="line">                contextFlux = collection(configuration, Collections.singletonList(parameterObject), parameterObject.getClass());</span><br><span class="line">            &#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">                <span class="hljs-comment">// 不是用interface的情况</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125; <span class="hljs-keyword">while</span> (<span class="hljs-keyword">false</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;CryptContext&gt; cryptContexts = encrypt(contextFlux);</span><br><span class="line"></span><br><span class="line">        invocation.proceed();</span><br><span class="line"></span><br><span class="line">        restore(cryptContexts);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">restore</span><span class="hljs-params">(List&lt;CryptContext&gt; cryptContexts)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">for</span> (CryptContext cryptContext : cryptContexts) &#123;</span><br><span class="line">            cryptContext.metaObject.setValue(cryptContext.fieldName, cryptContext.value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> Flux&lt;CryptContext&gt; <span class="hljs-title">collection</span><span class="hljs-params">(Configuration configuration, Collection&lt;?&gt; collection, Class&lt;?&gt; componentType)</span> <span class="hljs-keyword">throws</span> ExecutionException </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">final</span> List&lt;String&gt; fieldNames = <span class="hljs-keyword">this</span>.getDecryptFields(componentType);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">return</span> Flux.fromIterable(collection)</span><br><span class="line">                .map(configuration::newMetaObject)</span><br><span class="line">                .flatMapIterable(metaObject -&gt; fieldNames.stream().map(fieldName -&gt; <span class="hljs-keyword">new</span> CryptContext(metaObject, fieldName)).collect(Collectors.toList()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> List&lt;CryptContext&gt; <span class="hljs-title">encrypt</span><span class="hljs-params">(Flux&lt;CryptContext&gt; contextFlux)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> contextFlux</span><br><span class="line">                .filter(context -&gt; StringUtils.isNotBlank(context.value))</span><br><span class="line">                .buffer(<span class="hljs-number">1000</span>)</span><br><span class="line">                .doOnNext(contexts -&gt; &#123;</span><br><span class="line">                    Map&lt;String, String&gt; secretMap = Collections.emptyMap();</span><br><span class="line">                    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">                        secretMap = cipherSpi.batchEncrypt(contexts.stream().map(CryptContext::getValue).distinct().collect(Collectors.toList()));</span><br><span class="line">                    &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;</span><br><span class="line"></span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="hljs-keyword">for</span> (CryptContext context : contexts) &#123;</span><br><span class="line">                        context.secret = secretMap.get(context.value);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">                .flatMapIterable(Function.identity())</span><br><span class="line">                .doOnNext(context -&gt; context.metaObject.setValue(context.fieldName, context.secret))</span><br><span class="line">                .collectList()</span><br><span class="line">                .block();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@NotNull</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> List&lt;String&gt; <span class="hljs-title">getDecryptFields</span><span class="hljs-params">(Class&lt;?&gt; modelClazz)</span> <span class="hljs-keyword">throws</span> ExecutionException </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.decryptFieldCaches.get(modelClazz);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isUserDefinedClass</span><span class="hljs-params">(Class&lt;?&gt; clazz)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> !clazz.isPrimitive() &amp;&amp; !clazz.getPackage().getName().startsWith(<span class="hljs-string">"java"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">plugin</span><span class="hljs-params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> Plugin.wrap(target, <span class="hljs-keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setProperties</span><span class="hljs-params">(Properties properties)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">@Getter</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CryptContext</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    CryptContext(MetaObject metaObject, String fieldName) &#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.metaObject = metaObject;</span><br><span class="line">        <span class="hljs-keyword">this</span>.fieldName = fieldName;</span><br><span class="line">        <span class="hljs-keyword">this</span>.value = (String) metaObject.getValue(fieldName);</span><br><span class="line">        <span class="hljs-keyword">if</span> (StringUtils.isBlank(value)) &#123;</span><br><span class="line">            <span class="hljs-keyword">this</span>.secret = StringUtils.EMPTY;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">final</span> MetaObject metaObject;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">final</span> String fieldName;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">final</span> String value;</span><br><span class="line"></span><br><span class="line">    String secret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
         
@@ -433,11 +433,11 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Posts
+                        Entradas
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            30
+                            32
                         </p>
                     </a>
                 </div>
@@ -445,7 +445,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categories
+                        Categorias
                     </p>
                     <a href="/categories">
                         <p class="title has-text-weight-normal">
@@ -457,7 +457,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Tags
+                        Etiquetas
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
@@ -470,7 +470,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="http://github.com/sage417" target="_blank">
-                Follow</a>
+                SEGUIR</a>
         </div>
         
         
@@ -571,7 +571,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categories
+                Categorias
             </h3>
             <ul class="menu-list">
             <li>
@@ -668,7 +668,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">4</span>
+                <span class="level-item tag">6</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -684,7 +684,7 @@
                 <span class="level-item">缓存</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">3</span>
+                <span class="level-item tag">5</span>
             </span>
         </a></li></ul></li><li>
         <a class="level is-marginless" href="/categories/算法/">
@@ -735,9 +735,9 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Tag Cloud
+            Nube de etiquetas
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.5px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 15px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 13.75px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.75px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.5px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 12.5px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.25px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.14px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14.29px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.43px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.71px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.57px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.86px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 14.29px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.29px;">缓存</a> <a href="/tags/读书/" style="font-size: 15.71px;">读书</a>
     </div>
 </div>
     
@@ -747,12 +747,50 @@
             <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
             
-            <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="media-left">
+            <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/aHXFTSVv9hlJb3s.jpg" alt="缓存专题(五) 如何解决缓存穿透">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T18:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(五) 如何解决缓存穿透</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/04/2019-12-04-分布式缓存高可用/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/8YZSFOvUQWpbXnj.jpg" alt="缓存专题(四) 分布式缓存高可用">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T17:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-分布式缓存高可用/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(四) 分布式缓存高可用</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
                 </p>
@@ -760,48 +798,10 @@
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-06T02:00:00.000Z">2019-12-06</time></div>
-                    <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T16:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="Write Through（读穿 写穿）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
                 </div>
             </div>
@@ -828,16 +828,16 @@
         
         <article class="media">
             
-            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
+            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="缓存专题(三) Write Through（读穿 写穿）策略">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-30T19:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(三) Write Through（读穿 写穿）策略</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
@@ -852,7 +852,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -862,7 +862,7 @@
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">5</span>
+                    <span class="level-item tag">7</span>
                 </span>
             </a>
         </li>
@@ -1030,7 +1030,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1086,7 +1086,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/分布式/">
                         <span class="tag">分布式</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">6</span>
                     </a>
                 </div>
                 
@@ -1100,7 +1100,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">16</span>
+                        <span class="tag is-grey">18</span>
                     </a>
                 </div>
                 
@@ -1135,7 +1135,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/缓存/">
                         <span class="tag">缓存</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">5</span>
                     </a>
                 </div>
                 
@@ -1165,12 +1165,50 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Recent
+            Recientes
         </h3>
         
         <article class="media">
             
-            <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="media-left">
+            <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/aHXFTSVv9hlJb3s.jpg" alt="缓存专题(五) 如何解决缓存穿透">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T18:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(五) 如何解决缓存穿透</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/04/2019-12-04-分布式缓存高可用/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/8YZSFOvUQWpbXnj.jpg" alt="缓存专题(四) 分布式缓存高可用">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T17:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-分布式缓存高可用/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(四) 分布式缓存高可用</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
                 </p>
@@ -1178,48 +1216,10 @@
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-06T02:00:00.000Z">2019-12-06</time></div>
-                    <a href="/2019/12/06/2019-12-06-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T16:00:00.000Z">2019-12-04</time></div>
+                    <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="Write Through（读穿 写穿）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Write Through（读穿 写穿）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存概述">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存概述</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
                 </div>
             </div>
@@ -1246,16 +1246,16 @@
         
         <article class="media">
             
-            <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="media-left">
+            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/Ro1WXK3kBUxCcLZ.jpg" alt="Cache Aside（旁路缓存）策略">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="缓存专题(三) Write Through（读穿 写穿）策略">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Cache Aside（旁路缓存）策略</a>
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-30T19:00:00.000Z">2019-12-01</time></div>
+                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(三) Write Through（读穿 写穿）策略</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
                     </p>
@@ -1270,7 +1270,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Archives
+            Archivos
         </h3>
         <ul class="menu-list">
         
@@ -1280,7 +1280,7 @@
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">5</span>
+                    <span class="level-item tag">7</span>
                 </span>
             </a>
         </li>
@@ -1448,7 +1448,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Tags
+                Etiquetas
             </h3>
             <div class="field is-grouped is-grouped-multiline">
                 
@@ -1504,7 +1504,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/分布式/">
                         <span class="tag">分布式</span>
-                        <span class="tag is-grey">4</span>
+                        <span class="tag is-grey">6</span>
                     </a>
                 </div>
                 
@@ -1518,7 +1518,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">16</span>
+                        <span class="tag is-grey">18</span>
                     </a>
                 </div>
                 
@@ -1553,7 +1553,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/缓存/">
                         <span class="tag">缓存</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">5</span>
                     </a>
                 </div>
                 
@@ -1735,10 +1735,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
+                POSTS: 'Entradas',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categories',
-                TAGS: 'Tags',
+                CATEGORIES: 'Categorias',
+                TAGS: 'Etiquetas',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/content.json',
