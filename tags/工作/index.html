@@ -143,6 +143,225 @@
 <div class="card">
     
     <div class="card-image">
+        <a href="/2020/01/10/2020-01-10_Boyer–Moore 字符搜索算法/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2020/01/14/zQSP9xfZnBoYLNc.jpg" alt="Boyer–Moore 字符搜索算法">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2020-01-09T16:00:00.000Z">2020-01-10</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/架构/">架构</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    4 分钟 read (About 570 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2020/01/10/2020-01-10_Boyer–Moore 字符搜索算法/">Boyer–Moore 字符搜索算法</a>
+            
+        </h1>
+        <div class="content">
+            <p>因为字符比较是从右往左比较的，所以第一层循环  <code>needle.length + 1</code> &lt;= i &lt; <code>haystack.length</code>。</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">                  start=needle.length - 1                                             end=haystack.length - 1</span><br><span class="line">                          +                                                                   +</span><br><span class="line">                          |                                                                   |</span><br><span class="line">                          |                                                                   |</span><br><span class="line">                          v-------------------------------------------------------------------v-&gt;</span><br><span class="line">  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23</span><br><span class="line">+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+</span><br><span class="line">| t | h | i | s |   | i | s |   | a |   | s | i | m | p | l | e |   | e | x | a | m | p | l | e |</span><br><span class="line">+-------------------------------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+</span><br><span class="line">+---------------------------+</span><br><span class="line">| e | x | a | m | p | l | e |</span><br><span class="line">+---+---+---+---+---+---+---+</span><br></pre></td></tr></table></figure>
+
+<p>第二层循环中i变量表示坏字符的位置、j表示搜索坏字符开始位置</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">                          i</span><br><span class="line">                          +</span><br><span class="line">                          |</span><br><span class="line">                          v</span><br><span class="line">  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23</span><br><span class="line">+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+</span><br><span class="line">| t | h | i | s |   | i | s |   | a |   | s | i | m | p | l | e |   | e | x | a | m | p | l | e |</span><br><span class="line">+-------------------------------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+</span><br><span class="line">+---------------------------+</span><br><span class="line">| e | x | a | m | p | l | e |</span><br><span class="line">+---+---+---+---+---+---+-+-+</span><br><span class="line">                          ^</span><br><span class="line">                          |</span><br><span class="line">                          +</span><br><span class="line">                          j</span><br></pre></td></tr></table></figure>
+
+<p>i,j指针向左搜索,如果完全匹配直接返回i即可</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">for</span> (j = needle.length - <span class="hljs-number">1</span>; needle[j] == haystack[i]; --i, --j) &#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (j == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="坏字符规则和好字符规则"><a href="#坏字符规则和好字符规则" class="headerlink" title="坏字符规则和好字符规则"></a>坏字符规则和好字符规则</h3><p>坏字符:从右向左第一个不匹配的字符<br>好字符:从坏字符下一个字符直到最后的字符</p>
+<p>可以认为字符移动有两种策略：坏字符对齐和好字符对齐，然后选择字符移动距离大的策略即可</p>
+<h3 id="wiki实现"><a href="#wiki实现" class="headerlink" title="wiki实现"></a>wiki实现</h3><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * Returns the index within this string of the first occurrence of the</span></span><br><span class="line"><span class="hljs-comment"> * specified substring. If it is not a substring, return -1.</span></span><br><span class="line"><span class="hljs-comment"> *</span></span><br><span class="line"><span class="hljs-comment"> * There is no Galil because it only generates one match.</span></span><br><span class="line"><span class="hljs-comment"> *</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> haystack The string to be scanned</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> needle The target string to search</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@return</span> The start index of the substring</span></span><br><span class="line"><span class="hljs-comment"> */</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">indexOf</span><span class="hljs-params">(<span class="hljs-keyword">char</span>[] haystack, <span class="hljs-keyword">char</span>[] needle)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (needle.length == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">int</span> charTable[] = makeCharTable(needle);</span><br><span class="line">    <span class="hljs-keyword">int</span> offsetTable[] = makeOffsetTable(needle);</span><br><span class="line">    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = needle.length - <span class="hljs-number">1</span>, j; i &lt; haystack.length;) &#123;</span><br><span class="line">        <span class="hljs-keyword">for</span> (j = needle.length - <span class="hljs-number">1</span>; needle[j] == haystack[i]; --i, --j) &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (j == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">                <span class="hljs-keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-comment">// i += needle.length - j; // For naive method</span></span><br><span class="line">        i += Math.max(offsetTable[needle.length - <span class="hljs-number">1</span> - j], charTable[haystack[i]]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * Makes the jump table based on the mismatched character information.</span></span><br><span class="line"><span class="hljs-comment"> */</span></span><br><span class="line"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] makeCharTable(<span class="hljs-keyword">char</span>[] needle) &#123;</span><br><span class="line">    <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> ALPHABET_SIZE = Character.MAX_VALUE + <span class="hljs-number">1</span>; <span class="hljs-comment">// 65536</span></span><br><span class="line">    <span class="hljs-keyword">int</span>[] table = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[ALPHABET_SIZE];</span><br><span class="line">    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; table.length; ++i) &#123;</span><br><span class="line">        table[i] = needle.length;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; needle.length - <span class="hljs-number">2</span>; ++i) &#123;</span><br><span class="line">        table[needle[i]] = needle.length - <span class="hljs-number">1</span> - i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> table;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * Makes the jump table based on the scan offset which mismatch occurs.</span></span><br><span class="line"><span class="hljs-comment"> * (bad character rule).</span></span><br><span class="line"><span class="hljs-comment"> */</span></span><br><span class="line"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] makeOffsetTable(<span class="hljs-keyword">char</span>[] needle) &#123;</span><br><span class="line">    <span class="hljs-keyword">int</span>[] table = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[needle.length];</span><br><span class="line">    <span class="hljs-keyword">int</span> lastPrefixPosition = needle.length;</span><br><span class="line">    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = needle.length; i &gt; <span class="hljs-number">0</span>; --i) &#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (isPrefix(needle, i)) &#123;</span><br><span class="line">            lastPrefixPosition = i;</span><br><span class="line">        &#125;</span><br><span class="line">        table[needle.length - i] = lastPrefixPosition - i + needle.length;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; needle.length - <span class="hljs-number">1</span>; ++i) &#123;</span><br><span class="line">        <span class="hljs-keyword">int</span> slen = suffixLength(needle, i);</span><br><span class="line">        table[slen] = needle.length - <span class="hljs-number">1</span> - i + slen;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> table;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * Is needle[p:end] a prefix of needle?</span></span><br><span class="line"><span class="hljs-comment"> */</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isPrefix</span><span class="hljs-params">(<span class="hljs-keyword">char</span>[] needle, <span class="hljs-keyword">int</span> p)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = p, j = <span class="hljs-number">0</span>; i &lt; needle.length; ++i, ++j) &#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (needle[i] != needle[j]) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * Returns the maximum length of the substring ends at p and is a suffix.</span></span><br><span class="line"><span class="hljs-comment"> * (good suffix rule)</span></span><br><span class="line"><span class="hljs-comment"> */</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">suffixLength</span><span class="hljs-params">(<span class="hljs-keyword">char</span>[] needle, <span class="hljs-keyword">int</span> p)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">int</span> len = <span class="hljs-number">0</span>;</span><br><span class="line">    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = p, j = needle.length - <span class="hljs-number">1</span>;</span><br><span class="line">             i &gt;= <span class="hljs-number">0</span> &amp;&amp; needle[i] == needle[j]; --i, --j) &#123;</span><br><span class="line">        len += <span class="hljs-number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
+        <a href="/2019/12/08/2019-12-08-消息幂等/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-12-07T17:00:00.000Z">2019-12-08</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/架构/">架构</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    9 分钟 read (About 1362 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/12/08/2019-12-08-消息幂等/">消息队列(二)-消息幂等</a>
+            
+        </h1>
+        <div class="content">
+            <h4 id="什么是幂等"><a href="#什么是幂等" class="headerlink" title="什么是幂等"></a>什么是幂等</h4><p>幂等是一个数学上的概念，它的含义是多次执行同一个操作和执行一次操作，最终得到的结果是相同的。</p>
+<p>如果我们消费一条消息的时候，要给现有的库存数量减 1，那么如果消费两条相同的消息就会给库存数量减 2，这就不是幂等的。而如果消费一条消息后，处理逻辑是将库存的数量设置为 0，或者是如果当前库存数量是 10 时则减 1，这样在消费多条消息时，所得到的结果就是相同的，<strong>这就是幂等的。</strong></p>
+<p><strong>说白了，你可以这么理解“幂等”：</strong>一件事儿无论做多少次都和做一次产生的结果是一样的，那么这件事儿就具有幂等性。</p>
+<h4 id="在生产、消费过程中增加消息幂等性的保证"><a href="#在生产、消费过程中增加消息幂等性的保证" class="headerlink" title="在生产、消费过程中增加消息幂等性的保证"></a>在生产、消费过程中增加消息幂等性的保证</h4><p>消息在生产和消费的过程中都可能会产生重复，所以你要做的是，在生产过程和消费过程中增加消息幂等性的保证，这样就可以认为从<strong>最终结果上来看</strong>，消息实际上是只被消费了一次的。</p>
+<p><strong>在消息生产过程中，</strong>在 Kafka0.11 版本和 Pulsar 中都支持“producer idempotency”的特性，翻译过来就是生产过程的幂等性，这种特性保证消息虽然可能在生产端产生重复，但是最终在消息队列存储时只会存储一份。</p>
+<p>它的做法是给每一个生产者一个唯一的 ID，并且为生产的每一条消息赋予一个唯一 ID，消息队列的服务端会存储 &lt; 生产者 ID，最后一条消息 ID&gt; 的映射。当某一个生产者产生新的消息时，消息队列服务端会比对消息 ID 是否与存储的最后一条 ID 一致，如果一致，就认为是重复的消息，服务端会自动丢弃。</p>
+<p><img src="https://i.loli.net/2019/12/08/wy2d8WeaRP1SirO.jpg" alt="loss4.jpg"></p>
+<p><strong>而在消费端，</strong>幂等性的保证会稍微复杂一些，你可以从<strong>通用层和业务层</strong>两个层面来考虑。</p>
+<p>在通用层面，你可以在消息被生产的时候，使用发号器给它生成一个全局唯一的消息 ID，消息被处理之后，把这个 ID 存储在数据库中，在处理下一条消息之前，先从数据库里面查询这个全局 ID 是否被消费过，如果被消费过就放弃消费。</p>
+<p>你可以看到，无论是生产端的幂等性保证方式，还是消费端通用的幂等性保证方式，它们的共同特点都是为每一个消息生成一个唯一的 ID，然后在使用这个消息的时候，先比对这个 ID 是否已经存在，如果存在，则认为消息已经被使用过。所以这种方式是一种标准的实现幂等的方式，<strong>你在项目之中可以拿来直接使用，</strong>它在逻辑上的伪代码就像下面这样：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">boolean</span> isIDExisted = selectByID(ID); <span class="hljs-comment">// 判断 ID 是否存在</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">if</span>(isIDExisted) &#123;</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">return</span>; <span class="hljs-comment">// 存在则直接返回</span></span><br><span class="line"></span><br><span class="line">&#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">  process(message); <span class="hljs-comment">// 不存在，则处理消息</span></span><br><span class="line"></span><br><span class="line">  saveID(ID);   <span class="hljs-comment">// 存储 ID</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>不过这样会有一个问题：</strong>如果消息在处理之后，还没有来得及写入数据库，消费者宕机了重启之后发现数据库中并没有这条消息，还是会重复执行两次消费逻辑，这时你就需要引入事务机制，保证消息处理和写入数据库必须同时成功或者同时失败，但是这样消息处理的成本就更高了，所以，如果对于消息重复没有特别严格的要求，可以直接使用这种通用的方案，而不考虑引入事务。</p>
+<p><strong>在业务层面怎么处理呢？</strong>这里有很多种处理方式，其中有一种是增加乐观锁的方式。比如，你的消息处理程序需要给一个人的账号加钱，那么你可以通过乐观锁的方式来解决。</p>
+<p><strong>具体的操作方式是这样的：</strong>你给每个人的账号数据中增加一个版本号的字段，在生产消息时先查询这个账户的版本号，并且将版本号连同消息一起发送给消息队列。消费端在拿到消息和版本号后，在执行更新账户金额 SQL 的时候带上版本号，类似于执行：</p>
+<figure class="highlight sql hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">update</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">set</span> amount = amount + <span class="hljs-number">20</span>, <span class="hljs-keyword">version</span>=<span class="hljs-keyword">version</span>+<span class="hljs-number">1</span> <span class="hljs-keyword">where</span> userId=<span class="hljs-number">1</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">version</span>=<span class="hljs-number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>你看，我们在更新数据时给数据加了乐观锁，这样在消费第一条消息时，version 值为 1，SQL 可以执行成功，并且同时把 version 值改为了 2；在执行第二条相同的消息时，由于 version 值不再是 1，所以这条 SQL 不能执行成功，也就保证了消息的幂等性。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
+        <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="消息队列(一)-如何解决消息丢失">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-12-07T16:00:00.000Z">2019-12-08</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/架构/">架构</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    11 分钟 read (About 1669 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/12/08/2019-12-08-如何解决消息丢失/">消息队列(一)-如何解决消息丢失</a>
+            
+        </h1>
+        <div class="content">
+            <h3 id="消息会丢失的环节"><a href="#消息会丢失的环节" class="headerlink" title="消息会丢失的环节"></a>消息会丢失的环节</h3><p>消息从被写入到消息队列，到被消费者消费完成，这个链路上会有哪些地方存在丢失消息的可能呢？其实，主要存在三个场景：</p>
+<ul>
+<li><p>消息从生产者写入到消息队列的过程。</p>
+</li>
+<li><p>消息在消息队列中的存储场景。</p>
+</li>
+<li><p>消息被消费者消费的过程。</p>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2019/12/08/h75t1UqRlF8Tv6z.jpg" alt="lost1.jpg"></p>
+<h4 id="1-在消息生产的过程中丢失消息"><a href="#1-在消息生产的过程中丢失消息" class="headerlink" title="1. 在消息生产的过程中丢失消息"></a>1. 在消息生产的过程中丢失消息</h4><p>消息的生产者一般是我们的业务服务器，消息队列是独立部署在单独的服务器上的。两者之间的网络虽然是内网，但是也会存在抖动的可能，而一旦发生抖动，消息就有可能因为网络的错误而丢失。</p>
+<p><strong>针对这种情况，我建议你采用的方案是消息重传：</strong>也就是当你发现发送超时后你就将消息重新发一次，但是你也不能无限制地重传消息。一般来说，如果不是消息队列发生故障，或者是到消息队列的网络断开了，重试 2～3 次就可以了。</p>
+<p>不过，这种方案可能会造成消息的重复，从而导致在消费的时候会重复消费同样的消息。比方说，消息生产时由于消息队列处理慢或者网络的抖动，导致虽然最终写入消息队列成功，但在生产端却超时了，生产者重传这条消息就会形成重复的消息。</p>
+<h4 id="2-在消息队列中丢失消息"><a href="#2-在消息队列中丢失消息" class="headerlink" title="2. 在消息队列中丢失消息"></a>2. 在消息队列中丢失消息</h4><p>拿 Kafka 举例，消息在 Kafka 中是存储在本地磁盘上的，而为了减少消息存储时对磁盘的随机 I/O，我们一般会将消息先写入到操作系统的 Page Cache 中，然后再找合适的时机刷新到磁盘上。</p>
+<p>比如，Kafka 可以配置当达到某一时间间隔，或者累积一定的消息数量的时候再刷盘，<strong>也就是所说的异步刷盘。</strong></p>
+<p>不过，如果发生机器掉电或者机器异常重启，那么 Page Cache 中还没有来得及刷盘的消息就会丢失了。那么怎么解决呢？</p>
+<p>你可能会把刷盘的间隔设置很短，或者设置累积一条消息就就刷盘，但这样频繁刷盘会对性能有比较大的影响，而且从经验来看，出现机器宕机或者掉电的几率也不高，<strong>所以我不建议你这样做。</strong></p>
+<p><img src="https://i.loli.net/2019/12/08/ZtM7QFb6VkpfDiw.jpg" alt="loss2.jpg"></p>
+<p>如果你的系统对消息丢失的容忍度很低，<strong>那么你可以考虑以集群方式部署 Kafka 服务，通过部署多个副本备份数据，保证消息尽量不丢失。</strong></p>
+<p>那么它是怎么实现的呢？</p>
+<p>Kafka 集群中有一个 Leader 负责消息的写入和消费，可以有多个 Follower 负责数据的备份。Follower 中有一个特殊的集合叫做 ISR（in-sync replicas），当 Leader 故障时，新选举出来的 Leader 会从 ISR 中选择，默认 Leader 的数据会异步地复制给 Follower，这样在 Leader 发生掉电或者宕机时，Kafka 会从 Follower 中消费消息，减少消息丢失的可能。</p>
+<p>由于默认消息是异步地从 Leader 复制到 Follower 的，所以一旦 Leader 宕机，那些还没有来得及复制到 Follower 的消息还是会丢失。为了解决这个问题，Kafka 为生产者提供一个选项叫做“acks”，当这个选项被设置为“all”时，生产者发送的每一条消息除了发给 Leader 外还会发给所有的 ISR，并且必须得到 Leader 和所有 ISR 的确认后才被认为发送成功。这样，只有 Leader 和所有的 ISR 都挂了，消息才会丢失。</p>
+<p><img src="https://i.loli.net/2019/12/08/HZzRYqeLk3lxuBd.jpg" alt="loss3.jpg"></p>
+<p>从上面这张图来看，当设置“acks=all”时，需要同步执行 1，3，4 三个步骤，对于消息生产的性能来说也是有比较大的影响的，所以你在实际应用中需要仔细地权衡考量。<strong>我给你的建议是：</strong></p>
+<ol>
+<li><p>如果你需要确保消息一条都不能丢失，那么建议不要开启消息队列的同步刷盘，而是需要使用集群的方式来解决，可以配置当所有 ISR Follower 都接收到消息才返回成功。</p>
+</li>
+<li><p>如果对消息的丢失有一定的容忍度，那么建议不部署集群，即使以集群方式部署，也建议配置只发送给一个 Follower 就可以返回成功了。</p>
+</li>
+<li><p>我们的业务系统一般对于消息的丢失有一定的容忍度，比如说以上面的红包系统为例，如果红包消息丢失了，我们只要后续给没有发送红包的用户补发红包就好了。</p>
+</li>
+</ol>
+<h4 id="3-在消费的过程中存在消息丢失的可能"><a href="#3-在消费的过程中存在消息丢失的可能" class="headerlink" title="3. 在消费的过程中存在消息丢失的可能"></a>3. 在消费的过程中存在消息丢失的可能</h4><p>我还是以 Kafka 为例来说明。一个消费者消费消息的进度是记录在消息队列集群中的，而消费的过程分为三步：接收消息、处理消息、更新消费进度。</p>
+<p>这里面接收消息和处理消息的过程都可能会发生异常或者失败，比如说，消息接收时网络发生抖动，导致消息并没有被正确的接收到；处理消息时可能发生一些业务的异常导致处理流程未执行完成，这时如果更新消费进度，那么这条失败的消息就永远不会被处理了，也可以认为是丢失了。</p>
+<p>所以，在这里你需要注意的是，<strong>一定要等到消息接收和处理完成后才能更新消费进度</strong>，但是这也会造成消息重复的问题，比方说某一条消息在处理之后，消费者恰好宕机了，那么因为没有更新消费进度，所以当这个消费者重启之后，还会重复地消费这条消息。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
         <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="image is-7by1">
             <img class="thumbnail" src="https://i.loli.net/2019/12/04/aHXFTSVv9hlJb3s.jpg" alt="缓存专题(五) 如何解决缓存穿透">
         </a>
@@ -705,207 +924,6 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/09/24/2019-06-24自我时间管理/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2019/11/21/oLf2uA3Mbp9IqWP.jpg" alt="季度总结 如何管理自我时间">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-09-24T02:00:00.000Z">2019-09-24</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/工作/">工作</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/工作/总结/">总结</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    4 分钟 read (About 615 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/09/24/2019-06-24自我时间管理/">季度总结 如何管理自我时间</a>
-            
-        </h1>
-        <div class="content">
-            <h3 id="最近这个季度"><a href="#最近这个季度" class="headerlink" title="最近这个季度"></a>最近这个季度</h3><p>最近比较忙，算了下自己可以利用的空闲时间，忙时一天可能只有1到3个小时空闲时间，甚至一天没有空余时间。一周大约只有30小时时间是可以利用的，如果算上玩手机时间只会更短，如果再把这些时间再浪费掉，可能最近半年的成长就只有一些项目经验而已了。所幸平常关注的博客和《软技能》这本书里有提及一些关于自我时间管理相关内容，我简单实践了2个月，分享下这方面的心得感悟。</p>
-<h3 id="计划和休息"><a href="#计划和休息" class="headerlink" title="计划和休息"></a>计划和休息</h3><p>《软技能》中作者是如何做计划的？</p>
-<ul>
-<li>季度计划 明确宏观目标，以及如何实现</li>
-<li>月计划 估算当月能完成多少工作量</li>
-<li>周计划 为每周安排必须完成的强制性任务</li>
-<li>日计划 排除干扰，按需调整</li>
-<li>休息 每隔一段时间休息，只做强制性任务</li>
-</ul>
-<p>很惭愧，工作刚开始一两年我少有计划，单纯凭借好奇心学习到了不少东西。大约从去年写年度总结开始才刚刚做一些计划。目前我使用微软to-do跟踪自己的计划进度和deadline效果显著，治好了我的拖延症。</p>
-<p>简单来说《软技能》中阐述的几个观点我感觉十分受益：</p>
-<ol>
-<li>要有计划</li>
-<li>完成计划时保持专注</li>
-<li>使用番茄工作法可以保证保证一段时间的专注， 同时还可以确定自己的工作效率， 总结不足提高自身效率，从而帮助自己精确且高效的指定计划</li>
-<li>只有你完成了计划的工作，接下来的休息时间才能安心</li>
-</ol>
-<h3 id="这边年读书情况"><a href="#这边年读书情况" class="headerlink" title="这边年读书情况"></a>这边年读书情况</h3><p>这半年看的书比较少，但是刷题和博客总结写的多了些</p>
-<p>技术类：<br>《sql反模式》推荐， 应该叫数据库结构设计的最佳实践<br>《软技能，代码之外的生存指南》 有很多事比代码更重要的多，推荐</p>
-<p>心理类：<br>《你的灯亮着吗》 解决问题前，先要搞清楚问题的本质。 一般般</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
-    
-<div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/08/10/2019-08-10序列算法 - 最长回文子串/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2019/11/21/RBUb2LH4AQNhdnK.jpg" alt="LeetCode 最长回文子串算法">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-08-10T02:00:00.000Z">2019-08-10</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/算法/">算法</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/算法/字符串/">字符串</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    1 分钟 read (About 147 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/08/10/2019-08-10序列算法 - 最长回文子串/">LeetCode 最长回文子串算法</a>
-            
-        </h1>
-        <div class="content">
-            <p>Manacher 算法 容易理解，实现起来也没什么大坑，复杂度还是 O(n)的， 花半个小时实现下很有意思</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public String longestPalindrome(String s) &#123;        </span><br><span class="line">        StringBuilder sb = new StringBuilder(2 + 2 * s.length());</span><br><span class="line">        sb.append(&quot;^&quot;);</span><br><span class="line">        for (int i = 0; i &lt; s.length(); i++) &#123;</span><br><span class="line">            sb.append(&quot;#&quot;).append(s.charAt(i));</span><br><span class="line">        &#125;</span><br><span class="line">        sb.append(&quot;#$&quot;);</span><br><span class="line">        </span><br><span class="line">        String s2 = sb.toString();</span><br><span class="line">        </span><br><span class="line">        int maxStart = 1, max = 0, rC = 1, rR = 1;</span><br><span class="line">        int[] p = new int[s2.length()];</span><br><span class="line">        </span><br><span class="line">        for (int i = 1; i &lt; s2.length() - 1; i++ ) &#123;</span><br><span class="line">            </span><br><span class="line">            p[i] = i &lt; rR ? Math.min(p[2 * rC - i], rR - i) : 0;</span><br><span class="line">            </span><br><span class="line">            while (s2.charAt(i+p[i]+1) == s2.charAt(i - p[i] - 1)) &#123;</span><br><span class="line">                p[i] = p[i]+1;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            if (i + p[i] &gt; rR) &#123;</span><br><span class="line">                rC = i;</span><br><span class="line">                rR = i + p[i];</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            if (p[i] &gt; max) &#123;</span><br><span class="line">                maxStart = i - p[i];</span><br><span class="line">                max = p[i];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">        return s2.substring(maxStart,maxStart + 2*max+1).replace(&quot;#&quot;, &quot;&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
-    
-<div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/07/29/2019-07-29多角色权限展示数据的一种实现/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2019/11/21/rK1i4uDs6WEzLc7.jpg" alt="[项目] 多角色权限展示数据的一种实现">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-07-29T02:00:00.000Z">2019-07-29</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/工作/">工作</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    3 分钟 read (About 428 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/07/29/2019-07-29多角色权限展示数据的一种实现/">[项目] 多角色权限展示数据的一种实现</a>
-            
-        </h1>
-        <div class="content">
-            <h4 id="多角色权限如果遇到不同角色能看到不同的列可以怎么做"><a href="#多角色权限如果遇到不同角色能看到不同的列可以怎么做" class="headerlink" title="多角色权限如果遇到不同角色能看到不同的列可以怎么做"></a>多角色权限如果遇到不同角色能看到不同的列可以怎么做</h4><ul>
-<li>逐行读取</li>
-</ul>
-<p>最简单的解决方法，实现简单。但是在微服务中调用接口次数太多，性能很差。</p>
-<ul>
-<li>批量读取</li>
-</ul>
-<p>实现较复杂，但是性能好很多，下面主要介绍这种方法的思路</p>
-<h4 id="批量读取"><a href="#批量读取" class="headerlink" title="批量读取"></a>批量读取</h4><p>以分页读取数据为例：</p>
-<ol>
-<li>读取第一页数据，包含需要展示数据的id和所属权限（多个）</li>
-</ol>
-<p>为什么需要所属权限这个字段呢？ 因为决定能否看到这行是有你所拥有的所有权限决定的，而决定能否看到哪个列是由这行所拥有的权限决定的。</p>
-<p>如何获取该行所拥有的权限呢，我的做法是分不同的权限查询结果通过union 组合起来</p>
-<ol start="2">
-<li>将第一页数据原始顺序保存， 然后按行拥有权限分组</li>
-</ol>
-<p>记录原始顺序是因为后面分组后会打乱， 为什么要分组？分组后同样的查询才能聚合在一起，可以简化代码</p>
-<ol start="3">
-<li>根据权限分组多次查询所需要的字段，然后将查询结果合并</li>
-</ol>
-<p>这里我使用的graphql来选择需要查询的字段</p>
-<ol start="4">
-<li>最后还原成原来的顺序</li>
-</ol>
-<p>可以使用guava Ordering工具类方便生成Compartor</p>
-<p>[]: <a href="https://blog.yamato.moe/2018/11/06/2018-11-06-biz/">https://blog.yamato.moe/2018/11/06/2018-11-06-biz/</a>    “根据权限查询时避免角色切换的一种思路”<br>[]: <a href="https://blog.yamato.moe/2019/04/04/Mybatis%20ResultSetHandler_2019-04-04%20%E7%BB%AD/">https://blog.yamato.moe/2019/04/04/Mybatis%20ResultSetHandler_2019-04-04%20%E7%BB%AD/</a>    “【片段】 Mybatis ResultSetHandler 实践-续”<br>[]: <a href="https://blog.yamato.moe/2019/01/09/Mybatis%20ResultSetHandler_2019-01-09/">https://blog.yamato.moe/2019/01/09/Mybatis%20ResultSetHandler_2019-01-09/</a>    “【片段】 Mybatis ResultSetHandler 实践”</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -921,6 +939,8 @@
             <li><a class="pagination-link is-current" href="/tags/工作/">1</a></li>
             
             <li><a class="pagination-link has-text-black-ter" href="/tags/工作/page/2/">2</a></li>
+            
+            <li><a class="pagination-link has-text-black-ter" href="/tags/工作/page/3/">3</a></li>
             
         </ul>
     </nav>
@@ -970,7 +990,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            32
+                            35
                         </p>
                     </a>
                 </div>
@@ -982,7 +1002,7 @@
                     </p>
                     <a href="/categories">
                         <p class="title has-text-weight-normal">
-                            19
+                            20
                         </p>
                     </a>
                 </div>
@@ -994,7 +1014,7 @@
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
-                            16
+                            17
                         </p>
                     </a>
                 </div>
@@ -1201,7 +1221,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">6</span>
+                <span class="level-item tag">9</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -1210,6 +1230,14 @@
             </span>
             <span class="level-end">
                 <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/架构/消息/">
+            <span class="level-start">
+                <span class="level-item">消息</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">3</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/架构/缓存/">
@@ -1270,7 +1298,7 @@
         <h3 class="menu-label">
             Nube de etiquetas
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.14px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14.29px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.43px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.71px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.57px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.86px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/算法/" style="font-size: 14.29px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.29px;">缓存</a> <a href="/tags/读书/" style="font-size: 15.71px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.5px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.75px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/代码/" style="font-size: 18.75px;">代码</a> <a href="/tags/分布式/" style="font-size: 16.25px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 20px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.5px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/消息/" style="font-size: 12.5px;">消息</a> <a href="/tags/算法/" style="font-size: 13.75px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 15px;">读书</a>
     </div>
 </div>
     
@@ -1282,6 +1310,63 @@
         <h3 class="menu-label">
             Recientes
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/01/10/2020-01-10_Boyer–Moore 字符搜索算法/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/01/14/zQSP9xfZnBoYLNc.jpg" alt="Boyer–Moore 字符搜索算法">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-09T16:00:00.000Z">2020-01-10</time></div>
+                    <a href="/2020/01/10/2020-01-10_Boyer–Moore 字符搜索算法/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Boyer–Moore 字符搜索算法</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/08/2019-12-08-消息幂等/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T17:00:00.000Z">2019-12-08</time></div>
+                    <a href="/2019/12/08/2019-12-08-消息幂等/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(二)-消息幂等</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="消息队列(一)-如何解决消息丢失">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T16:00:00.000Z">2019-12-08</time></div>
+                    <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(一)-如何解决消息丢失</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -1321,63 +1406,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T16:00:00.000Z">2019-12-04</time></div>
-                    <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/PzE62RftLeOGNAr.jpg" alt="NoSql相对于关系型数据库的优势">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="title has-link-black-ter is-size-6 has-text-weight-normal">NoSql相对于关系型数据库的优势</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/nosql/">nosql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="缓存专题(三) Write Through（读穿 写穿）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-30T19:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(三) Write Through（读穿 写穿）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -1390,12 +1418,23 @@
         <ul class="menu-list">
         
         <li>
+            <a class="level is-marginless" href="/archives/2020/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
             <a class="level is-marginless" href="/archives/2019/12/">
                 <span class="level-start">
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">7</span>
+                    <span class="level-item tag">9</span>
                 </span>
             </a>
         </li>
@@ -1619,7 +1658,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/分布式/">
                         <span class="tag">分布式</span>
-                        <span class="tag is-grey">6</span>
+                        <span class="tag is-grey">8</span>
                     </a>
                 </div>
                 
@@ -1633,7 +1672,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">18</span>
+                        <span class="tag is-grey">21</span>
                     </a>
                 </div>
                 
@@ -1659,6 +1698,13 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/消息/">
+                        <span class="tag">消息</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/算法/">
                         <span class="tag">算法</span>
                         <span class="tag is-grey">5</span>
@@ -1668,7 +1714,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/缓存/">
                         <span class="tag">缓存</span>
-                        <span class="tag is-grey">5</span>
+                        <span class="tag is-grey">6</span>
                     </a>
                 </div>
                 
@@ -1703,6 +1749,63 @@
         
         <article class="media">
             
+            <a href="/2020/01/10/2020-01-10_Boyer–Moore 字符搜索算法/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/01/14/zQSP9xfZnBoYLNc.jpg" alt="Boyer–Moore 字符搜索算法">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-09T16:00:00.000Z">2020-01-10</time></div>
+                    <a href="/2020/01/10/2020-01-10_Boyer–Moore 字符搜索算法/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Boyer–Moore 字符搜索算法</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/08/2019-12-08-消息幂等/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T17:00:00.000Z">2019-12-08</time></div>
+                    <a href="/2019/12/08/2019-12-08-消息幂等/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(二)-消息幂等</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="消息队列(一)-如何解决消息丢失">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T16:00:00.000Z">2019-12-08</time></div>
+                    <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(一)-如何解决消息丢失</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2019/12/04/aHXFTSVv9hlJb3s.jpg" alt="缓存专题(五) 如何解决缓存穿透">
@@ -1739,63 +1842,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/04/RUNcmFlT5ajLCAo.jpg" alt="[片段] Mybatis ParameterHandler 实践">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-03T16:00:00.000Z">2019-12-04</time></div>
-                    <a href="/2019/12/04/2019-12-04-Mybatis ParameterInterceptor/" class="title has-link-black-ter is-size-6 has-text-weight-normal">[片段] Mybatis ParameterHandler 实践</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a> / <a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/PzE62RftLeOGNAr.jpg" alt="NoSql相对于关系型数据库的优势">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="title has-link-black-ter is-size-6 has-text-weight-normal">NoSql相对于关系型数据库的优势</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/nosql/">nosql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/03/M1cCnRUASwytQ3j.jpg" alt="缓存专题(三) Write Through（读穿 写穿）策略">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-11-30T19:00:00.000Z">2019-12-01</time></div>
-                    <a href="/2019/12/01/2019-12-01-Write Through（读穿 写穿）策略/" class="title has-link-black-ter is-size-6 has-text-weight-normal">缓存专题(三) Write Through（读穿 写穿）策略</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1808,12 +1854,23 @@
         <ul class="menu-list">
         
         <li>
+            <a class="level is-marginless" href="/archives/2020/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
             <a class="level is-marginless" href="/archives/2019/12/">
                 <span class="level-start">
                     <span class="level-item">十二月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">7</span>
+                    <span class="level-item tag">9</span>
                 </span>
             </a>
         </li>
@@ -2037,7 +2094,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/分布式/">
                         <span class="tag">分布式</span>
-                        <span class="tag is-grey">6</span>
+                        <span class="tag is-grey">8</span>
                     </a>
                 </div>
                 
@@ -2051,7 +2108,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">18</span>
+                        <span class="tag is-grey">21</span>
                     </a>
                 </div>
                 
@@ -2077,6 +2134,13 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/消息/">
+                        <span class="tag">消息</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/算法/">
                         <span class="tag">算法</span>
                         <span class="tag is-grey">5</span>
@@ -2086,7 +2150,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/缓存/">
                         <span class="tag">缓存</span>
-                        <span class="tag is-grey">5</span>
+                        <span class="tag is-grey">6</span>
                     </a>
                 </div>
                 
@@ -2118,7 +2182,7 @@
                 
                 </a>
                 <p class="is-size-7">
-                &copy; 2019 NightWish417&nbsp;
+                &copy; 2020 NightWish417&nbsp;
                 Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
                         href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 
@@ -2232,7 +2296,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
     
     
-<a id="back-to-top" title="Back to Top" href="javascript:;">
+<a id="back-to-top" title="Kembali ke atas" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/js/back-to-top.js" defer></script>
