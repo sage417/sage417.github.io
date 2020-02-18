@@ -109,7 +109,7 @@
             <div class="navbar-end">
                 
                     
-                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/sage417/sage417.github.io">
+                    <a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="http://github.com/sage417/sage417.github.io">
                         
                         <i class="fab fa-github"></i>
                         
@@ -187,20 +187,20 @@
 <li>查询性能有影响吗？—-有</li>
 </ol>
 <p>具体体现：</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select * from (</span><br><span class="line">(select id, sortvalue from table_1 where t_name = &apos;a&apos; order by sortvalue desc limit 20)  -- 先内部排序,limit</span><br><span class="line">union all -- 结果合并</span><br><span class="line">(select id, sortvalue from table_1 where t_name = &apos;b&apos; order by sortvalue desc limit 20)  -- 先内部排序,limit</span><br><span class="line">order by sortvalue desc  -- 外部排序</span><br><span class="line">) a group by id -- 使用groupby去重</span><br><span class="line">limit 10, 10</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select * from (</span><br><span class="line">(select id, sortvalue from table_1 where t_name = &apos;a&apos; order by sortvalue desc limit 20)  -- 先内部排序,limit</span><br><span class="line">union all -- 结果合并</span><br><span class="line">(select id, sortvalue from table_1 where t_name = &apos;b&apos; order by sortvalue desc limit 20)  -- 先内部排序,limit</span><br><span class="line">order by sortvalue desc  -- 外部排序</span><br><span class="line">) a group by id -- 使用groupby去重</span><br><span class="line">limit 10, 10</span><br></pre></td></tr></table></figure>
 
 <h3 id="深入思考-多角色数据范围对列的影响"><a href="#深入思考-多角色数据范围对列的影响" class="headerlink" title="深入思考 多角色数据范围对列的影响"></a>深入思考 多角色数据范围对列的影响</h3><ul>
 <li>薪酬管理员： 查看员工薪酬字段</li>
 <li>长期激励管理员：查看员工长期激励字段</li>
 </ul>
 <p>如何解决？方法有很多！</p>
-<h3 id="综合思考，给出一种解决方案"><a href="#综合思考，给出一种解决方案" class="headerlink" title="综合思考，给出一种解决方案"></a>综合思考，给出一种解决方案</h3><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">   A(查询行及角色信息) --&gt; B(根据角色查询对应列字段)</span><br><span class="line">   B --&gt; C(结果)</span><br></pre></td></tr></table></figure>
+<h3 id="综合思考，给出一种解决方案"><a href="#综合思考，给出一种解决方案" class="headerlink" title="综合思考，给出一种解决方案"></a>综合思考，给出一种解决方案</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">   A(查询行及角色信息) --&gt; B(根据角色查询对应列字段)</span><br><span class="line">   B --&gt; C(结果)</span><br></pre></td></tr></table></figure>
 
 <p>步骤：</p>
 <ol>
 <li>查询多角色数据范围下的数据，附带角色信息</li>
 </ol>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select id, GROUP_CONCAT(a.role) as roles from (</span><br><span class="line">(select id, &apos;role_a&apos; as role from table_1 where sortvalue &gt; 10 order by `sortvalue` desc limit 2)</span><br><span class="line">union all</span><br><span class="line">(select id, &apos;role_b&apos; as role from table_1 where sortvalue &gt; 20 order by `sortvalue` desc limit 2) </span><br><span class="line">order by `sortvalue` desc </span><br><span class="line">) a group by id</span><br><span class="line">limit 0, 2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select id, GROUP_CONCAT(a.role) as roles from (</span><br><span class="line">(select id, &apos;role_a&apos; as role from table_1 where sortvalue &gt; 10 order by `sortvalue` desc limit 2)</span><br><span class="line">union all</span><br><span class="line">(select id, &apos;role_b&apos; as role from table_1 where sortvalue &gt; 20 order by `sortvalue` desc limit 2) </span><br><span class="line">order by `sortvalue` desc </span><br><span class="line">) a group by id</span><br><span class="line">limit 0, 2</span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
 <table>
@@ -225,7 +225,7 @@
 </ol>
 <h2 id="3-总结和延伸"><a href="#3-总结和延伸" class="headerlink" title="3.总结和延伸"></a>3.总结和延伸</h2><h3 id="多角色数据范围写操作？"><a href="#多角色数据范围写操作？" class="headerlink" title="多角色数据范围写操作？"></a>多角色数据范围写操作？</h3><p>遍历角色直到找到满足条件的权限即可。</p>
 <h3 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h3><p>自己不行动，等于等着被别人安排哈哈</p>
-<h3 id="还有疑问？"><a href="#还有疑问？" class="headerlink" title="还有疑问？"></a>还有疑问？</h3><p>自己想。<a href="mailto:jinyufeng@ke.com?subject=问题" target="_blank" rel="noopener">还可以点这里</a></p>
+<h3 id="还有疑问？"><a href="#还有疑问？" class="headerlink" title="还有疑问？"></a>还有疑问？</h3><p>自己想。<a href="mailto:jinyufeng@ke.com?subject=问题">还可以点这里</a></p>
 
         </div>
         
@@ -247,7 +247,7 @@
 
 <div class="card">
     <div class="card-content">
-        <h3 class="menu-label has-text-centered">Suka dengan artikel ini? Bantu penulis dengan donasi melalui</h3>
+        <h3 class="menu-label has-text-centered">Like this article? Support the author with</h3>
         <div class="buttons is-centered">
             
                 
@@ -329,7 +329,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Entradas
+                        Posts
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
@@ -341,7 +341,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Categorias
+                        Categories
                     </p>
                     <a href="/categories">
                         <p class="title has-text-weight-normal">
@@ -353,7 +353,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Etiquetas
+                        Tags
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
@@ -365,43 +365,43 @@
         </nav>
         
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="http://github.com/sage417" target="_blank">
-                SEGUIR</a>
+            <a class="level-item button is-link is-rounded" href="http://github.com/sage417" target="_blank" rel="noopener">
+                Follow</a>
         </div>
         
         
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Github" href="http://github.com/sage417">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Facebook" href="https://facebook.com">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Twitter" href="https://twitter.com">
                 
                 <i class="fab fa-twitter"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="Dribbble" href="https://dribbble.com">
                 
                 <i class="fab fa-dribbble"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
                 title="RSS" href="/">
                 
                 <i class="fas fa-rss"></i>
@@ -424,7 +424,7 @@
         <ul class="menu-list">
         
             <li>
-                <a class="level is-mobile" href="https://hexo.io" target="_blank">
+                <a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener">
                     <span class="level-left">
                         <span class="level-item">Hexo</span>
                     </span>
@@ -435,7 +435,7 @@
             </li>
         
             <li>
-                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank">
+                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank" rel="noopener">
                     <span class="level-left">
                         <span class="level-item">PPOffice</span>
                     </span>
@@ -446,7 +446,18 @@
             </li>
         
             <li>
-                <a class="level is-mobile" href="http://luck-cheng.github.io" target="_blank">
+                <a class="level is-mobile" href="http://mysql.taobao.org" target="_blank" rel="noopener">
+                    <span class="level-left">
+                        <span class="level-item">taobaomysql</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">mysql.taobao.org</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="http://luck-cheng.github.io" target="_blank" rel="noopener">
                     <span class="level-left">
                         <span class="level-item">luck-cheng</span>
                     </span>
@@ -467,7 +478,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Categorias
+                Categories
             </h3>
             <ul class="menu-list">
             <li>
@@ -647,7 +658,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Nube de etiquetas
+            Tag Cloud
         </h3>
         <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
     </div>
@@ -675,8 +686,8 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 NightWish417&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
                 
                 </p>
             </div>
@@ -685,7 +696,7 @@
                 <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
                         
                         <i class="fab fa-creative-commons"></i>
                         
@@ -693,7 +704,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
                         
                         <i class="fab fa-creative-commons-by"></i>
                         
@@ -701,7 +712,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -718,8 +729,13 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-cn");</script>
 
+
 <script>
 var IcarusThemeSettings = {
+    site: {
+        url: 'http://blog.yamato.moe',
+        external_link: {"enable":true,"exclude":[]}
+    },
     article: {
         highlight: {
             clipboard: true,
@@ -730,22 +746,22 @@ var IcarusThemeSettings = {
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
 
 
 
-    
-    
+
+
 <script src="/js/animation.js"></script>
 
-    
-    
+
+
 <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
 <script src="/js/gallery.js" defer></script>
 
-    
-    
+
+
 <div id="outdated">
     <h6>Your browser is out-of-date!</h6>
     <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
@@ -763,8 +779,8 @@ var IcarusThemeSettings = {
     });
 </script>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
@@ -786,24 +802,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-    
-    
-<a id="back-to-top" title="Kembali ke atas" href="javascript:;">
+
+
+<a id="back-to-top" title="Back to Top" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/js/back-to-top.js" defer></script>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script src="/js/main.js" defer></script>
@@ -824,10 +840,10 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Entradas',
+                POSTS: 'Posts',
                 PAGES: 'Pages',
-                CATEGORIES: 'Categorias',
-                TAGS: 'Etiquetas',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
                 UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/content.json',
