@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html  lang="zh">
+<html  lang="en">
 <head>
     <meta charset="utf-8" />
 
@@ -16,7 +16,7 @@
 <meta property="og:url" content="http://blog.yamato.moe/tags/代码/page/2/index.html">
 <meta property="og:site_name" content="塑料内存">
 <meta property="og:description" content="随笔">
-<meta property="og:locale" content="zh-cn">
+<meta property="og:locale" content="en">
 <meta property="og:image" content="http://blog.yamato.moe/images/og_image.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="塑料内存">
@@ -146,6 +146,66 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-04-18T02:00:00.000Z">2019-04-18</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/resilience4j/">resilience4j</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    3 minutes read (About 431 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/04/18/resilience4j-retry源码阅读/">resilience4j-retry源码阅读</a>
+            
+        </h1>
+        <div class="content">
+            <p>resilience4j 源码还是比较清晰简单的，比较适合阅读。</p>
+<p>放一张主要类的结构图：</p>
+<p><img src="https://i.loli.net/2019/04/18/5cb7e40673fcf.png" alt=""></p>
+<h4 id="Retry入口"><a href="#Retry入口" class="headerlink" title="Retry入口"></a>Retry入口</h4><p>Retry接口是提供重试功能的入口，主要提供了方法模版，具体校验结构，失败后处理由Context子类实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Creates a retryable supplier.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> retry    the retry context</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> supplier the original function</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &lt;T&gt;      the type of results supplied by this supplier</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> a retryable function</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> &lt;T&gt; <span class="function">Supplier&lt;T&gt; <span class="title">decorateSupplier</span><span class="params">(Retry retry, Supplier&lt;T&gt; supplier)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> () -&gt; &#123;</span><br><span class="line">		Retry.Context&lt;T&gt; context = retry.context();</span><br><span class="line">		<span class="keyword">do</span> <span class="keyword">try</span> &#123;</span><br><span class="line">			T result = supplier.get();</span><br><span class="line">			<span class="keyword">final</span> <span class="keyword">boolean</span> validationOfResult = context.onResult(result);</span><br><span class="line">			<span class="keyword">if</span> (!validationOfResult) &#123;</span><br><span class="line">				context.onSuccess();</span><br><span class="line">				<span class="keyword">return</span> result;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (RuntimeException runtimeException) &#123;</span><br><span class="line">			context.onRuntimeError(runtimeException);</span><br><span class="line">		&#125; <span class="keyword">while</span> (<span class="keyword">true</span>);</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里摘抄了一段核心代码，作用是循环直到context.onResult(result)返回true为止，需要留意context.onResult/onRuntimeError/onError可能执行多次， onSuccess只会执行一次，这里每次进入重试都是一个新的context对象。</p>
+<h4 id="Retry-ContextImpl"><a href="#Retry-ContextImpl" class="headerlink" title="Retry.ContextImpl"></a>Retry.ContextImpl</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onResult</span><span class="params">(T result)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> != resultPredicate &amp;&amp; resultPredicate.test(result)) &#123;</span><br><span class="line">        <span class="keyword">int</span> currentNumOfAttempts = numOfAttempts.incrementAndGet();</span><br><span class="line">        <span class="keyword">if</span> (currentNumOfAttempts &gt;= maxAttempts) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            waitIntervalAfterFailure(currentNumOfAttempts, <span class="keyword">null</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onRuntimeError</span><span class="params">(RuntimeException runtimeException)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (exceptionPredicate.test(runtimeException)) &#123;</span><br><span class="line">        lastRuntimeException.set(runtimeException);</span><br><span class="line">        throwOrSleepAfterRuntimeException();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        failedWithoutRetryCounter.increment();</span><br><span class="line">        publishRetryEvent(() -&gt; <span class="keyword">new</span> RetryOnIgnoredErrorEvent(getName(), runtimeException));</span><br><span class="line">        <span class="keyword">throw</span> runtimeException;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先关注onResult，它负责判断是否需要继续重试，如果通过校验或者重试超过此数，会停止重试。</p>
+<p>onRuntimeError/onError, 负责把catch的异常存储在lastRuntimeException中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> currentNumOfAttempts = numOfAttempts.get();</span><br><span class="line">	<span class="keyword">if</span> (currentNumOfAttempts &gt; <span class="number">0</span>) &#123;</span><br><span class="line">		succeededAfterRetryCounter.increment();</span><br><span class="line">		Throwable throwable = Option.of(lastException.get()).getOrElse(lastRuntimeException.get());</span><br><span class="line">		publishRetryEvent(() -&gt; <span class="keyword">new</span> RetryOnSuccessEvent(getName(), currentNumOfAttempts, throwable));</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		succeededWithoutRetryCounter.increment();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>onSuccess负责统计和发送事件。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>总体来说retry比较简单，需要注意的点有一个如果设置了结果校验，如果一直校验不通过，将返回未通过的结果，而不是返回失败。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-04-04T02:00:00.000Z">2019-04-04</time>
                 
                 <div class="level-item">
@@ -156,7 +216,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    3 分钟 read (About 515 words)
+                    3 minutes read (About 515 words)
                 </span>
                 
                 
@@ -207,7 +267,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    3 分钟 read (About 438 words)
+                    3 minutes read (About 438 words)
                 </span>
                 
                 
@@ -253,7 +313,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    9 分钟 read (About 1336 words)
+                    9 minutes read (About 1336 words)
                 </span>
                 
                 
@@ -306,7 +366,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    1 分钟 read (About 197 words)
+                    a minute read (About 197 words)
                 </span>
                 
                 
@@ -359,7 +419,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    2 分钟 read (About 227 words)
+                    2 minutes read (About 227 words)
                 </span>
                 
                 
@@ -410,7 +470,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    1 分钟 read (About 215 words)
+                    a minute read (About 215 words)
                 </span>
                 
                 
@@ -460,7 +520,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    3 分钟 read (About 497 words)
+                    3 minutes read (About 497 words)
                 </span>
                 
                 
@@ -510,7 +570,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    3 分钟 read (About 484 words)
+                    3 minutes read (About 484 words)
                 </span>
                 
                 
@@ -575,7 +635,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    13 分钟 read (About 1895 words)
+                    13 minutes read (About 1895 words)
                 </span>
                 
                 
@@ -627,87 +687,6 @@
 <p>Actor模型基于actor互相发送消息并作出回应。每一个actor只能做少量的动作，创建其他actors, 发送消息或者决定如何处理下个消息。通过这些简单的规则，复杂的分布式系统可以被准确描述，可以在actor崩溃后自我修复。</p>
 <p>使用akka提供了标准的分布式模型，避免我们重复造轮子。</p>
 <h2 id="反应式架构"><a href="#反应式架构" class="headerlink" title="反应式架构"></a>反应式架构</h2><p>当构建大型分布式系统时，目标常常是它们的弹性，伸缩性，和扩展性。反应式架构是在这个领域最流行和最通用的方案。</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
-    
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-11-11T02:00:00.000Z">2018-11-11</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/算法/">算法</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/算法/字符串/">字符串</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    6 分钟 read (About 948 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/11/11/2018-11-11-lcs/">再谈最长公共子串</a>
-            
-        </h1>
-        <div class="content">
-            <h3 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h3><p>这次遇到贝壳花名的需求，需要使用最长公共子串对花名做校验。这种算法在面试题中算是必会题，各种四层循环，三层循环，两层循环的代码在我脑中闪过，但是今天就是要带你实现不一样的最长公共子串！</p>
-<h3 id="教科书式实现"><a href="#教科书式实现" class="headerlink" title="教科书式实现"></a>教科书式实现</h3><p>使用动态规划，两层循环，使用二维数组存储状态，时间复杂度O(n^2^)，空间复杂度O(n^2^)或O(2n)</p>
-<p>一张图解释原理：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">                  先 横 向 处 理</span><br><span class="line">         +---------------------------&gt;</span><br><span class="line"></span><br><span class="line">           e   a   b   c   b   c   f</span><br><span class="line">  +      +---+---+---+---+---+---+---+</span><br><span class="line">  |    a | 0 | 1 | 0 | 0 | 0 | 0 | 0 |</span><br><span class="line">纵 |      +---------------------------+</span><br><span class="line">向 |    b | 0 | 0 | 2 | 0 | 1 | 0 | 0 |</span><br><span class="line">累 |      +---------------------------+</span><br><span class="line">加 |    c | 0 | 0 | 0 | 3 | 0 | 2 | 0 |</span><br><span class="line">  |      +---------------------------+</span><br><span class="line">  |    d | 0 | 0 | 0 | 0 | 0 | 0 | 0 |</span><br><span class="line">  |      +---------------------------+</span><br><span class="line">  |    e | 1 | 0 | 0 | 0 | 0 | 0 | 0 |</span><br><span class="line">  v      +---+---+---+---+---+---+---+</span><br><span class="line">           e   a   b   c   b   c   f</span><br></pre></td></tr></table></figure>
-
-<h3 id="优化空间复杂度至O-1"><a href="#优化空间复杂度至O-1" class="headerlink" title="优化空间复杂度至O(1)"></a>优化空间复杂度至O(1)</h3><p>从上图可以发现，在纵向累加时实际只需要左上方的计数器即可, O(n^2^)的空间白白被浪费了,最优的空间复杂度应该是O(1)。那么该如何处理呢？</p>
-<p>一张图解释原理：</p>
-<pre><code>                                 e   a   b   c   b   c   f
-  +---+                        +---+---+---+---+---+---+---+
-a | 0 |                            | 1 | 0 | 0 | 0 | 0 | 0 | a
-  +-------+                        +-----------------------+
-b | 0 | 0 |                            | 2 | 0 | 1 | 0 | 0 | b
-  +-----------+                        --------------------+
-c | 0 | 0 | 0 |                            | 3 | 0 | 2 | 0 | c
-  +---------------+                        ----------------+
-d | 0 | 0 | 0 | 0 |                            | 0 | 0 | 0 | d
-  +-------------------+                        +-----------+
-e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
-  +---+---+---+---+---+-------+                    +---+---+
-    e   a   b   c   b   c   f</code></pre><p>答案就是沿着等长对着线处理。</p>
-<h3 id="有意思的代码抽象"><a href="#有意思的代码抽象" class="headerlink" title="有意思的代码抽象"></a>有意思的代码抽象</h3><p>大家可以根据上面思路写一下，一般会把算法分成两部分：处理长方形的左下部分和处理长方形的右上部分，两部分都是双层循环，时间复杂度和空间负载度已经变为了O(n^2^) ，O(1)。</p>
-<p>肯定有人已经发现自己的代码处理左下角的代码和处理右上角的代码不能复用，一个是从中间向左下角处理，一个是从中间向右上角处理，明明很类似，但是就是没发合并。</p>
-<p>那么有没有方法把这两部分处理抽象成公共代码呢？不卖关子了，直接上图：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">                                                         +</span><br><span class="line">                                                       e |</span><br><span class="line">                                                         +--+</span><br><span class="line">  e   a   b   c   b   c   f                            a | 1|</span><br><span class="line">+---+---+---+---+---+---+---+                            +-----+</span><br><span class="line">    | 1 | 0 | 0 | 0 | 0 | 0 | a                        b | 0| 2|</span><br><span class="line">    +-----------------------+                            +--------+</span><br><span class="line">        | 2 | 0 | 1 | 0 | 0 | b                        c | 0| 0| 3|</span><br><span class="line">        --------------------+         翻      折           +-----------+</span><br><span class="line">            | 3 | 0 | 2 | 0 | c     +------------&gt;     b | 0| 1| 0| 0|</span><br><span class="line">            ----------------+                            +--------------+</span><br><span class="line">                | 0 | 0 | 0 | d                        c | 0| 0| 2| 0| 0|</span><br><span class="line">                +-----------+                            +--------------+</span><br><span class="line">                    | 0 | 0 | e                        f | 0| 0| 0| 0| 0|</span><br><span class="line">                    +---+---+                            +--------------+</span><br><span class="line">                                                           a  b  c  d  e</span><br></pre></td></tr></table></figure>
-
-<p>如果你想使用公共代码同时实现处理左下角和右上角是不可能的了。所以你需要把右上角的三角翻折，然后你就得到了两个三角：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">                                      +</span><br><span class="line">                                    e |</span><br><span class="line">                                      +--+</span><br><span class="line">                                    a | 1|</span><br><span class="line">  +---+                               +-----+</span><br><span class="line">a | 0 |                             b | 0| 2|</span><br><span class="line">  +-------+                           +--------+</span><br><span class="line">b | 0 | 0 |                         c | 0| 0| 3|</span><br><span class="line">  +-----------+                       +-----------+</span><br><span class="line">c | 0 | 0 | 0 |                     b | 0| 1| 0| 0|</span><br><span class="line">  +---------------+                   +--------------+</span><br><span class="line">d | 0 | 0 | 0 | 0 |                 c | 0| 0| 2| 0| 0|</span><br><span class="line">  +-------------------+               +--------------+</span><br><span class="line">e | 1 | 0 | 0 | 0 | 0 |             f | 0| 0| 0| 0| 0|</span><br><span class="line">  +---+---+---+---+---+------         +--------------+</span><br><span class="line">    e   a   b   c   b   c   f           a  b  c  d  e</span><br></pre></td></tr></table></figure>
-
-<p>这样就变成了处理两遍左下角了，代码也可以完美复用！！！</p>
-<h3 id="最终实现"><a href="#最终实现" class="headerlink" title="最终实现"></a>最终实现</h3><p>我的完整思考过程已经分析完毕，这样沿对着线处理还有一个小小的优点：提前结束搜索。这一点大家可以自行思考，这里不做过多解释。</p>
-<p>直接干货上场：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> A: A string</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> B: A string</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span>: the length of the longest common substring.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestCommonSubstring</span><span class="params">(String A, String B)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// write your code here</span></span><br><span class="line">        <span class="keyword">char</span>[] achars = A.toCharArray(), bchars = B.toCharArray();</span><br><span class="line">        <span class="keyword">return</span> getMaxLength(bchars, achars, getMaxLength(achars, bchars, <span class="number">0</span>, <span class="number">0</span>), <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getMaxLength</span><span class="params">(<span class="keyword">char</span>[] s1, <span class="keyword">char</span>[] s2, <span class="keyword">int</span> maxLength, <span class="keyword">int</span> startIndex)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> start = startIndex; start &lt; s1.length; start++) &#123;</span><br><span class="line">            <span class="keyword">int</span> upper = Math.min(s2.length, s1.length - start);</span><br><span class="line">            <span class="comment">// if (upper &lt;= maxLength) break; //提前结束搜索</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> currentLineLength = <span class="number">0</span>, x = <span class="number">0</span>, y = start; x &lt; upper; x++, y++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (s1[y] == s2[x])</span><br><span class="line">                    maxLength = Math.max(maxLength, ++currentLineLength);</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// if (upper - x - 1 &lt;= maxLength) break; //提前结束搜索</span></span><br><span class="line">                    currentLineLength = <span class="number">0</span>;</span><br><span class="line">                &#125;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxLength;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>怎么样，经历这次优化过程是否感觉自己对最长公共子串的认识又更深了一步呢？虽然不能保证是首创（也可能是首创？），但是这次一步一步真切思考优化直到获得成果让我无比兴奋。</p>
-<p>说了这么多，我就是要给我们贝壳招聘开发组打个广告&gt;_&gt;，期待更多爱思考优秀的同学加入！</p>
-<p>![](/Users/sage/Desktop/屏幕快照 2018-11-10 13.33.20.png)</p>
 
         </div>
         
@@ -789,7 +768,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            37
+                            38
                         </p>
                     </a>
                 </div>
@@ -1031,7 +1010,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">9</span>
+                <span class="level-item tag">10</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/mysql/">
@@ -1039,7 +1018,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <span class="level-item">mysql</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">1</span>
+                <span class="level-item tag">2</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -1131,6 +1110,25 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         
         <article class="media">
             
+            <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/02/27/bY675l1AuosdCPt.jpg" alt="为什么引入间隙锁">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-26T16:00:00.000Z">2020-02-27</time></div>
+                    <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="title has-link-black-ter is-size-6 has-text-weight-normal">为什么引入间隙锁</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/02/01/2020-02-01-清醒思考的艺术/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/02/02/M7WtmcIu2YOJyjf.jpg" alt="清醒思考的艺术-checklist">
@@ -1205,25 +1203,6 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="消息队列(一)-如何解决消息丢失">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T16:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(一)-如何解决消息丢失</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -1238,10 +1217,10 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
                 <span class="level-start">
-                    <span class="level-item">二月 2020</span>
+                    <span class="level-item">February 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -1249,7 +1228,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2020/01/">
                 <span class="level-start">
-                    <span class="level-item">一月 2020</span>
+                    <span class="level-item">January 2020</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1260,7 +1239,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/12/">
                 <span class="level-start">
-                    <span class="level-item">十二月 2019</span>
+                    <span class="level-item">December 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">9</span>
@@ -1271,7 +1250,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/11/">
                 <span class="level-start">
-                    <span class="level-item">十一月 2019</span>
+                    <span class="level-item">November 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1282,7 +1261,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/09/">
                 <span class="level-start">
-                    <span class="level-item">九月 2019</span>
+                    <span class="level-item">September 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1293,7 +1272,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/08/">
                 <span class="level-start">
-                    <span class="level-item">八月 2019</span>
+                    <span class="level-item">August 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1304,7 +1283,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/07/">
                 <span class="level-start">
-                    <span class="level-item">七月 2019</span>
+                    <span class="level-item">July 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1315,7 +1294,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/06/">
                 <span class="level-start">
-                    <span class="level-item">六月 2019</span>
+                    <span class="level-item">June 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1326,7 +1305,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/05/">
                 <span class="level-start">
-                    <span class="level-item">五月 2019</span>
+                    <span class="level-item">May 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1337,7 +1316,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/04/">
                 <span class="level-start">
-                    <span class="level-item">四月 2019</span>
+                    <span class="level-item">April 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">3</span>
@@ -1348,7 +1327,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
-                    <span class="level-item">三月 2019</span>
+                    <span class="level-item">March 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1359,7 +1338,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/02/">
                 <span class="level-start">
-                    <span class="level-item">二月 2019</span>
+                    <span class="level-item">February 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1370,7 +1349,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/01/">
                 <span class="level-start">
-                    <span class="level-item">一月 2019</span>
+                    <span class="level-item">January 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1381,7 +1360,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2018/12/">
                 <span class="level-start">
-                    <span class="level-item">十二月 2018</span>
+                    <span class="level-item">December 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1392,7 +1371,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2018/11/">
                 <span class="level-start">
-                    <span class="level-item">十一月 2018</span>
+                    <span class="level-item">November 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">3</span>
@@ -1403,7 +1382,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2018/09/">
                 <span class="level-start">
-                    <span class="level-item">九月 2018</span>
+                    <span class="level-item">September 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1414,7 +1393,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2018/07/">
                 <span class="level-start">
-                    <span class="level-item">七月 2018</span>
+                    <span class="level-item">July 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1480,7 +1459,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">22</span>
+                        <span class="tag is-grey">23</span>
                     </a>
                 </div>
                 
@@ -1550,7 +1529,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">8</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
@@ -1578,6 +1557,25 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         
         <article class="media">
             
+            <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/02/27/bY675l1AuosdCPt.jpg" alt="为什么引入间隙锁">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-26T16:00:00.000Z">2020-02-27</time></div>
+                    <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="title has-link-black-ter is-size-6 has-text-weight-normal">为什么引入间隙锁</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/02/01/2020-02-01-清醒思考的艺术/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/02/02/M7WtmcIu2YOJyjf.jpg" alt="清醒思考的艺术-checklist">
@@ -1652,25 +1650,6 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="消息队列(一)-如何解决消息丢失">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T16:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(一)-如何解决消息丢失</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1685,10 +1664,10 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
                 <span class="level-start">
-                    <span class="level-item">二月 2020</span>
+                    <span class="level-item">February 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -1696,7 +1675,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2020/01/">
                 <span class="level-start">
-                    <span class="level-item">一月 2020</span>
+                    <span class="level-item">January 2020</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1707,7 +1686,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/12/">
                 <span class="level-start">
-                    <span class="level-item">十二月 2019</span>
+                    <span class="level-item">December 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">9</span>
@@ -1718,7 +1697,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/11/">
                 <span class="level-start">
-                    <span class="level-item">十一月 2019</span>
+                    <span class="level-item">November 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1729,7 +1708,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/09/">
                 <span class="level-start">
-                    <span class="level-item">九月 2019</span>
+                    <span class="level-item">September 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1740,7 +1719,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/08/">
                 <span class="level-start">
-                    <span class="level-item">八月 2019</span>
+                    <span class="level-item">August 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1751,7 +1730,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/07/">
                 <span class="level-start">
-                    <span class="level-item">七月 2019</span>
+                    <span class="level-item">July 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1762,7 +1741,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/06/">
                 <span class="level-start">
-                    <span class="level-item">六月 2019</span>
+                    <span class="level-item">June 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1773,7 +1752,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/05/">
                 <span class="level-start">
-                    <span class="level-item">五月 2019</span>
+                    <span class="level-item">May 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1784,7 +1763,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/04/">
                 <span class="level-start">
-                    <span class="level-item">四月 2019</span>
+                    <span class="level-item">April 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">3</span>
@@ -1795,7 +1774,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
-                    <span class="level-item">三月 2019</span>
+                    <span class="level-item">March 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1806,7 +1785,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/02/">
                 <span class="level-start">
-                    <span class="level-item">二月 2019</span>
+                    <span class="level-item">February 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1817,7 +1796,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2019/01/">
                 <span class="level-start">
-                    <span class="level-item">一月 2019</span>
+                    <span class="level-item">January 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1828,7 +1807,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2018/12/">
                 <span class="level-start">
-                    <span class="level-item">十二月 2018</span>
+                    <span class="level-item">December 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1839,7 +1818,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2018/11/">
                 <span class="level-start">
-                    <span class="level-item">十一月 2018</span>
+                    <span class="level-item">November 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">3</span>
@@ -1850,7 +1829,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2018/09/">
                 <span class="level-start">
-                    <span class="level-item">九月 2018</span>
+                    <span class="level-item">September 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1861,7 +1840,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
         <li>
             <a class="level is-marginless" href="/archives/2018/07/">
                 <span class="level-start">
-                    <span class="level-item">七月 2018</span>
+                    <span class="level-item">July 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1927,7 +1906,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">22</span>
+                        <span class="tag is-grey">23</span>
                     </a>
                 </div>
                 
@@ -1997,7 +1976,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">8</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
@@ -2064,7 +2043,7 @@ e | 1 | 0 | 0 | 0 | 0 |                            | 0 | 0 | e
 </footer>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
-<script>moment.locale("zh-cn");</script>
+<script>moment.locale("en");</script>
 
 
 <script>

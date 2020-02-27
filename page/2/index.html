@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html  lang="zh">
+<html  lang="en">
 <head>
     <meta charset="utf-8" />
 
@@ -16,7 +16,7 @@
 <meta property="og:url" content="http://blog.yamato.moe/page/2/index.html">
 <meta property="og:site_name" content="塑料内存">
 <meta property="og:description" content="随笔">
-<meta property="og:locale" content="zh-cn">
+<meta property="og:locale" content="en">
 <meta property="og:image" content="http://blog.yamato.moe/images/og_image.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="塑料内存">
@@ -133,6 +133,70 @@
 <div class="card">
     
     <div class="card-image">
+        <a href="/2020/01/10/2020-01-10_Boyer–Moore 字符搜索算法/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2020/01/14/zQSP9xfZnBoYLNc.jpg" alt="Boyer–Moore 字符搜索算法">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2020-01-09T16:00:00.000Z">2020-01-10</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/算法/">算法</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/算法/字符串/">字符串</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    4 minutes read (About 570 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2020/01/10/2020-01-10_Boyer–Moore 字符搜索算法/">Boyer–Moore 字符搜索算法</a>
+            
+        </h1>
+        <div class="content">
+            <p>因为字符比较是从右往左比较的，所以第一层循环  <code>needle.length + 1</code> &lt;= i &lt; <code>haystack.length</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">                  start=needle.length - 1                                             end=haystack.length - 1</span><br><span class="line">                          +                                                                   +</span><br><span class="line">                          |                                                                   |</span><br><span class="line">                          |                                                                   |</span><br><span class="line">                          v-------------------------------------------------------------------v-&gt;</span><br><span class="line">  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23</span><br><span class="line">+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+</span><br><span class="line">| t | h | i | s |   | i | s |   | a |   | s | i | m | p | l | e |   | e | x | a | m | p | l | e |</span><br><span class="line">+-------------------------------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+</span><br><span class="line">+---------------------------+</span><br><span class="line">| e | x | a | m | p | l | e |</span><br><span class="line">+---+---+---+---+---+---+---+</span><br></pre></td></tr></table></figure>
+
+<p>第二层循环中i变量表示坏字符的位置、j表示搜索坏字符开始位置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">                          i</span><br><span class="line">                          +</span><br><span class="line">                          |</span><br><span class="line">                          v</span><br><span class="line">  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23</span><br><span class="line">+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+</span><br><span class="line">| t | h | i | s |   | i | s |   | a |   | s | i | m | p | l | e |   | e | x | a | m | p | l | e |</span><br><span class="line">+-------------------------------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+</span><br><span class="line">+---------------------------+</span><br><span class="line">| e | x | a | m | p | l | e |</span><br><span class="line">+---+---+---+---+---+---+-+-+</span><br><span class="line">                          ^</span><br><span class="line">                          |</span><br><span class="line">                          +</span><br><span class="line">                          j</span><br></pre></td></tr></table></figure>
+
+<p>i,j指针向左搜索,如果完全匹配直接返回i即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (j = needle.length - <span class="number">1</span>; needle[j] == haystack[i]; --i, --j) &#123;</span><br><span class="line">    <span class="keyword">if</span> (j == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="坏字符规则和好字符规则"><a href="#坏字符规则和好字符规则" class="headerlink" title="坏字符规则和好字符规则"></a>坏字符规则和好字符规则</h3><p>坏字符:从右向左第一个不匹配的字符<br>好字符:从坏字符下一个字符直到最后的字符</p>
+<p>可以认为字符移动有两种策略：坏字符对齐和好字符对齐，然后选择字符移动距离大的策略即可</p>
+<h3 id="wiki实现"><a href="#wiki实现" class="headerlink" title="wiki实现"></a>wiki实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the index within this string of the first occurrence of the</span></span><br><span class="line"><span class="comment"> * specified substring. If it is not a substring, return -1.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * There is no Galil because it only generates one match.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> haystack The string to be scanned</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> needle The target string to search</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> The start index of the substring</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">indexOf</span><span class="params">(<span class="keyword">char</span>[] haystack, <span class="keyword">char</span>[] needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (needle.length == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> charTable[] = makeCharTable(needle);</span><br><span class="line">    <span class="keyword">int</span> offsetTable[] = makeOffsetTable(needle);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = needle.length - <span class="number">1</span>, j; i &lt; haystack.length;) &#123;</span><br><span class="line">        <span class="keyword">for</span> (j = needle.length - <span class="number">1</span>; needle[j] == haystack[i]; --i, --j) &#123;</span><br><span class="line">            <span class="keyword">if</span> (j == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// i += needle.length - j; // For naive method</span></span><br><span class="line">        i += Math.max(offsetTable[needle.length - <span class="number">1</span> - j], charTable[haystack[i]]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Makes the jump table based on the mismatched character information.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span>[] makeCharTable(<span class="keyword">char</span>[] needle) &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> ALPHABET_SIZE = Character.MAX_VALUE + <span class="number">1</span>; <span class="comment">// 65536</span></span><br><span class="line">    <span class="keyword">int</span>[] table = <span class="keyword">new</span> <span class="keyword">int</span>[ALPHABET_SIZE];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; table.length; ++i) &#123;</span><br><span class="line">        table[i] = needle.length;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; needle.length - <span class="number">2</span>; ++i) &#123;</span><br><span class="line">        table[needle[i]] = needle.length - <span class="number">1</span> - i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> table;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Makes the jump table based on the scan offset which mismatch occurs.</span></span><br><span class="line"><span class="comment"> * (bad character rule).</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span>[] makeOffsetTable(<span class="keyword">char</span>[] needle) &#123;</span><br><span class="line">    <span class="keyword">int</span>[] table = <span class="keyword">new</span> <span class="keyword">int</span>[needle.length];</span><br><span class="line">    <span class="keyword">int</span> lastPrefixPosition = needle.length;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = needle.length; i &gt; <span class="number">0</span>; --i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (isPrefix(needle, i)) &#123;</span><br><span class="line">            lastPrefixPosition = i;</span><br><span class="line">        &#125;</span><br><span class="line">        table[needle.length - i] = lastPrefixPosition - i + needle.length;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; needle.length - <span class="number">1</span>; ++i) &#123;</span><br><span class="line">        <span class="keyword">int</span> slen = suffixLength(needle, i);</span><br><span class="line">        table[slen] = needle.length - <span class="number">1</span> - i + slen;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> table;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Is needle[p:end] a prefix of needle?</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isPrefix</span><span class="params">(<span class="keyword">char</span>[] needle, <span class="keyword">int</span> p)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = p, j = <span class="number">0</span>; i &lt; needle.length; ++i, ++j) &#123;</span><br><span class="line">        <span class="keyword">if</span> (needle[i] != needle[j]) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the maximum length of the substring ends at p and is a suffix.</span></span><br><span class="line"><span class="comment"> * (good suffix rule)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">suffixLength</span><span class="params">(<span class="keyword">char</span>[] needle, <span class="keyword">int</span> p)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = p, j = needle.length - <span class="number">1</span>;</span><br><span class="line">             i &gt;= <span class="number">0</span> &amp;&amp; needle[i] == needle[j]; --i, --j) &#123;</span><br><span class="line">        len += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
         <a href="/2019/12/08/2019-12-08-消息幂等/" class="image is-7by1">
             <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
         </a>
@@ -152,7 +216,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    9 分钟 read (About 1362 words)
+                    9 minutes read (About 1362 words)
                 </span>
                 
                 
@@ -221,7 +285,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    11 分钟 read (About 1669 words)
+                    11 minutes read (About 1669 words)
                 </span>
                 
                 
@@ -269,121 +333,6 @@
 <h4 id="3-在消费的过程中存在消息丢失的可能"><a href="#3-在消费的过程中存在消息丢失的可能" class="headerlink" title="3. 在消费的过程中存在消息丢失的可能"></a>3. 在消费的过程中存在消息丢失的可能</h4><p>我还是以 Kafka 为例来说明。一个消费者消费消息的进度是记录在消息队列集群中的，而消费的过程分为三步：接收消息、处理消息、更新消费进度。</p>
 <p>这里面接收消息和处理消息的过程都可能会发生异常或者失败，比如说，消息接收时网络发生抖动，导致消息并没有被正确的接收到；处理消息时可能发生一些业务的异常导致处理流程未执行完成，这时如果更新消费进度，那么这条失败的消息就永远不会被处理了，也可以认为是丢失了。</p>
 <p>所以，在这里你需要注意的是，<strong>一定要等到消息接收和处理完成后才能更新消费进度</strong>，但是这也会造成消息重复的问题，比方说某一条消息在处理之后，消费者恰好宕机了，那么因为没有更新消费进度，所以当这个消费者重启之后，还会重复地消费这条消息。</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
-    
-<div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2019/12/04/aHXFTSVv9hlJb3s.jpg" alt="缓存专题(五) 如何解决缓存穿透">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-12-03T18:00:00.000Z">2019-12-04</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/架构/">架构</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    27 分钟 read (About 4060 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/12/04/2019-12-04-缓存穿透解决方案/">缓存专题(五) 如何解决缓存穿透</a>
-            
-        </h1>
-        <div class="content">
-            <h2 id="什么是缓存穿透"><a href="#什么是缓存穿透" class="headerlink" title="什么是缓存穿透"></a>什么是缓存穿透</h2><p>缓存穿透其实是指从缓存中没有查到数据，而不得不从后端系统（比如数据库）中查询的情况。你可以把数据库比喻为手机，它是经受不了太多的划痕和磕碰的，所以你需要给它贴个膜再套个保护壳，就能对手机起到一定的保护作用了。</p>
-<p>不过，少量的缓存穿透不可避免，对系统也是没有损害的，主要有几点原因：</p>
-<ul>
-<li>一方面，互联网系统通常会面临极大数据量的考验，而缓存系统在容量上是有限的，不可能存储系统所有的数据，那么在查询未缓存数据的时候就会发生缓存穿透。</li>
-<li>另一方面，互联网系统的数据访问模型一般会遵从“80/20 原则”。“80/20 原则”又称为帕累托法则，是意大利经济学家帕累托提出的一个经济学的理论。它是指在一组事物中，最重要的事物通常只占 20%，而剩余的 80% 的事物确实不重要的。把它应用到数据访问的领域，就是我们会经常访问 20% 的热点数据，而另外的 80% 的数据则不会被经常访问。比如你买了很多衣服，很多书，但是其实经常穿的，经常看的，可能也就是其中很小的一部分。</li>
-</ul>
-<p>既然缓存的容量有限，并且大部分的访问只会请求 20% 的热点数据，那么理论上说，我们只需要在有限的缓存空间里存储 20% 的热点数据就可以有效地保护脆弱的后端系统了，也就可以放弃缓存另外 80% 的非热点数据了。所以，这种少量的缓存穿透是不可避免的，但是对系统是没有损害的。</p>
-<p>那么什么样的缓存穿透对系统有害呢？答案是大量的穿透请求超过了后端系统的承受范围，造成了后端系统的崩溃。如果把少量的请求比作毛毛细雨，那么一旦变成倾盆大雨，引发洪水，冲倒房屋，肯定就不行了。</p>
-<p>产生这种大量穿透请求的场景有很多，接下来，我就带你解析这几种场景以及相应的解决方案。</p>
-<h2 id="缓存穿透的解决方案"><a href="#缓存穿透的解决方案" class="headerlink" title="缓存穿透的解决方案"></a>缓存穿透的解决方案</h2><p>先来考虑这样一种场景：在你的电商系统的用户表中，我们需要通过用户 ID 查询用户的信息，缓存的读写策略采用 Cache Aside 策略。</p>
-<p>那么，如果要读取一个用户表中未注册的用户，会发生什么情况呢？按照这个策略，我们会先读缓存，再穿透读数据库。由于用户并不存在，所以缓存和数据库中都没有查询到数据，因此也就不会向缓存中回种数据（也就是向缓存中设置值的意思），这样当再次请求这个用户数据的时候还是会再次穿透到数据库。在这种场景下，缓存并不能有效地阻挡请求穿透到数据库上，它的作用就微乎其微了。</p>
-<p>那如何解决缓存穿透呢？一般来说我们会有两种解决方案：<strong>回种空值以及使用布隆过滤器。</strong></p>
-<p>我们先来看看第一种方案。</p>
-<h3 id="回种空值"><a href="#回种空值" class="headerlink" title="回种空值"></a>回种空值</h3><p>回顾上面提到的场景，你会发现最大的问题在于数据库中并不存在用户的数据，这就造成无论查询多少次，数据库中永远都不会存在这个用户的数据，穿透永远都会发生。</p>
-<p><strong>类似的场景还有一些：</strong>比如由于代码的 bug 导致查询数据库的时候抛出了异常，这样可以认为从数据库查询出来的数据为空，同样不会回种缓存。</p>
-<p>那么，当我们从数据库中查询到空值或者发生异常时，我们可以向缓存中回种一个空值。但是因为空值并不是准确的业务数据，并且会占用缓存的空间，所以我们会给这个空值加一个比较短的过期时间，让空值在短时间之内能够快速过期淘汰。<strong>下面是这个流程的伪代码：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Object nullValue = <span class="keyword">new</span> Object();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  Object valueFromDB = getFromDB(uid); <span class="comment">// 从数据库中查询数据</span></span><br><span class="line">  <span class="keyword">if</span> (valueFromDB == <span class="keyword">null</span>) &#123;</span><br><span class="line">    cache.set(uid, nullValue, <span class="number">10</span>);   <span class="comment">// 如果从数据库中查询到空值，就把空值写入缓存，设置较短的超时时间</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    cache.set(uid, valueFromDB, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">  cache.set(uid, nullValue, <span class="number">10</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>回种空值虽然能够阻挡大量穿透的请求，但如果有大量获取未注册用户信息的请求，缓存内就会有有大量的空值缓存，也就会浪费缓存的存储空间，如果缓存空间被占满了，还会剔除掉一些已经被缓存的用户信息反而会造成缓存命中率的下降。</p>
-<p><strong>所以这个方案，我建议你在使用的时候应该评估一下缓存容量是否能够支撑。</strong>如果需要大量的缓存节点来支持，那么就无法通过通过回种空值的方式来解决，这时你可以考虑使用布隆过滤器。</p>
-<h3 id="使用布隆过滤器"><a href="#使用布隆过滤器" class="headerlink" title="使用布隆过滤器"></a>使用布隆过滤器</h3><p>1970 年布隆提出了一种布隆过滤器的算法，用来判断一个元素是否在一个集合中。这种算法由一个二进制数组和一个 Hash 算法组成。<strong>它的基本思路如下：</strong></p>
-<p>我们把集合中的每一个值按照提供的 Hash 算法算出对应的 Hash 值，然后将 Hash 值对数组长度取模后得到需要计入数组的索引值，并且将数组这个位置的值从 0 改成 1。在判断一个元素是否存在于这个集合中时，你只需要将这个元素按照相同的算法计算出索引值，如果这个位置的值为 1 就认为这个元素在集合中，否则则认为不在集合中。</p>
-<p>下图是布隆过滤器示意图，我来带你分析一下图内的信息。</p>
-<p><img src="https://i.loli.net/2019/12/04/bTVrdWJIfQ9lvRg.jpg" alt="nullcache1.jpg"></p>
-<p>A、B、C 等元素组成了一个集合，元素 D 计算出的 Hash 值所对应的的数组中值是 1，所以可以认为 D 也在集合中。而 F 在数组中的值是 0，所以 F 不在数组中。</p>
-<p><strong>那么我们如何使用布隆过滤器来解决缓存穿透的问题呢？</strong></p>
-<p>还是以存储用户信息的表为例进行讲解。首先，我们初始化一个很大的数组，比方说长度为 20 亿的数组，接下来我们选择一个 Hash 算法，然后我们将目前现有的所有用户的 ID 计算出 Hash 值并且映射到这个大数组中，映射位置的值设置为 1，其它值设置为 0。</p>
-<p>新注册的用户除了需要写入到数据库中之外，它也需要依照同样的算法更新布隆过滤器的数组中，相应位置的值。那么当我们需要查询某一个用户的信息时，我们首先查询这个 ID 在布隆过滤器中是否存在，如果不存在就直接返回空值，而不需要继续查询数据库和缓存，这样就可以极大地减少异常查询带来的缓存穿透。</p>
-<p><img src="https://i.loli.net/2019/12/04/VFpabuKdtwIN5ko.jpg" alt="nullcache2.jpg"></p>
-<p>布隆过滤器拥有极高的性能，无论是写入操作还是读取操作，时间复杂度都是 O(1)，是常量值。在空间上，相对于其他数据结构它也有很大的优势，比如，20 亿的数组需要 2000000000/8/1024/1024 = 238M 的空间，而如果使用数组来存储，假设每个用户 ID 占用 4 个字节的空间，那么存储 20 亿用户需要 2000000000 * 4 / 1024 / 1024 = 7600M 的空间，是布隆过滤器的 32 倍。</p>
-<p>不过，任何事物都有两面性，布隆过滤器也不例外，<strong>它主要有两个缺陷：</strong></p>
-<ol>
-<li><p>它在判断元素是否在集合中时是有一定错误几率的，比如它会把不是集合中的元素判断为处在集合中；</p>
-</li>
-<li><p>不支持删除元素。</p>
-</li>
-</ol>
-<p><strong>关于第一个缺陷，主要是 Hash 算法的问题。</strong>因为布隆过滤器是由一个二进制数组和一个 Hash 算法组成的，Hash 算法存在着一定的碰撞几率。Hash 碰撞的含义是不同的输入值经过 Hash 运算后得到了相同的 Hash 结果。</p>
-<p>本来，Hash 的含义是不同的输入，依据不同的算法映射成独一无二的固定长度的值，也就是我输入字符串“1”，根据 CRC32 算法，值是 2212294583。但是现实中 Hash 算法的输入值是无限的，输出值的值空间却是固定的，比如 16 位的 Hash 值的值空间是 65535，那么它的碰撞几率就是 1/65535，即如果输入值的个数超过 65535 就一定会发生碰撞。</p>
-<p><strong>那么你可能会问为什么不映射成更长的 Hash 值呢？</strong></p>
-<p>因为更长的 Hash 值会带来更高的存储成本和计算成本。即使使用 32 位的 Hash 算法，它的值空间长度是 2 的 32 次幂减一，约等于 42 亿，用来映射 20 亿的用户数据，碰撞几率依然有接近 50%。</p>
-<p>Hash 的碰撞就造成了两个用户 ID ，A 和 B 会计算出相同的 Hash 值，那么如果 A 是注册的用户，它的 Hash 值对应的数组中的值是 1，那么 B 即使不是注册用户，它在数组中的位置和 A 是相同的，对应的值也是 1，<strong>这就产生了误判。</strong></p>
-<p>布隆过滤器的误判有一个特点，就是它只会出现“false positive”的情况。这是什么意思呢？当布隆过滤器判断元素在集合中时，这个元素可能不在集合中。但是一旦布隆过滤器判断这个元素不在集合中时，它一定不在集合中。<strong>这一点非常适合解决缓存穿透的问题。</strong>为什么呢？</p>
-<p>你想，如果布隆过滤器会将集合中的元素判定为不在集合中，那么我们就不确定，被布隆过滤器判定为不在集合中的元素，是不是在集合中。假设在刚才的场景中，如果有大量查询未注册的用户信息的请求存在，那么这些请求到达布隆过滤器之后，即使布隆过滤器判断为不是注册用户，那么我们也不确定它是不是真的不是注册用户，那么就还是需要去数据库和缓存中查询，这就使布隆过滤器失去了价值。</p>
-<p>所以你看，布隆过滤器虽然存在误判的情况，但是还是会减少缓存穿透的情况发生，只是我们需要尽量减少误判的几率，这样布隆过滤器的判断正确的几率更高，对缓存的穿透也更少。<strong>一个解决方案是：</strong></p>
-<p>使用多个 Hash 算法为元素计算出多个 Hash 值，只有所有 Hash 值对应的数组中的值都为 1 时，才会认为这个元素在集合中。</p>
-<p><strong>布隆过滤器不支持删除元素的缺陷也和 Hash 碰撞有关。</strong>给你举一个例子，假如两个元素 A 和 B 都是集合中的元素，它们有相同的 Hash 值，它们就会映射到数组的同一个位置。这时我们删除了 A，数组中对应位置的值也从 1 变成 0，那么在判断 B 的时候发现值是 0，也会判断 B 是不在集合中的元素，就会得到错误的结论。</p>
-<p><strong>那么我是怎么解决这个问题的呢？</strong>我会让数组中不再只有 0 和 1 两个值，而是存储一个计数。比如如果 A 和 B 同时命中了一个数组的索引，那么这个位置的值就是 2，如果 A 被删除了就把这个值从 2 改为 1。这个方案中的数组不再存储 bit 位，而是存储数值，也就会增加空间的消耗。<strong>所以，你要依据业务场景来选择是否能够使用布隆过滤器，</strong>比如像是注册用户的场景下，因为用户删除的情况基本不存在，所以还是可以使用布隆过滤器来解决缓存穿透的问题的。</p>
-<p><strong>讲了这么多，关于布隆过滤器的使用上，我也给你几个建议：</strong></p>
-<ol>
-<li><p>选择多个 Hash 函数计算多个 Hash 值，这样可以减少误判的几率；</p>
-</li>
-<li><p>布隆过滤器会消耗一定的内存空间，所以在使用时需要评估你的业务场景下需要多大的内存，存储的成本是否可以接受。</p>
-</li>
-</ol>
-<p>总的来说，<strong>回种空值和布隆过滤器</strong>是解决缓存穿透问题的两种最主要的解决方案，但是它们也有各自的适用场景，并不能解决所有问题。比方说当有一个极热点的缓存项，它一旦失效会有大量请求穿透到数据库，这会对数据库造成瞬时极大的压力，我们把这个场景叫做“dog-pile effect”（狗桩效应），</p>
-<p>这是典型的缓存并发穿透的问题，<strong>那么，我们如何来解决这个问题呢？</strong>解决狗桩效应的思路是尽量地减少缓存穿透后的并发，方案也比较简单：</p>
-<ol>
-<li><p>在代码中，控制在某一个热点缓存项失效之后启动一个后台线程，穿透到数据库，将数据加载到缓存中，在缓存未加载之前，所有访问这个缓存的请求都不再穿透而直接返回。</p>
-</li>
-<li><p>通过在 Memcached 或者 Redis 中设置分布式锁，只有获取到锁的请求才能够穿透到数据库。</p>
-</li>
-</ol>
-<p>分布式锁的方式也比较简单，比方说 ID 为 1 的用户是一个热点用户，当他的用户信息缓存失效后，我们需要从数据库中重新加载数据时，先向 Memcached 中写入一个 Key 为”lock.1”的缓存项，然后去数据库里面加载数据，当数据加载完成后再把这个 Key 删掉。这时，如果另外一个线程也要请求这个用户的数据，它发现缓存中有 Key 为“lock.1”的缓存，就认为目前已经有线程在加载数据库中的值到缓存中了，它就可以重新去缓存中查询数据，不再穿透数据库了。</p>
 
         </div>
         
@@ -469,7 +418,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            37
+                            38
                         </p>
                     </a>
                 </div>
@@ -711,7 +660,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">9</span>
+                <span class="level-item tag">10</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/mysql/">
@@ -719,7 +668,7 @@
                 <span class="level-item">mysql</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">1</span>
+                <span class="level-item tag">2</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -811,6 +760,25 @@
         
         <article class="media">
             
+            <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/02/27/bY675l1AuosdCPt.jpg" alt="为什么引入间隙锁">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-26T16:00:00.000Z">2020-02-27</time></div>
+                    <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="title has-link-black-ter is-size-6 has-text-weight-normal">为什么引入间隙锁</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/02/01/2020-02-01-清醒思考的艺术/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/02/02/M7WtmcIu2YOJyjf.jpg" alt="清醒思考的艺术-checklist">
@@ -885,25 +853,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="消息队列(一)-如何解决消息丢失">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T16:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(一)-如何解决消息丢失</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -918,10 +867,10 @@
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
                 <span class="level-start">
-                    <span class="level-item">二月 2020</span>
+                    <span class="level-item">February 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -929,7 +878,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2020/01/">
                 <span class="level-start">
-                    <span class="level-item">一月 2020</span>
+                    <span class="level-item">January 2020</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -940,7 +889,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/12/">
                 <span class="level-start">
-                    <span class="level-item">十二月 2019</span>
+                    <span class="level-item">December 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">9</span>
@@ -951,7 +900,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/11/">
                 <span class="level-start">
-                    <span class="level-item">十一月 2019</span>
+                    <span class="level-item">November 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -962,7 +911,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/09/">
                 <span class="level-start">
-                    <span class="level-item">九月 2019</span>
+                    <span class="level-item">September 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -973,7 +922,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/08/">
                 <span class="level-start">
-                    <span class="level-item">八月 2019</span>
+                    <span class="level-item">August 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -984,7 +933,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/07/">
                 <span class="level-start">
-                    <span class="level-item">七月 2019</span>
+                    <span class="level-item">July 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -995,7 +944,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/06/">
                 <span class="level-start">
-                    <span class="level-item">六月 2019</span>
+                    <span class="level-item">June 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1006,7 +955,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/05/">
                 <span class="level-start">
-                    <span class="level-item">五月 2019</span>
+                    <span class="level-item">May 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1017,7 +966,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/04/">
                 <span class="level-start">
-                    <span class="level-item">四月 2019</span>
+                    <span class="level-item">April 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">3</span>
@@ -1028,7 +977,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
-                    <span class="level-item">三月 2019</span>
+                    <span class="level-item">March 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1039,7 +988,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/02/">
                 <span class="level-start">
-                    <span class="level-item">二月 2019</span>
+                    <span class="level-item">February 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1050,7 +999,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/01/">
                 <span class="level-start">
-                    <span class="level-item">一月 2019</span>
+                    <span class="level-item">January 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1061,7 +1010,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2018/12/">
                 <span class="level-start">
-                    <span class="level-item">十二月 2018</span>
+                    <span class="level-item">December 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1072,7 +1021,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2018/11/">
                 <span class="level-start">
-                    <span class="level-item">十一月 2018</span>
+                    <span class="level-item">November 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">3</span>
@@ -1083,7 +1032,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2018/09/">
                 <span class="level-start">
-                    <span class="level-item">九月 2018</span>
+                    <span class="level-item">September 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1094,7 +1043,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2018/07/">
                 <span class="level-start">
-                    <span class="level-item">七月 2018</span>
+                    <span class="level-item">July 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1160,7 +1109,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">22</span>
+                        <span class="tag is-grey">23</span>
                     </a>
                 </div>
                 
@@ -1230,7 +1179,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">8</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
@@ -1258,6 +1207,25 @@
         
         <article class="media">
             
+            <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/02/27/bY675l1AuosdCPt.jpg" alt="为什么引入间隙锁">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-02-26T16:00:00.000Z">2020-02-27</time></div>
+                    <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="title has-link-black-ter is-size-6 has-text-weight-normal">为什么引入间隙锁</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/02/01/2020-02-01-清醒思考的艺术/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/02/02/M7WtmcIu2YOJyjf.jpg" alt="清醒思考的艺术-checklist">
@@ -1332,25 +1300,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="消息队列(一)-如何解决消息丢失">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T16:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-如何解决消息丢失/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(一)-如何解决消息丢失</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1365,10 +1314,10 @@
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
                 <span class="level-start">
-                    <span class="level-item">二月 2020</span>
+                    <span class="level-item">February 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -1376,7 +1325,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2020/01/">
                 <span class="level-start">
-                    <span class="level-item">一月 2020</span>
+                    <span class="level-item">January 2020</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1387,7 +1336,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/12/">
                 <span class="level-start">
-                    <span class="level-item">十二月 2019</span>
+                    <span class="level-item">December 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">9</span>
@@ -1398,7 +1347,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/11/">
                 <span class="level-start">
-                    <span class="level-item">十一月 2019</span>
+                    <span class="level-item">November 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1409,7 +1358,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/09/">
                 <span class="level-start">
-                    <span class="level-item">九月 2019</span>
+                    <span class="level-item">September 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1420,7 +1369,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/08/">
                 <span class="level-start">
-                    <span class="level-item">八月 2019</span>
+                    <span class="level-item">August 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1431,7 +1380,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/07/">
                 <span class="level-start">
-                    <span class="level-item">七月 2019</span>
+                    <span class="level-item">July 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1442,7 +1391,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/06/">
                 <span class="level-start">
-                    <span class="level-item">六月 2019</span>
+                    <span class="level-item">June 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1453,7 +1402,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/05/">
                 <span class="level-start">
-                    <span class="level-item">五月 2019</span>
+                    <span class="level-item">May 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1464,7 +1413,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/04/">
                 <span class="level-start">
-                    <span class="level-item">四月 2019</span>
+                    <span class="level-item">April 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">3</span>
@@ -1475,7 +1424,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
-                    <span class="level-item">三月 2019</span>
+                    <span class="level-item">March 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1486,7 +1435,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/02/">
                 <span class="level-start">
-                    <span class="level-item">二月 2019</span>
+                    <span class="level-item">February 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1497,7 +1446,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2019/01/">
                 <span class="level-start">
-                    <span class="level-item">一月 2019</span>
+                    <span class="level-item">January 2019</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1508,7 +1457,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2018/12/">
                 <span class="level-start">
-                    <span class="level-item">十二月 2018</span>
+                    <span class="level-item">December 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1519,7 +1468,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2018/11/">
                 <span class="level-start">
-                    <span class="level-item">十一月 2018</span>
+                    <span class="level-item">November 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">3</span>
@@ -1530,7 +1479,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2018/09/">
                 <span class="level-start">
-                    <span class="level-item">九月 2018</span>
+                    <span class="level-item">September 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">2</span>
@@ -1541,7 +1490,7 @@
         <li>
             <a class="level is-marginless" href="/archives/2018/07/">
                 <span class="level-start">
-                    <span class="level-item">七月 2018</span>
+                    <span class="level-item">July 2018</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -1607,7 +1556,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">22</span>
+                        <span class="tag is-grey">23</span>
                     </a>
                 </div>
                 
@@ -1677,7 +1626,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">8</span>
+                        <span class="tag is-grey">9</span>
                     </a>
                 </div>
                 
@@ -1744,7 +1693,7 @@
 </footer>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
-<script>moment.locale("zh-cn");</script>
+<script>moment.locale("en");</script>
 
 
 <script>
