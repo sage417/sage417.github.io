@@ -11,7 +11,7 @@
 
 
     <meta name="description" content="为了便于说明问题，我们先使用一个小一点儿的表，建表和初始化语句如下： 123456789101112131415CREATE TABLE `t` (  `id` int(11) NOT NULL,  `c` int(11) DEFAULT NULL,  `d` int(11) DEFAULT NULL,  PRIMARY KEY (`id`),  KEY `c` (`c`)) ENGINE=Inn">
-<meta name="keywords" content="代码,读书">
+<meta name="keywords" content="数据库">
 <meta property="og:type" content="article">
 <meta property="og:title" content="为什么引入间隙锁">
 <meta property="og:url" content="http://blog.yamato.moe/2020/02/27/2020-02-27-为什么引入间隙锁/index.html">
@@ -19,7 +19,7 @@
 <meta property="og:description" content="为了便于说明问题，我们先使用一个小一点儿的表，建表和初始化语句如下： 123456789101112131415CREATE TABLE `t` (  `id` int(11) NOT NULL,  `c` int(11) DEFAULT NULL,  `d` int(11) DEFAULT NULL,  PRIMARY KEY (`id`),  KEY `c` (`c`)) ENGINE=Inn">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://i.loli.net/2020/02/27/bY675l1AuosdCPt.jpg">
-<meta property="og:updated_time" content="2020-02-27T11:14:34.863Z">
+<meta property="og:updated_time" content="2020-03-12T12:45:23.929Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="为什么引入间隙锁">
 <meta name="twitter:description" content="为了便于说明问题，我们先使用一个小一点儿的表，建表和初始化语句如下： 123456789101112131415CREATE TABLE `t` (  `id` int(11) NOT NULL,  `c` int(11) DEFAULT NULL,  `d` int(11) DEFAULT NULL,  PRIMARY KEY (`id`),  KEY `c` (`c`)) ENGINE=Inn">
@@ -254,7 +254,7 @@
             <div class="level-start">
                 <div class="level-item">
                     <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/代码/">代码</a>, <a class="has-link-grey -link" href="/tags/读书/">读书</a>
+                    <a class="has-link-grey -link" href="/tags/数据库/">数据库</a>
                 </div>
             </div>
         </div>
@@ -289,6 +289,13 @@
 
 <div class="card card-transparent">
     <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">奇怪的知识又增加了- BLNJ导致索引有序性失效</span>
+            </a>
+        </div>
         
         
         <div class="level-end">
@@ -347,7 +354,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            38
+                            39
                         </p>
                     </a>
                 </div>
@@ -613,7 +620,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">10</span>
+                <span class="level-item tag">11</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/mysql/">
@@ -621,7 +628,7 @@
                 <span class="level-item">mysql</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">2</span>
+                <span class="level-item tag">3</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -698,7 +705,7 @@
         <h3 class="menu-label">
             Tag Cloud
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 12.22px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
     </div>
 </div>
     

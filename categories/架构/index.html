@@ -144,6 +144,169 @@
 <div class="card">
     
     <div class="card-image">
+        <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/架构/">架构</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    3 minutes read (About 483 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
+            
+        </h1>
+        <div class="content">
+            <p>先来看表结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE a (</span><br><span class="line">  `id`bigint AUTO_INCREMENT ,</span><br><span class="line">  `a` int,</span><br><span class="line">  `b` int,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  KEY `idx_a_b` (`a`,`b`)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">CREATE TABLE b (</span><br><span class="line">	`id`bigint AUTO_INCREMENT ,</span><br><span class="line">  `b` int,</span><br><span class="line">  `c` int,</span><br><span class="line">  PRIMARY KEY (`id`)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>看一下join语句，因为b上没有索引，所以mysql用的BLNJ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">explain select * from a </span><br><span class="line">join b using(b)</span><br><span class="line">where a = 1</span><br><span class="line">order by a, b;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>select_type</th>
+<th>table</th>
+<th>partitions</th>
+<th>type</th>
+<th>possible_keys</th>
+<th>key</th>
+<th>key_len</th>
+<th>ref</th>
+<th>rows</th>
+<th align="right">filtered</th>
+<th>extra</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>SIMPLE</td>
+<td>a</td>
+<td>null</td>
+<td>ref</td>
+<td>idx_a_b</td>
+<td>idx_a_b</td>
+<td>4</td>
+<td>const</td>
+<td>5206</td>
+<td align="right">100.00</td>
+<td>Using temporary; Using filesort</td>
+</tr>
+<tr>
+<td>1</td>
+<td>SIMPLE</td>
+<td>b</td>
+<td>null</td>
+<td>ALL</td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+<td>Null</td>
+<td>1000</td>
+<td align="right">100.00</td>
+<td>Using where; Using join buffer (Block Nested Loop)</td>
+</tr>
+</tbody></table>
+<p>如果b表有索引的话：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE b (</span><br><span class="line">	`id`bigint AUTO_INCREMENT ,</span><br><span class="line">  `b` int,</span><br><span class="line">  `c` int,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  KEY `idx_b` (`b`)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>select_type</th>
+<th>table</th>
+<th>partitions</th>
+<th>type</th>
+<th>possible_keys</th>
+<th>key</th>
+<th>key_len</th>
+<th>ref</th>
+<th>rows</th>
+<th align="right">filtered</th>
+<th>extra</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>SIMPLE</td>
+<td>a</td>
+<td>null</td>
+<td>ref</td>
+<td>idx_a_b</td>
+<td>idx_a_b</td>
+<td>8</td>
+<td>Const</td>
+<td>5206</td>
+<td align="right">100.00</td>
+<td>Using index condition</td>
+</tr>
+<tr>
+<td>1</td>
+<td>SIMPLE</td>
+<td>b</td>
+<td>null</td>
+<td>Ref</td>
+<td>idx_b</td>
+<td>Idx_b</td>
+<td>4</td>
+<td>b.b</td>
+<td>50</td>
+<td align="right">100.00</td>
+<td>null</td>
+</tr>
+</tbody></table>
+<p>可以发现a表idx_a_b有序性没有利用上，至于原因，先看一下BNLJ执行的流程图:</p>
+<p><img src="https://i.loli.net/2020/03/12/ON4hu3cKt1Ck9Ji.jpg" alt="BNLJ.jpeg"></p>
+<p>执行过程为：</p>
+<ol>
+<li>扫描表 t1，顺序读取数据行放入 join_buffer 中，直到 join_buffer 满了，继续第 2 步；</li>
+<li>扫描表 t2，把 t2 中的每一行取出来，跟 join_buffer 中的数据做对比，满足 join 条件的，作为结果集的一部分返回；</li>
+<li>清空 join_buffer；</li>
+<li>继续扫描表 t1，顺序读取之后数据放入 join_buffer 中，继续执行第 2 步，直到所有数据读取完毕。</li>
+</ol>
+<p>其中隐含的问题在于第二步：即使t1表的数据是有序读取到join_buffer中的，由于是先扫描t2表再关联join_buffer数据，导致join_buffer中的有序性失效。</p>
+<p>如果表b有索引idx_b,那么使用BKA算法第二步的关联顺序与BNLJ相反，是先扫描join_buffer后通过索引关联t2,则可以利用join_buffer中的有序数据。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
         <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="image is-7by1">
             <img class="thumbnail" src="https://i.loli.net/2020/02/27/bY675l1AuosdCPt.jpg" alt="为什么引入间隙锁">
         </a>
@@ -1046,79 +1209,25 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/12/01/2019-12-01-如何使用缓存/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2019/12/03/fkCJu7hxad14spr.jpg" alt="缓存专题(一) 缓存概述">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-11-30T17:00:00.000Z">2019-12-01</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/架构/">架构</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/架构/缓存/">缓存</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    13 minutes read (About 1951 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/12/01/2019-12-01-如何使用缓存/">缓存专题(一) 缓存概述</a>
-            
-        </h1>
-        <div class="content">
-            <h3 id="缓存分类"><a href="#缓存分类" class="headerlink" title="缓存分类"></a>缓存分类</h3><p>在我们日常开发中，常见的缓存主要就是<strong>静态缓存、分布式缓存和热点本地缓存</strong>这三种。</p>
-<p>静态缓存在 Web 1.0 时期是非常著名的，它一般通过生成 Velocity 模板或者静态 HTML 文件来实现静态缓存，在 Nginx 上部署静态缓存可以减少对于后台应用服务器的压力。例如，我们在做一些内容管理系统的时候，后台会录入很多的文章，前台在网站上展示文章内容，就像新浪，网易这种门户网站一样。</p>
-<p>当然，我们也可以把文章录入到数据库里面，然后前端展示的时候穿透查询数据库来获取数据，但是这样会对数据库造成很大的压力。即使我们使用分布式缓存来挡读请求，但是对于像日均 PV 几十亿的大型门户网站来说，基于成本考虑仍然是不划算的。</p>
-<p><strong>所以我们的解决思路是</strong>每篇文章在录入的时候渲染成静态页面，放置在所有的前端 Nginx 或者 Squid 等 Web 服务器上，这样用户在访问的时候会优先访问 Web 服务器上的静态页面，在对旧的文章执行一定的清理策略后，依然可以保证 99% 以上的缓存命中率。</p>
-<p>这种缓存只能针对静态数据来缓存，对于动态请求就无能为力了。那么我们如何针对动态请求做缓存呢？<strong>这时你就需要分布式缓存了。</strong></p>
-<p>分布式缓存的大名可谓是如雷贯耳了，我们平时耳熟能详的 Memcached、Redis 就是分布式缓存的典型例子。它们性能强劲，通过一些分布式的方案组成集群可以突破单机的限制。所以在整体架构中，分布式缓存承担着非常重要的角色。</p>
-<p>对于静态的资源的缓存你可以选择静态缓存，对于动态的请求你可以选择分布式缓存，<strong>那么什么时候要考虑热点本地缓存呢？</strong></p>
-<p><strong>答案是当我们遇到极端的热点数据查询的时候。</strong>热点本地缓存主要部署在应用服务器的代码中，用于阻挡热点查询对于分布式缓存节点或者数据库的压力。</p>
-<p>比如某一位明星在微博上有了热点话题，“吃瓜群众”会到他 (她) 的微博首页围观，这就会引发这个用户信息的热点查询。这些查询通常会命中某一个缓存节点或者某一个数据库分区，短时间内会形成极高的热点查询。</p>
-<p>那么我们会在代码中使用一些本地缓存方案，如 HashMap，Guava Cache 或者是 Ehcache 等，它们和应用程序部署在同一个进程中，优势是不需要跨网络调度，速度极快，所以可以来阻挡短时间内的热点查询。<strong>来看个例子。</strong></p>
-<p><strong>比方说</strong>你的垂直电商系统的首页有一些推荐的商品，这些商品信息是由编辑在后台录入和变更。你分析编辑录入新的商品或者变更某个商品的信息后，在页面的展示是允许有一些延迟的，比如说 30 秒的延迟，并且首页请求量最大，即使使用分布式缓存也很难抗住，所以你决定使用 Guava Cache 来将所有的推荐商品的信息缓存起来，并且设置每隔 30 秒重新从数据库中加载最新的所有商品。</p>
-<p>首先，我们初始化 Guava 的 Loading Cache：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CacheBuilder&lt;String, List&lt;Product&gt;&gt; cacheBuilder = CacheBuilder.newBuilder().maximumSize(maxSize).recordStats(); // 设置缓存最大值</span><br><span class="line">cacheBuilder = cacheBuilder.refreshAfterWrite(30, TimeUnit.Seconds); // 设置刷新间隔</span><br><span class="line"> </span><br><span class="line">LoadingCache&lt;String, List&lt;Product&gt;&gt; cache = cacheBuilder.build(new CacheLoader&lt;String, List&lt;Product&gt;&gt;() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public List&lt;Product&gt; load(String k) throws Exception &#123;</span><br><span class="line">        return productService.loadAll(); // 获取所有商品</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
-<p>这样，你在获取所有商品信息的时候可以调用 Loading Cache 的 get 方法，就可以优先从本地缓存中获取商品信息，如果本地缓存不存在，会使用 CacheLoader 中的逻辑从数据库中加载所有的商品。</p>
-<p>由于本地缓存是部署在应用服务器中，而我们应用服务器通常会部署多台，当数据更新时，我们不能确定哪台服务器本地中了缓存，更新或者删除所有服务器的缓存不是一个好的选择，所以我们通常会等待缓存过期。因此，这种缓存的有效期很短，通常为分钟或者秒级别，以避免返回前端脏数据。</p>
-<h4 id="缓存的不足"><a href="#缓存的不足" class="headerlink" title="缓存的不足"></a>缓存的不足</h4><p>通过了解上面的内容，你不难发现，缓存的主要作用是提升访问速度，从而能够抗住更高的并发。那么，缓存是不是能够解决一切问题？显然不是。事物都是具有两面性的，缓存也不例外，我们要了解它的优势的同时也需要了解它有哪些不足，从而扬长避短，将它的作用发挥到最大。</p>
-<p><strong>首先，缓存比较适合于读多写少的业务场景，并且数据最好带有一定的热点属性。</strong>这是因为缓存毕竟会受限于存储介质不可能缓存所有数据，那么当数据有热点属性的时候才能保证一定的缓存命中率。比如说类似微博、朋友圈这种 20% 的内容会占到 80% 的流量。所以，一旦当业务场景读少写多时或者没有明显热点时，比如在搜索的场景下，每个人搜索的词都会不同，没有明显的热点，那么这时缓存的作用就不明显了。</p>
-<p><strong>其次，缓存会给整体系统带来复杂度，并且会有数据不一致的风险。</strong>当更新数据库成功，更新缓存失败的场景下，缓存中就会存在脏数据。对于这种场景，我们可以考虑使用较短的过期时间或者手动清理的方式来解决。</p>
-<p><strong>再次，之前提到缓存通常使用内存作为存储介质，但是内存并不是无限的。</strong>因此，我们在使用缓存的时候要做数据存储量级的评估，对于可预见的需要消耗极大存储成本的数据，要慎用缓存方案。同时，缓存一定要设置过期时间，这样可以保证缓存中的会是热点数据。</p>
-<p><strong>最后，缓存会给运维也带来一定的成本，</strong>运维需要对缓存组件有一定的了解，在排查问题的时候也多了一个组件需要考虑在内。</p>
-<p>虽然有这么多的不足，但是缓存对于性能的提升是毋庸置疑的，我们在做架构设计的时候也需要把它考虑在内，只是在做具体方案的时候需要对缓存的设计有更细致的思考，才能最大化的发挥缓存的优势。</p>
-
+    
+<div class="card card-transparent">
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+        <div class="pagination-previous is-invisible is-hidden-mobile">
+            <a class="is-flex-grow has-text-black-ter" href="/categories/架构/page/0/">Previous</a>
         </div>
-        
-        
-        
-    </div>
+        <div class="pagination-next">
+            <a class="is-flex-grow has-text-black-ter" href="/categories/架构/page/2/">Next</a>
+        </div>
+        <ul class="pagination-list is-hidden-mobile">
+            
+            <li><a class="pagination-link is-current" href="/categories/架构/">1</a></li>
+            
+            <li><a class="pagination-link has-text-black-ter" href="/categories/架构/page/2/">2</a></li>
+            
+        </ul>
+    </nav>
 </div>
-
-
-
-
-
-
-
-
 </div>
                 
 
@@ -1164,7 +1273,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            38
+                            39
                         </p>
                     </a>
                 </div>
@@ -1406,7 +1515,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">10</span>
+                <span class="level-item tag">11</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/mysql/">
@@ -1414,7 +1523,7 @@
                 <span class="level-item">mysql</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">2</span>
+                <span class="level-item tag">3</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -1491,7 +1600,7 @@
         <h3 class="menu-label">
             Tag Cloud
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 12.22px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
     </div>
 </div>
     
@@ -1503,6 +1612,25 @@
         <h3 class="menu-label">
             Recent
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
+                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -1580,25 +1708,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-消息幂等/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T17:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-消息幂等/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(二)-消息幂等</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -1609,6 +1718,17 @@
             Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">March 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
@@ -1855,7 +1975,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">23</span>
+                        <span class="tag is-grey">22</span>
                     </a>
                 </div>
                 
@@ -1897,7 +2017,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/数据库/">
                         <span class="tag">数据库</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
@@ -1925,7 +2045,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">9</span>
+                        <span class="tag is-grey">8</span>
                     </a>
                 </div>
                 
@@ -1953,6 +2073,25 @@
         
         <article class="media">
             
+            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
+                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/02/27/bY675l1AuosdCPt.jpg" alt="为什么引入间隙锁">
@@ -2027,25 +2166,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-消息幂等/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T17:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-消息幂等/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(二)-消息幂等</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -2056,6 +2176,17 @@
             Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">March 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
@@ -2302,7 +2433,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">23</span>
+                        <span class="tag is-grey">22</span>
                     </a>
                 </div>
                 
@@ -2344,7 +2475,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/数据库/">
                         <span class="tag">数据库</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
@@ -2372,7 +2503,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">9</span>
+                        <span class="tag is-grey">8</span>
                     </a>
                 </div>
                 

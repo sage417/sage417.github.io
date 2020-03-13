@@ -136,6 +136,142 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-09-08T02:00:00.000Z">2018-09-08</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/读书/">读书</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    6 minutes read (About 897 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2018/09/08/2018-9-8-reading/">《重构-改善既有代码设计》读书笔记</a>
+            
+        </h1>
+        <div class="content">
+            <h3 id="1-1-一个简单的例子"><a href="#1-1-一个简单的例子" class="headerlink" title="1.1 一个简单的例子"></a>1.1 一个简单的例子</h3><p>一个计算顾客租赁影片费用的程序，能容易写成面条式的代码（流水账）：顾客类调用影片类和租赁时长计算费用</p>
+<p>对机器来言只要能运行正确没有好代码和坏代码之分，但是对（维护的）人来说很难找到修改点，容易引入bug</p>
+<h3 id="1-2重构前先写测试保证重构结果"><a href="#1-2重构前先写测试保证重构结果" class="headerlink" title="1.2重构前先写测试保证重构结果"></a>1.2重构前先写测试保证重构结果</h3><p>利用单元测试保证重构正确性</p>
+<h3 id="1-3以微小的步伐修改程序，保证问题快速发现解决"><a href="#1-3以微小的步伐修改程序，保证问题快速发现解决" class="headerlink" title="1.3以微小的步伐修改程序，保证问题快速发现解决"></a>1.3以微小的步伐修改程序，保证问题快速发现解决</h3><p>不要为修改变量名感到羞耻，只有写出人能理解的代码才是好程序员</p>
+<p>重构完可能 性能变差，但同时会带来更多的机会来优化</p>
+<h3 id="1-4干货－用多态代替switch"><a href="#1-4干货－用多态代替switch" class="headerlink" title="1.4干货－用多态代替switch"></a>1.4干货－用多态代替switch</h3><p>switch需要关心具体条件，多态具有switch不具备的优势：不需要关心具体类型</p>
+<h3 id="2-1重构的定义"><a href="#2-1重构的定义" class="headerlink" title="2.1重构的定义"></a>2.1重构的定义</h3><p>重构：不改变运行结果下 提高理解性 降低修改成本</p>
+<h3 id="2-2重构的原因"><a href="#2-2重构的原因" class="headerlink" title="2.2重构的原因"></a>2.2重构的原因</h3><ul>
+<li><p>代码结构的流失是累积性的，越难看懂代码设计意图，越难保护其设计</p>
+</li>
+<li><p>消除重复代码，方便修改</p>
+</li>
+<li><p>我们编写代码时很容易忘记读者的感受，造成他人时间的浪费</p>
+</li>
+<li><p>重构时犯错可以加深对代码意图的理解，可以帮助发现bug</p>
+</li>
+<li><p>好的结构设计是加速开发的根本</p>
+</li>
+</ul>
+<h3 id="2-3重构的时机"><a href="#2-3重构的时机" class="headerlink" title="2.3重构的时机"></a>2.3重构的时机</h3><ul>
+<li><p>添加功能时重构，在修改过程中把结构理清，也可以更简单的添加功能</p>
+</li>
+<li><p>修复错误时重构 </p>
+</li>
+<li><p>复审代码时重构</p>
+</li>
+</ul>
+<h3 id="2-4-重构的价值"><a href="#2-4-重构的价值" class="headerlink" title="2.4 重构的价值"></a>2.4 重构的价值</h3><p>程序有两面价值，今天可以为你做什么和明天可以为你做什么为了满足明天的需要，你会遇到：</p>
+<ul>
+<li>难以阅读，逻辑重复</li>
+<li>添加新功能许修改以前代码</li>
+<li>复杂的条件逻辑等代码</li>
+</ul>
+<p>而你希望看到的是：</p>
+<ul>
+<li>容易阅读，所有逻辑在唯一指定地点，</li>
+<li>新的修改不会危及现有行为</li>
+<li>尽可能简单表达逻辑条件</li>
+</ul>
+<p><strong>重构</strong>就是把程序转变为这些特征的工具</p>
+<h3 id="2-5如何告诉（对付）经理"><a href="#2-5如何告诉（对付）经理" class="headerlink" title="2.5如何告诉（对付）经理"></a>2.5如何告诉（对付）经理</h3><p>很多经理都是进度驱动，所以更加需要重构带来的好处，所以不要告诉他们 他们不会理解的</p>
+<h4 id="2-5-1引入间接层与重构的关系"><a href="#2-5-1引入间接层与重构的关系" class="headerlink" title="2.5.1引入间接层与重构的关系"></a>2.5.1引入间接层与重构的关系</h4><p>间接层优点：</p>
+<ul>
+<li><p>允许逻辑共享</p>
+</li>
+<li><p>增加解释意图和实现的机会－多了类名和函数名</p>
+</li>
+<li><p>隔离变化</p>
+</li>
+<li><p>多态封装条件逻辑</p>
+</li>
+</ul>
+<h4 id="2-5-2何时不应该重构"><a href="#2-5-2何时不应该重构" class="headerlink" title="2.5.2何时不应该重构"></a>2.5.2何时不应该重构</h4><ul>
+<li>软件根本不工作</li>
+<li>最后期限已近</li>
+</ul>
+<p>未完成的重构可以称之为债务，迟早要还</p>
+<h4 id="2-5-3重构与预先设计的关系"><a href="#2-5-3重构与预先设计的关系" class="headerlink" title="2.5.3重构与预先设计的关系"></a>2.5.3重构与预先设计的关系</h4><p>重构可以节约不必要的时间精力花在预先设计上，让软件设计向简化发展</p>
+<h3 id="3代码的坏味道"><a href="#3代码的坏味道" class="headerlink" title="3代码的坏味道"></a>3代码的坏味道</h3><ul>
+<li><p>重复代码</p>
+</li>
+<li><p>过长函数</p>
+</li>
+<li><p>过大类，过长参数</p>
+</li>
+<li><p>修改一处程序的原因过多/一个原因修改过多的程序</p>
+</li>
+<li><p>数据依赖过多</p>
+</li>
+<li><p>重复的字段和参数</p>
+</li>
+<li><p>总是放在一起的字段</p>
+</li>
+<li><p>switch语句</p>
+</li>
+<li><p>平行继承关系</p>
+</li>
+<li><p>不是所有分支下都需要的临时变量</p>
+</li>
+<li><p>过度耦合调用链</p>
+</li>
+<li><p>不必要的委托</p>
+</li>
+<li><p>失血数据类</p>
+</li>
+<li><p>频繁重写父类方法</p>
+</li>
+<li><p>过多注释</p>
+</li>
+</ul>
+<h3 id="4-12具体如何做"><a href="#4-12具体如何做" class="headerlink" title="4~12具体如何做"></a>4~12具体如何做</h3><p>自己看书吧</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2018-09-04T02:00:00.000Z">2018-09-04</time>
                 
                 <div class="level-item">
@@ -366,7 +502,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            38
+                            39
                         </p>
                     </a>
                 </div>
@@ -608,7 +744,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">10</span>
+                <span class="level-item tag">11</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/mysql/">
@@ -616,7 +752,7 @@
                 <span class="level-item">mysql</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">2</span>
+                <span class="level-item tag">3</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -693,7 +829,7 @@
         <h3 class="menu-label">
             Tag Cloud
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 12.22px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
     </div>
 </div>
     
@@ -705,6 +841,25 @@
         <h3 class="menu-label">
             Recent
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
+                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -782,25 +937,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-消息幂等/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T17:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-消息幂等/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(二)-消息幂等</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -811,6 +947,17 @@
             Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">March 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
@@ -1057,7 +1204,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">23</span>
+                        <span class="tag is-grey">22</span>
                     </a>
                 </div>
                 
@@ -1099,7 +1246,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/数据库/">
                         <span class="tag">数据库</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
@@ -1127,7 +1274,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">9</span>
+                        <span class="tag is-grey">8</span>
                     </a>
                 </div>
                 
@@ -1155,6 +1302,25 @@
         
         <article class="media">
             
+            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
+                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/02/27/bY675l1AuosdCPt.jpg" alt="为什么引入间隙锁">
@@ -1229,25 +1395,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-消息幂等/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T17:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-消息幂等/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(二)-消息幂等</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1258,6 +1405,17 @@
             Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">March 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
@@ -1504,7 +1662,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">23</span>
+                        <span class="tag is-grey">22</span>
                     </a>
                 </div>
                 
@@ -1546,7 +1704,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/数据库/">
                         <span class="tag">数据库</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
@@ -1574,7 +1732,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">9</span>
+                        <span class="tag is-grey">8</span>
                     </a>
                 </div>
                 

@@ -136,6 +136,110 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-05-17T02:00:00.000Z">2019-05-17</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/工作/">工作</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    6 minutes read (About 888 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/05/17/2019-05-17-根据权限查询时避免角色切换遇到的坑/">[项目] 根据权限查询时避免角色切换遇到的坑</a>
+            
+        </h1>
+        <div class="content">
+            <p><a href="https://blog.yamato.moe/2018/11/06/2018-11-06-biz/">前情概要</a></p>
+<h3 id="1-问题背景"><a href="#1-问题背景" class="headerlink" title="1. 问题背景"></a>1. 问题背景</h3><p>使用多个角色查询列表时，会遇到两个维度的不同点：</p>
+<ul>
+<li>行维度：多个角色能够看到行的并集，sql需要多次查询取并集，之后还要去重分页排序</li>
+<li>列维度：如果不同角色可见列不同，计算出当前行能看到列的并集</li>
+</ul>
+<p>举一个例子：</p>
+<p>假设存在一个登录员工拥有两个角色：</p>
+<ol>
+<li>长期激励负责人：能看到拥有长期激励的人（行维度），能看到基本信息和长期激励信息（列维度）</li>
+<li>薪酬负责人：能看到低职级的人（行维度），能看到基本信息和薪酬信息（列维度）</li>
+</ol>
+<p>那么，在列表中他能看见：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>基本信息</th>
+<th>薪酬信息</th>
+<th>长期激励信息</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>低职级/无长期激励</td>
+<td>√</td>
+<td>√</td>
+<td>x</td>
+</tr>
+<tr>
+<td>低职级/长期激励</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>高职级/无长期激励</td>
+<td>x</td>
+<td>x</td>
+<td>x</td>
+</tr>
+<tr>
+<td>高职级/长期激励</td>
+<td>√</td>
+<td>x</td>
+<td>√</td>
+</tr>
+</tbody></table>
+<h3 id="2-实际遇到的问题（困难重重）"><a href="#2-实际遇到的问题（困难重重）" class="headerlink" title="2. 实际遇到的问题（困难重重）"></a>2. 实际遇到的问题（困难重重）</h3><p>基本思路已经在前期概要里介绍，本人已经实践了一段时间，挖了两个深坑正在解决中。</p>
+<h4 id="性能问题（已解决）"><a href="#性能问题（已解决）" class="headerlink" title="性能问题（已解决）"></a>性能问题（已解决）</h4><p>最开始的实现中数据是一条一条读取的，同时薪酬字段属于加密信息，使用了第三方微服务提供解密，读取字段多+解密字段多 导致了在百条分页的情况下接口在超时的边缘不断试探。。。</p>
+<p>解决方案：</p>
+<ul>
+<li>合并查询sql,批量查询数据</li>
+<li>合并解密请求,批量调用解密微服务</li>
+</ul>
+<p>因为之前为了方便我们解密使用了mybatis的TypeHandler做到字段隐式加解密，目前我们的做法是对于单条数据的加解密，还是保持原来的typeHandler做法，而对批量数据处理，重新写一套数据实体，同时使用mybatis的拦截器对查询的批量数据做批量解密的处理。具体做法可以参见我的另一片文章：<a href="https://blog.yamato.moe/2019/04/04/Mybatis%20ResultSetHandler_2019-04-04%20%E7%BB%AD/">【片段】 Mybatis ResultSetHandler 实践-续</a></p>
+<h4 id="批量查询带来的问题"><a href="#批量查询带来的问题" class="headerlink" title="批量查询带来的问题"></a>批量查询带来的问题</h4><p>批量查询返回的列表中列字段都是一致的，而我们的需求是不同的行能看见不同的列字段，把批量查询出来的列表直接返回是有问题的，这个问题因为疏忽导致了线上的一次故障。</p>
+<p>所以目前的思路是先做一次数据批量预取，之后在对列字段做处理，隐藏掉不能看见的字段。</p>
+<h3 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h3><p>没有想到当时想解决权限查询时避免角色切换这个问题时会遇到这么多困难，想法是正确的，在实际执行时还是困难重重。值得欣慰的在最开始的时候思路和方向都是正确的，同时也把其中遇到的各种问题和心得记录了下来，经过层层积累，才到达现在的高度。</p>
+<p>[]: <a href="https://blog.yamato.moe/2018/11/06/2018-11-06-biz/">https://blog.yamato.moe/2018/11/06/2018-11-06-biz/</a>    “根据权限查询时避免角色切换的一种思路”<br>[]: <a href="https://blog.yamato.moe/2019/04/04/Mybatis%20ResultSetHandler_2019-04-04%20%E7%BB%AD/">https://blog.yamato.moe/2019/04/04/Mybatis%20ResultSetHandler_2019-04-04%20%E7%BB%AD/</a>    “【片段】 Mybatis ResultSetHandler 实践-续”<br>[]: <a href="https://blog.yamato.moe/2019/01/09/Mybatis%20ResultSetHandler_2019-01-09/">https://blog.yamato.moe/2019/01/09/Mybatis%20ResultSetHandler_2019-01-09/</a>    “【片段】 Mybatis ResultSetHandler 实践”</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-04-18T02:00:00.000Z">2019-04-18</time>
                 
                 <div class="level-item">
@@ -240,64 +344,6 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-04-01T02:00:00.000Z">2019-04-01</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/读书/">读书</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    4 minutes read (About 639 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/04/01/2019-04-01-[项目感悟] 读《再谈敏捷开发与延期风控》/">[项目感悟] 读《再谈敏捷开发与延期风控》</a>
-            
-        </h1>
-        <div class="content">
-            <p>本人本身不太喜欢方法论，感觉都是套路，生搬硬套不适合自己，敏捷开发就是其中让我保持谨慎态度的方法论之一。</p>
-<h4 id="敏捷开发与Scrum"><a href="#敏捷开发与Scrum" class="headerlink" title="敏捷开发与Scrum"></a>敏捷开发与Scrum</h4><p>对于一个项目来说，能够即快又好地完成当然是非常棒的，但是众所周知，受限于项目管理三要素：时间、质量、成本，只能折衷选择。因此「敏捷」作为一种方法论（虽然Agile自称为Culture）被提出，其中Scrum(/skrʌm/，一种球类比赛)是比较知名的实现类之一。</p>
-<p>在Scum中，它主要强调将瀑布式开发流程转为多阶段小迭代，可以理解为CPU的多级流水线(Instruction pipeline)设计，流水线设计将CPU的计算逻辑拆分，实现了复用计算模块，进而提高了时钟频率，同时也引入了寄存器/分支预测等管理模块增加了复杂度。</p>
-<p>类似于CPU流水线机制，敏捷开发本质是在保持时间、质量不变的情况下，通过投入管理成本降低开发过程的空转成本，进而提高时钟周期的方法。</p>
-<p>用白话来说，可以把软件开放比作流水车间，把PM，SE比作流水线工人。</p>
-<h4 id="我见过的的假敏捷"><a href="#我见过的的假敏捷" class="headerlink" title="我见过的的假敏捷"></a>我见过的的假敏捷</h4><p>然而到了现实，由于各种原因，却很容易成为假敏捷</p>
-<ul>
-<li>将工位的隔栏拆开变成网吧“敏捷岛”</li>
-<li>强行将Release计划拆成一个月一版，将Sprint拆成2周就看作快速迭代，照着人月神话反着搞</li>
-<li>招聘一堆无责任心的开发让你去“敏捷”，永远无法实现“全功能部队”</li>
-<li>客户难沟通，PO低估工作量，SE设计缺陷，编码质量低等原因，最终导致延期<br>上述任何一个问题，都可能导致最终项目一锅粥，导致高层焦虑，中层跑路，底层混日子的结果。</li>
-</ul>
-<p>敏捷能够提供强大高效的方法论，但是前提是需要本身基础过硬的团队，敏捷只能帮助存在进步瓶颈的团队。如果项目已经空心化，债务多，这不是敏捷方法论应该解决的问题。</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -372,7 +418,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            38
+                            39
                         </p>
                     </a>
                 </div>
@@ -614,7 +660,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">10</span>
+                <span class="level-item tag">11</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/mysql/">
@@ -622,7 +668,7 @@
                 <span class="level-item">mysql</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">2</span>
+                <span class="level-item tag">3</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -699,7 +745,7 @@
         <h3 class="menu-label">
             Tag Cloud
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 12.22px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
     </div>
 </div>
     
@@ -711,6 +757,25 @@
         <h3 class="menu-label">
             Recent
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
+                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -788,25 +853,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-消息幂等/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T17:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-消息幂等/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(二)-消息幂等</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -817,6 +863,17 @@
             Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">March 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
@@ -1063,7 +1120,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">23</span>
+                        <span class="tag is-grey">22</span>
                     </a>
                 </div>
                 
@@ -1105,7 +1162,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/数据库/">
                         <span class="tag">数据库</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
@@ -1133,7 +1190,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">9</span>
+                        <span class="tag is-grey">8</span>
                     </a>
                 </div>
                 
@@ -1161,6 +1218,25 @@
         
         <article class="media">
             
+            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
+                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/02/27/2020-02-27-为什么引入间隙锁/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/02/27/bY675l1AuosdCPt.jpg" alt="为什么引入间隙锁">
@@ -1235,25 +1311,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/12/08/2019-12-08-消息幂等/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/lcKi4CHrfBG7dQT.jpg" alt="消息队列(二)-消息幂等">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-12-07T17:00:00.000Z">2019-12-08</time></div>
-                    <a href="/2019/12/08/2019-12-08-消息幂等/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列(二)-消息幂等</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/消息/">消息</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1264,6 +1321,17 @@
             Archives
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">March 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/02/">
@@ -1510,7 +1578,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/代码/">
                         <span class="tag">代码</span>
-                        <span class="tag is-grey">23</span>
+                        <span class="tag is-grey">22</span>
                     </a>
                 </div>
                 
@@ -1552,7 +1620,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/数据库/">
                         <span class="tag">数据库</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
@@ -1580,7 +1648,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/读书/">
                         <span class="tag">读书</span>
-                        <span class="tag is-grey">9</span>
+                        <span class="tag is-grey">8</span>
                     </a>
                 </div>
                 
