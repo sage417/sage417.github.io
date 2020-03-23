@@ -136,6 +136,52 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-03-13T02:00:00.000Z">2019-03-13</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    3 minutes read (About 438 words)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/03/13/【片段】SpringBoot Mybatis配置/">[片段] SpringBoot Mybatis配置</a>
+            
+        </h1>
+        <div class="content">
+            <p>纯记录，供自己参考🤣。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> MybatisProperties properties;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Interceptor[] interceptors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ResourceLoader resourceLoader;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> DatabaseIdProvider databaseIdProvider;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> List&lt;ConfigurationCustomizer&gt; configurationCustomizers;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">DataSourceConfig</span><span class="params">(MybatisProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">                        ObjectProvider&lt;Interceptor[]&gt; interceptorsProvider,</span></span></span><br><span class="line"><span class="function"><span class="params">                        ResourceLoader resourceLoader,</span></span></span><br><span class="line"><span class="function"><span class="params">                        ObjectProvider&lt;DatabaseIdProvider&gt; databaseIdProvider,</span></span></span><br><span class="line"><span class="function"><span class="params">                        ObjectProvider&lt;List&lt;ConfigurationCustomizer&gt;&gt; configurationCustomizersProvider)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.properties = properties;</span><br><span class="line">    <span class="keyword">this</span>.interceptors = interceptorsProvider.getIfAvailable();</span><br><span class="line">    <span class="keyword">this</span>.resourceLoader = resourceLoader;</span><br><span class="line">    <span class="keyword">this</span>.databaseIdProvider = databaseIdProvider.getIfAvailable();</span><br><span class="line">    <span class="keyword">this</span>.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 普通数据源</span></span><br><span class="line"><span class="comment"> * 主数据源，必须配置，spring启动时会执行初始化数据操作（无论是否真的需要），选择查找DataSource class类型的数据源</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="doctag">@link</span> DataSource&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Primary</span></span><br><span class="line"><span class="meta">@Bean</span>(name = BEANNAME_DATASOURCE_COMMON)</span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"com.lianjia.confucius.bridge.boot.datasource.common"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> DataSource <span class="title">createDataSourceCommon</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> DataSourceBuilder.create().build();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 只读数据源</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="doctag">@link</span> DataSource&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span>(name = BEANNAME_DATASOURCE_READONLY)</span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"com.lianjia.confucius.bridge.boot.datasource.readonly"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> DataSource <span class="title">createDataSourceReadonly</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> DataSourceBuilder.create().build();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> SqlSessionFactory <span class="title">sqlSessionFactory</span><span class="params">(DataSource dataSource)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    SqlSessionFactoryBean factory = <span class="keyword">new</span> SqlSessionFactoryBean();</span><br><span class="line">    factory.setDataSource(dataSource);</span><br><span class="line">    factory.setVfs(SpringBootVFS.class);</span><br><span class="line">    <span class="keyword">if</span> (StringUtils.hasText(<span class="keyword">this</span>.properties.getConfigLocation())) &#123;</span><br><span class="line">        factory.setConfigLocation(<span class="keyword">this</span>.resourceLoader.getResource(<span class="keyword">this</span>.properties.getConfigLocation()));</span><br><span class="line">    &#125;</span><br><span class="line">    org.apache.ibatis.session.Configuration configuration = <span class="keyword">this</span>.properties.getConfiguration();</span><br><span class="line">    <span class="keyword">if</span> (configuration == <span class="keyword">null</span> &amp;&amp; !StringUtils.hasText(<span class="keyword">this</span>.properties.getConfigLocation())) &#123;</span><br><span class="line">        configuration = <span class="keyword">new</span> org.apache.ibatis.session.Configuration();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (configuration != <span class="keyword">null</span> &amp;&amp; !CollectionUtils.isEmpty(<span class="keyword">this</span>.configurationCustomizers)) &#123;</span><br><span class="line">        <span class="keyword">for</span> (ConfigurationCustomizer customizer : <span class="keyword">this</span>.configurationCustomizers) &#123;</span><br><span class="line">            customizer.customize(configuration);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    factory.setConfiguration(configuration);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.properties.getConfigurationProperties() != <span class="keyword">null</span>) &#123;</span><br><span class="line">        factory.setConfigurationProperties(<span class="keyword">this</span>.properties.getConfigurationProperties());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!ObjectUtils.isEmpty(<span class="keyword">this</span>.interceptors)) &#123;</span><br><span class="line">        factory.setPlugins(<span class="keyword">this</span>.interceptors);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.databaseIdProvider != <span class="keyword">null</span>) &#123;</span><br><span class="line">        factory.setDatabaseIdProvider(<span class="keyword">this</span>.databaseIdProvider);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (StringUtils.hasLength(<span class="keyword">this</span>.properties.getTypeAliasesPackage())) &#123;</span><br><span class="line">        factory.setTypeAliasesPackage(<span class="keyword">this</span>.properties.getTypeAliasesPackage());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (StringUtils.hasLength(<span class="keyword">this</span>.properties.getTypeHandlersPackage())) &#123;</span><br><span class="line">        factory.setTypeHandlersPackage(<span class="keyword">this</span>.properties.getTypeHandlersPackage());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!ObjectUtils.isEmpty(<span class="keyword">this</span>.properties.resolveMapperLocations())) &#123;</span><br><span class="line">        factory.setMapperLocations(<span class="keyword">this</span>.properties.resolveMapperLocations());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> factory.getObject();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSessionTemplate <span class="title">sqlSessionTemplate</span><span class="params">(SqlSessionFactory sqlSessionFactory)</span> </span>&#123;</span><br><span class="line">    ExecutorType executorType = <span class="keyword">this</span>.properties.getExecutorType();</span><br><span class="line">    <span class="keyword">if</span> (executorType != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SqlSessionTemplate(sqlSessionFactory, executorType);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SqlSessionTemplate(sqlSessionFactory);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@Primary</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">primarySqlSessionFactory</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.sqlSessionFactory(<span class="keyword">this</span>.createDataSourceCommon());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">secondarySqlSessionFactory</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.sqlSessionFactory(<span class="keyword">this</span>.createDataSourceReadonly());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 实例普通的 sqlSession</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> SqlSession</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> Exception when any exception occured</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span>(name = BEANNAME_SQLSESSION_COMMON)</span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSession <span class="title">initSqlSessionCommon</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.sqlSessionTemplate(<span class="keyword">this</span>.primarySqlSessionFactory());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 实例只读的 sqlSession</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> SqlSession</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> Exception when any exception occured</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span>(name = BEANNAME_SQLSESSION_READONLY)</span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSession <span class="title">initSqlSessionReadonly</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.sqlSessionTemplate(<span class="keyword">this</span>.secondarySqlSessionFactory());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@MapperScan</span>(annotationClass = PrimaryMapper.class,</span><br><span class="line">        sqlSessionTemplateRef = BEANNAME_SQLSESSION_COMMON,</span><br><span class="line">        basePackageClasses = ITalentApplicationSpringBootStart.class)</span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">PrimaryMapperConfiguration</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@MapperScan</span>(annotationClass = SecondaryMapper.class,</span><br><span class="line">        sqlSessionTemplateRef = BEANNAME_SQLSESSION_READONLY,</span><br><span class="line">        basePackageClasses = ITalentApplicationSpringBootStart.class)</span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SecondaryMapperConfiguration</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-03-11T09:57:57.000Z">2019-03-11</time>
                 
                 <div class="level-item">
@@ -235,57 +281,6 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-02-11T02:00:00.000Z">2019-02-11</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    2 minutes read (About 227 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/02/11/【片段】@CreatedBy  @ModifiedBy/">[片段] @CreatedBy / @ModifiedBy 拦截器实现</a>
-            
-        </h1>
-        <div class="content">
-            <p>拦截器实现：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> app.pooi.common.entity;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> app.pooi.common.entity.anno.CreatedBy;</span><br><span class="line"><span class="keyword">import</span> app.pooi.common.entity.anno.ModifiedBy;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.executor.Executor;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.mapping.MappedStatement;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.plugin.Intercepts;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.plugin.Invocation;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.plugin.Plugin;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.plugin.Signature;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Supplier;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Intercepts</span>(&#123;</span><br><span class="line">        <span class="meta">@Signature</span>(type = Executor.class, method = <span class="string">"update"</span>, args = &#123;MappedStatement.class, Object.class&#125;),</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EntityInterceptor</span> <span class="keyword">implements</span> <span class="title">org</span>.<span class="title">apache</span>.<span class="title">ibatis</span>.<span class="title">plugin</span>.<span class="title">Interceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Supplier&lt;Long&gt; auditorAware;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">intercept</span><span class="params">(Invocation invocation)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        Executor executor = (Executor) invocation.getTarget();</span><br><span class="line"></span><br><span class="line">        MappedStatement ms = (MappedStatement) invocation.getArgs()[<span class="number">0</span>];</span><br><span class="line">        Object o = invocation.getArgs()[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">        Arrays.stream(o.getClass().getDeclaredFields())</span><br><span class="line">                .forEach(field -&gt; &#123;</span><br><span class="line">                    <span class="keyword">final</span> CreatedBy createdBy = field.getAnnotation(CreatedBy.class);</span><br><span class="line">                    <span class="keyword">final</span> ModifiedBy modifiedBy = field.getAnnotation(ModifiedBy.class);</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (createdBy != <span class="keyword">null</span> || modifiedBy != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            field.set(o, auditorAware.get());</span><br><span class="line">                        &#125; <span class="keyword">catch</span> (IllegalAccessException ignore) &#123;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> invocation.proceed();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">plugin</span><span class="params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Plugin.wrap(target, <span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setProperties</span><span class="params">(Properties properties)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>配置：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MybatisInterceptorConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Interceptor[] configurationCustomizer(CipherSpi cipherSpi) &#123;</span><br><span class="line">        <span class="keyword">final</span> EntityInterceptor entityInterceptor = <span class="keyword">new</span> EntityInterceptor();</span><br><span class="line"></span><br><span class="line">        entityInterceptor.setAuditorAware(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">final</span> String header = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader(XHeaders.LOGIN_USER_ID);</span><br><span class="line">            <span class="keyword">return</span> Long.valueOf(header);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Interceptor[]&#123;<span class="keyword">new</span> DecryptInterceptor(cipherSpi), entityInterceptor&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -360,7 +355,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            40
+                            41
                         </p>
                     </a>
                 </div>
@@ -602,7 +597,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">12</span>
+                <span class="level-item tag">13</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/架构/mysql/">
@@ -610,7 +605,7 @@
                 <span class="level-item">mysql</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">3</span>
+                <span class="level-item tag">4</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/架构/nosql/">
@@ -687,7 +682,7 @@
         <h3 class="menu-label">
             Tag Cloud
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 17.78px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 13.33px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11.11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 15.56px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 18.89px;">工作</a> <a href="/tags/感悟/" style="font-size: 12.22px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 12.22px;">数据库</a> <a href="/tags/消息/" style="font-size: 11.11px;">消息</a> <a href="/tags/算法/" style="font-size: 14.44px;">算法</a> <a href="/tags/缓存/" style="font-size: 14.44px;">缓存</a> <a href="/tags/读书/" style="font-size: 16.67px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/消息/" style="font-size: 11px;">消息</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
     </div>
 </div>
     
@@ -699,6 +694,25 @@
         <h3 class="menu-label">
             Recent
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/03/23/2020-02-23_高并发系统-数据库关键点梳理/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/03/23/eNkhvRJ12jaXwgr.jpg" alt="高并发系统-数据库关键点梳理">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-23T05:54:56.995Z">2020-03-23</time></div>
+                    <a href="/2020/03/23/2020-02-23_高并发系统-数据库关键点梳理/" class="title has-link-black-ter is-size-6 has-text-weight-normal">高并发系统-数据库关键点梳理</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -776,25 +790,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/01/28/2020-01-28-高性能MySql 4~6章/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/01/31/x7tbhdX8uR5nLp2.jpg" alt="高性能MySql 4至6章读书笔记">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-27T16:00:00.000Z">2020-01-28</time></div>
-                    <a href="/2020/01/28/2020-01-28-高性能MySql 4~6章/" class="title has-link-black-ter is-size-6 has-text-weight-normal">高性能MySql 4至6章读书笔记</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -812,7 +807,7 @@
                     <span class="level-item">March 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">2</span>
+                    <span class="level-item tag">3</span>
                 </span>
             </a>
         </li>
@@ -1104,7 +1099,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/数据库/">
                         <span class="tag">数据库</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">4</span>
                     </a>
                 </div>
                 
@@ -1160,6 +1155,25 @@
         
         <article class="media">
             
+            <a href="/2020/03/23/2020-02-23_高并发系统-数据库关键点梳理/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/03/23/eNkhvRJ12jaXwgr.jpg" alt="高并发系统-数据库关键点梳理">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-23T05:54:56.995Z">2020-03-23</time></div>
+                    <a href="/2020/03/23/2020-02-23_高并发系统-数据库关键点梳理/" class="title has-link-black-ter is-size-6 has-text-weight-normal">高并发系统-数据库关键点梳理</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/03/23/2020-02-23_IM系统关键点梳理/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/03/23/FwNYL9kIoCRDVT5.jpg" alt="IM系统关键点梳理">
@@ -1234,25 +1248,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/01/28/2020-01-28-高性能MySql 4~6章/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/01/31/x7tbhdX8uR5nLp2.jpg" alt="高性能MySql 4至6章读书笔记">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-27T16:00:00.000Z">2020-01-28</time></div>
-                    <a href="/2020/01/28/2020-01-28-高性能MySql 4~6章/" class="title has-link-black-ter is-size-6 has-text-weight-normal">高性能MySql 4至6章读书笔记</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a> / <a class="has-link-grey -link" href="/categories/架构/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1270,7 +1265,7 @@
                     <span class="level-item">March 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">2</span>
+                    <span class="level-item tag">3</span>
                 </span>
             </a>
         </li>
@@ -1562,7 +1557,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/数据库/">
                         <span class="tag">数据库</span>
-                        <span class="tag is-grey">3</span>
+                        <span class="tag is-grey">4</span>
                     </a>
                 </div>
                 
