@@ -11,7 +11,7 @@
 
 
     <meta name="description" content="我们来考虑一种最简单的业务场景，比方说在你的电商系统中有一个用户表，表中只有 ID 和年龄两个字段，缓存中我们以 ID 为 Key 存储用户的年龄信息。那么当我们要把 ID 为 1 的用户的年龄从 19 变更为 20，要如何做呢？ 你可能会产生这样的思路：先更新数据库中 ID 为 1 的记录，再更新缓存中 Key 为 1 的数据。  这个思路会造成缓存和数据库中的数据不一致。比如，A 请求将数据库">
-<meta name="keywords" content="工作,缓存,分布式">
+<meta name="keywords" content="工作,分布式,缓存">
 <meta property="og:type" content="article">
 <meta property="og:title" content="缓存专题(二) Cache Aside（旁路缓存）策略">
 <meta property="og:url" content="http://blog.yamato.moe/2019/12/01/2019-12-01-Cache Aside（旁路缓存）策略/index.html">
