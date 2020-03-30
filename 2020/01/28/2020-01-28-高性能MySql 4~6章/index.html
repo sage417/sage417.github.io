@@ -11,13 +11,13 @@
 
 
     <meta name="description" content="第四章 Schema设计选择优化的数据类型更小的通常更好，但是要确保没有低估需要存储的值的范围，因为在schema中的多个地方增加数据类型范围是一个十分耗时的操作。 简单就好简单的数据类型的操作通常需要更少的cpu时间。 尽量避免NULL可为NULL的列使得索引、索引比统计和值比较都更为复杂。 当然也有例外，InnoDB使用单独的位存储NULL值， 所以对于稀疏数据有很好的空间效率。 选择标识符一">
-<meta name="keywords" content="读书,代码">
+<meta name="keywords" content="代码,读书">
 <meta property="og:type" content="article">
 <meta property="og:title" content="高性能MySql 4至6章读书笔记">
 <meta property="og:url" content="http://blog.yamato.moe/2020/01/28/2020-01-28-高性能MySql 4~6章/index.html">
 <meta property="og:site_name" content="塑料内存">
 <meta property="og:description" content="第四章 Schema设计选择优化的数据类型更小的通常更好，但是要确保没有低估需要存储的值的范围，因为在schema中的多个地方增加数据类型范围是一个十分耗时的操作。 简单就好简单的数据类型的操作通常需要更少的cpu时间。 尽量避免NULL可为NULL的列使得索引、索引比统计和值比较都更为复杂。 当然也有例外，InnoDB使用单独的位存储NULL值， 所以对于稀疏数据有很好的空间效率。 选择标识符一">
-<meta property="og:locale" content="zh-cn">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://i.loli.net/2020/01/31/x7tbhdX8uR5nLp2.jpg">
 <meta property="og:updated_time" content="2020-02-18T04:24:58.801Z">
 <meta name="twitter:card" content="summary">
@@ -117,12 +117,12 @@
                     
                 
                 
-                <a class="navbar-item is-hidden-tablet catalogue" title="Katalog" href="javascript:;">
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
                     <i class="fas fa-list-ul"></i>
                 </a>
                 
                 
-                <a class="navbar-item search" title="Suche" href="javascript:;">
+                <a class="navbar-item search" title="搜索" href="javascript:;">
                     <i class="fas fa-search"></i>
                 </a>
                 
@@ -157,7 +157,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    22 分钟 lesen (Über 3225 Worte)
+                    22 分钟 读完 (大约 3225 个字)
                 </span>
                 
                 
@@ -324,7 +324,7 @@
 
 <div class="card">
     <div class="card-content">
-        <h3 class="menu-label has-text-centered">Gefällt Ihnen der Artikel? Unterstützen Sie den Autor mit</h3>
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
         <div class="buttons is-centered">
             
                 
@@ -332,8 +332,8 @@
     <span class="icon is-small">
         <i class="fab fa-alipay"></i>
     </span>
-    <span>Alipay</span>
-    <div class="qrcode"><img src="https://i.loli.net/2019/11/22/XRDCKkWs2v5GmI6.jpg" alt="Alipay"></div>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="https://i.loli.net/2019/11/22/XRDCKkWs2v5GmI6.jpg" alt="支付宝"></div>
 </a>
 
                 
@@ -406,7 +406,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Posts
+                        文章
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
@@ -418,7 +418,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Kategorien
+                        分类
                     </p>
                     <a href="/categories">
                         <p class="title has-text-weight-normal">
@@ -430,7 +430,7 @@
             <div class="level-item has-text-centered is-marginless">
                 <div>
                     <p class="heading">
-                        Tags
+                        标签
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
@@ -443,7 +443,7 @@
         
         <div class="level">
             <a class="level-item button is-link is-rounded" href="http://github.com/sage417" target="_blank" rel="noopener">
-                Folgen</a>
+                关注我</a>
         </div>
         
         
@@ -496,7 +496,7 @@
         <div class="card-content">
             <div class="menu">
                 <h3 class="menu-label">
-                    Katalog
+                    目录
                 </h3>
                 <ul class="menu-list"><li>
         <a class="is-flex" href="#第四章-Schema设计">
@@ -604,7 +604,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            Links
+            链接
         </h3>
         <ul class="menu-list">
         
@@ -663,7 +663,7 @@
     <div class="card-content">
         <div class="menu">
             <h3 class="menu-label">
-                Kategorien
+                分类
             </h3>
             <ul class="menu-list">
             <li>
@@ -843,7 +843,7 @@
         <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
-            Tag Cloud
+            标签云
         </h3>
         <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/消息/" style="font-size: 11px;">消息</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
     </div>
@@ -912,7 +912,7 @@
 </footer>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
-<script>moment.locale("zh-cn");</script>
+<script>moment.locale("zh-CN");</script>
 
 
 <script>
@@ -989,7 +989,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<a id="back-to-top" title="Zurück nach oben" href="javascript:;">
+<a id="back-to-top" title="回到顶端" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/js/back-to-top.js" defer></script>
@@ -1013,7 +1013,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Tippen Sie etwas..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -1025,11 +1025,11 @@ document.addEventListener('DOMContentLoaded', function () {
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
-                PAGES: 'Seiten',
-                CATEGORIES: 'Kategorien',
-                TAGS: 'Tags',
-                UNTITLED: '(Unbenannt)',
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
             },
             CONTENT_URL: '/content.json',
         };
