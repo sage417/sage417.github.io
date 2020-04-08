@@ -136,6 +136,66 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-04-18T02:00:00.000Z">2019-04-18</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/resilience4j/">resilience4j</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    3 分钟 读完 (大约 431 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/04/18/resilience4j-retry源码阅读/">resilience4j-retry源码阅读</a>
+            
+        </h1>
+        <div class="content">
+            <p>resilience4j 源码还是比较清晰简单的，比较适合阅读。</p>
+<p>放一张主要类的结构图：</p>
+<p><img src="https://i.loli.net/2019/04/18/5cb7e40673fcf.png" alt=""></p>
+<h4 id="Retry入口"><a href="#Retry入口" class="headerlink" title="Retry入口"></a>Retry入口</h4><p>Retry接口是提供重试功能的入口，主要提供了方法模版，具体校验结构，失败后处理由Context子类实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Creates a retryable supplier.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> retry    the retry context</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> supplier the original function</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &lt;T&gt;      the type of results supplied by this supplier</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> a retryable function</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> &lt;T&gt; <span class="function">Supplier&lt;T&gt; <span class="title">decorateSupplier</span><span class="params">(Retry retry, Supplier&lt;T&gt; supplier)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> () -&gt; &#123;</span><br><span class="line">		Retry.Context&lt;T&gt; context = retry.context();</span><br><span class="line">		<span class="keyword">do</span> <span class="keyword">try</span> &#123;</span><br><span class="line">			T result = supplier.get();</span><br><span class="line">			<span class="keyword">final</span> <span class="keyword">boolean</span> validationOfResult = context.onResult(result);</span><br><span class="line">			<span class="keyword">if</span> (!validationOfResult) &#123;</span><br><span class="line">				context.onSuccess();</span><br><span class="line">				<span class="keyword">return</span> result;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (RuntimeException runtimeException) &#123;</span><br><span class="line">			context.onRuntimeError(runtimeException);</span><br><span class="line">		&#125; <span class="keyword">while</span> (<span class="keyword">true</span>);</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里摘抄了一段核心代码，作用是循环直到context.onResult(result)返回true为止，需要留意context.onResult/onRuntimeError/onError可能执行多次， onSuccess只会执行一次，这里每次进入重试都是一个新的context对象。</p>
+<h4 id="Retry-ContextImpl"><a href="#Retry-ContextImpl" class="headerlink" title="Retry.ContextImpl"></a>Retry.ContextImpl</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onResult</span><span class="params">(T result)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> != resultPredicate &amp;&amp; resultPredicate.test(result)) &#123;</span><br><span class="line">        <span class="keyword">int</span> currentNumOfAttempts = numOfAttempts.incrementAndGet();</span><br><span class="line">        <span class="keyword">if</span> (currentNumOfAttempts &gt;= maxAttempts) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            waitIntervalAfterFailure(currentNumOfAttempts, <span class="keyword">null</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onRuntimeError</span><span class="params">(RuntimeException runtimeException)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (exceptionPredicate.test(runtimeException)) &#123;</span><br><span class="line">        lastRuntimeException.set(runtimeException);</span><br><span class="line">        throwOrSleepAfterRuntimeException();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        failedWithoutRetryCounter.increment();</span><br><span class="line">        publishRetryEvent(() -&gt; <span class="keyword">new</span> RetryOnIgnoredErrorEvent(getName(), runtimeException));</span><br><span class="line">        <span class="keyword">throw</span> runtimeException;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先关注onResult，它负责判断是否需要继续重试，如果通过校验或者重试超过此数，会停止重试。</p>
+<p>onRuntimeError/onError, 负责把catch的异常存储在lastRuntimeException中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> currentNumOfAttempts = numOfAttempts.get();</span><br><span class="line">	<span class="keyword">if</span> (currentNumOfAttempts &gt; <span class="number">0</span>) &#123;</span><br><span class="line">		succeededAfterRetryCounter.increment();</span><br><span class="line">		Throwable throwable = Option.of(lastException.get()).getOrElse(lastRuntimeException.get());</span><br><span class="line">		publishRetryEvent(() -&gt; <span class="keyword">new</span> RetryOnSuccessEvent(getName(), currentNumOfAttempts, throwable));</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		succeededWithoutRetryCounter.increment();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>onSuccess负责统计和发送事件。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>总体来说retry比较简单，需要注意的点有一个如果设置了结果校验，如果一直校验不通过，将返回未通过的结果，而不是返回失败。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-04-04T02:00:00.000Z">2019-04-04</time>
                 
                 <div class="level-item">
@@ -238,52 +298,6 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-03-13T02:00:00.000Z">2019-03-13</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/Java框架/Mybatis/">Mybatis</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    3 分钟 读完 (大约 438 个字)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/03/13/【片段】SpringBoot Mybatis配置/">[片段] SpringBoot Mybatis配置</a>
-            
-        </h1>
-        <div class="content">
-            <p>纯记录，供自己参考🤣。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> MybatisProperties properties;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Interceptor[] interceptors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ResourceLoader resourceLoader;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> DatabaseIdProvider databaseIdProvider;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> List&lt;ConfigurationCustomizer&gt; configurationCustomizers;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">DataSourceConfig</span><span class="params">(MybatisProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">                        ObjectProvider&lt;Interceptor[]&gt; interceptorsProvider,</span></span></span><br><span class="line"><span class="function"><span class="params">                        ResourceLoader resourceLoader,</span></span></span><br><span class="line"><span class="function"><span class="params">                        ObjectProvider&lt;DatabaseIdProvider&gt; databaseIdProvider,</span></span></span><br><span class="line"><span class="function"><span class="params">                        ObjectProvider&lt;List&lt;ConfigurationCustomizer&gt;&gt; configurationCustomizersProvider)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.properties = properties;</span><br><span class="line">    <span class="keyword">this</span>.interceptors = interceptorsProvider.getIfAvailable();</span><br><span class="line">    <span class="keyword">this</span>.resourceLoader = resourceLoader;</span><br><span class="line">    <span class="keyword">this</span>.databaseIdProvider = databaseIdProvider.getIfAvailable();</span><br><span class="line">    <span class="keyword">this</span>.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 普通数据源</span></span><br><span class="line"><span class="comment"> * 主数据源，必须配置，spring启动时会执行初始化数据操作（无论是否真的需要），选择查找DataSource class类型的数据源</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="doctag">@link</span> DataSource&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Primary</span></span><br><span class="line"><span class="meta">@Bean</span>(name = BEANNAME_DATASOURCE_COMMON)</span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"com.lianjia.confucius.bridge.boot.datasource.common"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> DataSource <span class="title">createDataSourceCommon</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> DataSourceBuilder.create().build();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 只读数据源</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="doctag">@link</span> DataSource&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span>(name = BEANNAME_DATASOURCE_READONLY)</span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"com.lianjia.confucius.bridge.boot.datasource.readonly"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> DataSource <span class="title">createDataSourceReadonly</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> DataSourceBuilder.create().build();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> SqlSessionFactory <span class="title">sqlSessionFactory</span><span class="params">(DataSource dataSource)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    SqlSessionFactoryBean factory = <span class="keyword">new</span> SqlSessionFactoryBean();</span><br><span class="line">    factory.setDataSource(dataSource);</span><br><span class="line">    factory.setVfs(SpringBootVFS.class);</span><br><span class="line">    <span class="keyword">if</span> (StringUtils.hasText(<span class="keyword">this</span>.properties.getConfigLocation())) &#123;</span><br><span class="line">        factory.setConfigLocation(<span class="keyword">this</span>.resourceLoader.getResource(<span class="keyword">this</span>.properties.getConfigLocation()));</span><br><span class="line">    &#125;</span><br><span class="line">    org.apache.ibatis.session.Configuration configuration = <span class="keyword">this</span>.properties.getConfiguration();</span><br><span class="line">    <span class="keyword">if</span> (configuration == <span class="keyword">null</span> &amp;&amp; !StringUtils.hasText(<span class="keyword">this</span>.properties.getConfigLocation())) &#123;</span><br><span class="line">        configuration = <span class="keyword">new</span> org.apache.ibatis.session.Configuration();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (configuration != <span class="keyword">null</span> &amp;&amp; !CollectionUtils.isEmpty(<span class="keyword">this</span>.configurationCustomizers)) &#123;</span><br><span class="line">        <span class="keyword">for</span> (ConfigurationCustomizer customizer : <span class="keyword">this</span>.configurationCustomizers) &#123;</span><br><span class="line">            customizer.customize(configuration);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    factory.setConfiguration(configuration);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.properties.getConfigurationProperties() != <span class="keyword">null</span>) &#123;</span><br><span class="line">        factory.setConfigurationProperties(<span class="keyword">this</span>.properties.getConfigurationProperties());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!ObjectUtils.isEmpty(<span class="keyword">this</span>.interceptors)) &#123;</span><br><span class="line">        factory.setPlugins(<span class="keyword">this</span>.interceptors);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.databaseIdProvider != <span class="keyword">null</span>) &#123;</span><br><span class="line">        factory.setDatabaseIdProvider(<span class="keyword">this</span>.databaseIdProvider);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (StringUtils.hasLength(<span class="keyword">this</span>.properties.getTypeAliasesPackage())) &#123;</span><br><span class="line">        factory.setTypeAliasesPackage(<span class="keyword">this</span>.properties.getTypeAliasesPackage());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (StringUtils.hasLength(<span class="keyword">this</span>.properties.getTypeHandlersPackage())) &#123;</span><br><span class="line">        factory.setTypeHandlersPackage(<span class="keyword">this</span>.properties.getTypeHandlersPackage());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!ObjectUtils.isEmpty(<span class="keyword">this</span>.properties.resolveMapperLocations())) &#123;</span><br><span class="line">        factory.setMapperLocations(<span class="keyword">this</span>.properties.resolveMapperLocations());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> factory.getObject();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSessionTemplate <span class="title">sqlSessionTemplate</span><span class="params">(SqlSessionFactory sqlSessionFactory)</span> </span>&#123;</span><br><span class="line">    ExecutorType executorType = <span class="keyword">this</span>.properties.getExecutorType();</span><br><span class="line">    <span class="keyword">if</span> (executorType != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SqlSessionTemplate(sqlSessionFactory, executorType);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SqlSessionTemplate(sqlSessionFactory);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@Primary</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">primarySqlSessionFactory</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.sqlSessionFactory(<span class="keyword">this</span>.createDataSourceCommon());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">secondarySqlSessionFactory</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.sqlSessionFactory(<span class="keyword">this</span>.createDataSourceReadonly());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 实例普通的 sqlSession</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> SqlSession</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> Exception when any exception occured</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span>(name = BEANNAME_SQLSESSION_COMMON)</span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSession <span class="title">initSqlSessionCommon</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.sqlSessionTemplate(<span class="keyword">this</span>.primarySqlSessionFactory());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 实例只读的 sqlSession</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> SqlSession</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> Exception when any exception occured</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span>(name = BEANNAME_SQLSESSION_READONLY)</span><br><span class="line"><span class="function"><span class="keyword">public</span> SqlSession <span class="title">initSqlSessionReadonly</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.sqlSessionTemplate(<span class="keyword">this</span>.secondarySqlSessionFactory());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@MapperScan</span>(annotationClass = PrimaryMapper.class,</span><br><span class="line">        sqlSessionTemplateRef = BEANNAME_SQLSESSION_COMMON,</span><br><span class="line">        basePackageClasses = ITalentApplicationSpringBootStart.class)</span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">PrimaryMapperConfiguration</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@MapperScan</span>(annotationClass = SecondaryMapper.class,</span><br><span class="line">        sqlSessionTemplateRef = BEANNAME_SQLSESSION_READONLY,</span><br><span class="line">        basePackageClasses = ITalentApplicationSpringBootStart.class)</span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SecondaryMapperConfiguration</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -358,7 +372,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            43
+                            44
                         </p>
                     </a>
                 </div>
@@ -552,7 +566,7 @@
                 <span class="level-item">中间件</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">15</span>
+                <span class="level-item tag">16</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/中间件/mysql/">
@@ -592,7 +606,7 @@
                 <span class="level-item">消息队列</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">3</span>
+                <span class="level-item tag">4</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/中间件/缓存/">
@@ -685,7 +699,7 @@
         <h3 class="menu-label">
             标签云
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 10px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/消息/" style="font-size: 11px;">消息</a> <a href="/tags/消息队列/" style="font-size: 10px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 11px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/消息/" style="font-size: 11px;">消息</a> <a href="/tags/消息队列/" style="font-size: 11px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
     </div>
 </div>
     
@@ -700,7 +714,26 @@
         
         <article class="media">
             
-            <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="media-left">
+            <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/04/08/QlkTUGNtbAL3gx5.jpg" alt="消息队列基础补充">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-07T16:00:00.000Z">2020-04-08</time></div>
+                    <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础补充</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/04/02/QqsSbO1gldWTpfo.jpg" alt="消息队列基础概念">
                 </p>
@@ -709,7 +742,7 @@
             <div class="media-content">
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-01T16:00:00.000Z">2020-04-02</time></div>
-                    <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
+                    <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
                     </p>
@@ -774,25 +807,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
-                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -810,7 +824,7 @@
                     <span class="level-item">四月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -1071,7 +1085,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/中间件/">
                         <span class="tag">中间件</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -1134,7 +1148,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/消息队列/">
                         <span class="tag">消息队列</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -1183,7 +1197,26 @@
         
         <article class="media">
             
-            <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="media-left">
+            <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/04/08/QlkTUGNtbAL3gx5.jpg" alt="消息队列基础补充">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-07T16:00:00.000Z">2020-04-08</time></div>
+                    <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础补充</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/04/02/QqsSbO1gldWTpfo.jpg" alt="消息队列基础概念">
                 </p>
@@ -1192,7 +1225,7 @@
             <div class="media-content">
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-01T16:00:00.000Z">2020-04-02</time></div>
-                    <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
+                    <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
                     </p>
@@ -1257,25 +1290,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
-                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1293,7 +1307,7 @@
                     <span class="level-item">四月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -1554,7 +1568,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/中间件/">
                         <span class="tag">中间件</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -1617,7 +1631,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/消息队列/">
                         <span class="tag">消息队列</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 

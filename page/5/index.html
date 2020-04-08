@@ -133,6 +133,121 @@
 <div class="card">
     
     <div class="card-image">
+        <a href="/2019/12/04/2019-12-04-缓存穿透解决方案/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2019/12/04/aHXFTSVv9hlJb3s.jpg" alt="缓存专题(五) 如何解决缓存穿透">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-12-03T18:00:00.000Z">2019-12-04</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/缓存/">缓存</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    27 分钟 读完 (大约 4060 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/12/04/2019-12-04-缓存穿透解决方案/">缓存专题(五) 如何解决缓存穿透</a>
+            
+        </h1>
+        <div class="content">
+            <h2 id="什么是缓存穿透"><a href="#什么是缓存穿透" class="headerlink" title="什么是缓存穿透"></a>什么是缓存穿透</h2><p>缓存穿透其实是指从缓存中没有查到数据，而不得不从后端系统（比如数据库）中查询的情况。你可以把数据库比喻为手机，它是经受不了太多的划痕和磕碰的，所以你需要给它贴个膜再套个保护壳，就能对手机起到一定的保护作用了。</p>
+<p>不过，少量的缓存穿透不可避免，对系统也是没有损害的，主要有几点原因：</p>
+<ul>
+<li>一方面，互联网系统通常会面临极大数据量的考验，而缓存系统在容量上是有限的，不可能存储系统所有的数据，那么在查询未缓存数据的时候就会发生缓存穿透。</li>
+<li>另一方面，互联网系统的数据访问模型一般会遵从“80/20 原则”。“80/20 原则”又称为帕累托法则，是意大利经济学家帕累托提出的一个经济学的理论。它是指在一组事物中，最重要的事物通常只占 20%，而剩余的 80% 的事物确实不重要的。把它应用到数据访问的领域，就是我们会经常访问 20% 的热点数据，而另外的 80% 的数据则不会被经常访问。比如你买了很多衣服，很多书，但是其实经常穿的，经常看的，可能也就是其中很小的一部分。</li>
+</ul>
+<p>既然缓存的容量有限，并且大部分的访问只会请求 20% 的热点数据，那么理论上说，我们只需要在有限的缓存空间里存储 20% 的热点数据就可以有效地保护脆弱的后端系统了，也就可以放弃缓存另外 80% 的非热点数据了。所以，这种少量的缓存穿透是不可避免的，但是对系统是没有损害的。</p>
+<p>那么什么样的缓存穿透对系统有害呢？答案是大量的穿透请求超过了后端系统的承受范围，造成了后端系统的崩溃。如果把少量的请求比作毛毛细雨，那么一旦变成倾盆大雨，引发洪水，冲倒房屋，肯定就不行了。</p>
+<p>产生这种大量穿透请求的场景有很多，接下来，我就带你解析这几种场景以及相应的解决方案。</p>
+<h2 id="缓存穿透的解决方案"><a href="#缓存穿透的解决方案" class="headerlink" title="缓存穿透的解决方案"></a>缓存穿透的解决方案</h2><p>先来考虑这样一种场景：在你的电商系统的用户表中，我们需要通过用户 ID 查询用户的信息，缓存的读写策略采用 Cache Aside 策略。</p>
+<p>那么，如果要读取一个用户表中未注册的用户，会发生什么情况呢？按照这个策略，我们会先读缓存，再穿透读数据库。由于用户并不存在，所以缓存和数据库中都没有查询到数据，因此也就不会向缓存中回种数据（也就是向缓存中设置值的意思），这样当再次请求这个用户数据的时候还是会再次穿透到数据库。在这种场景下，缓存并不能有效地阻挡请求穿透到数据库上，它的作用就微乎其微了。</p>
+<p>那如何解决缓存穿透呢？一般来说我们会有两种解决方案：<strong>回种空值以及使用布隆过滤器。</strong></p>
+<p>我们先来看看第一种方案。</p>
+<h3 id="回种空值"><a href="#回种空值" class="headerlink" title="回种空值"></a>回种空值</h3><p>回顾上面提到的场景，你会发现最大的问题在于数据库中并不存在用户的数据，这就造成无论查询多少次，数据库中永远都不会存在这个用户的数据，穿透永远都会发生。</p>
+<p><strong>类似的场景还有一些：</strong>比如由于代码的 bug 导致查询数据库的时候抛出了异常，这样可以认为从数据库查询出来的数据为空，同样不会回种缓存。</p>
+<p>那么，当我们从数据库中查询到空值或者发生异常时，我们可以向缓存中回种一个空值。但是因为空值并不是准确的业务数据，并且会占用缓存的空间，所以我们会给这个空值加一个比较短的过期时间，让空值在短时间之内能够快速过期淘汰。<strong>下面是这个流程的伪代码：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Object nullValue = <span class="keyword">new</span> Object();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  Object valueFromDB = getFromDB(uid); <span class="comment">// 从数据库中查询数据</span></span><br><span class="line">  <span class="keyword">if</span> (valueFromDB == <span class="keyword">null</span>) &#123;</span><br><span class="line">    cache.set(uid, nullValue, <span class="number">10</span>);   <span class="comment">// 如果从数据库中查询到空值，就把空值写入缓存，设置较短的超时时间</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    cache.set(uid, valueFromDB, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">  cache.set(uid, nullValue, <span class="number">10</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>回种空值虽然能够阻挡大量穿透的请求，但如果有大量获取未注册用户信息的请求，缓存内就会有有大量的空值缓存，也就会浪费缓存的存储空间，如果缓存空间被占满了，还会剔除掉一些已经被缓存的用户信息反而会造成缓存命中率的下降。</p>
+<p><strong>所以这个方案，我建议你在使用的时候应该评估一下缓存容量是否能够支撑。</strong>如果需要大量的缓存节点来支持，那么就无法通过通过回种空值的方式来解决，这时你可以考虑使用布隆过滤器。</p>
+<h3 id="使用布隆过滤器"><a href="#使用布隆过滤器" class="headerlink" title="使用布隆过滤器"></a>使用布隆过滤器</h3><p>1970 年布隆提出了一种布隆过滤器的算法，用来判断一个元素是否在一个集合中。这种算法由一个二进制数组和一个 Hash 算法组成。<strong>它的基本思路如下：</strong></p>
+<p>我们把集合中的每一个值按照提供的 Hash 算法算出对应的 Hash 值，然后将 Hash 值对数组长度取模后得到需要计入数组的索引值，并且将数组这个位置的值从 0 改成 1。在判断一个元素是否存在于这个集合中时，你只需要将这个元素按照相同的算法计算出索引值，如果这个位置的值为 1 就认为这个元素在集合中，否则则认为不在集合中。</p>
+<p>下图是布隆过滤器示意图，我来带你分析一下图内的信息。</p>
+<p><img src="https://i.loli.net/2019/12/04/bTVrdWJIfQ9lvRg.jpg" alt="nullcache1.jpg"></p>
+<p>A、B、C 等元素组成了一个集合，元素 D 计算出的 Hash 值所对应的的数组中值是 1，所以可以认为 D 也在集合中。而 F 在数组中的值是 0，所以 F 不在数组中。</p>
+<p><strong>那么我们如何使用布隆过滤器来解决缓存穿透的问题呢？</strong></p>
+<p>还是以存储用户信息的表为例进行讲解。首先，我们初始化一个很大的数组，比方说长度为 20 亿的数组，接下来我们选择一个 Hash 算法，然后我们将目前现有的所有用户的 ID 计算出 Hash 值并且映射到这个大数组中，映射位置的值设置为 1，其它值设置为 0。</p>
+<p>新注册的用户除了需要写入到数据库中之外，它也需要依照同样的算法更新布隆过滤器的数组中，相应位置的值。那么当我们需要查询某一个用户的信息时，我们首先查询这个 ID 在布隆过滤器中是否存在，如果不存在就直接返回空值，而不需要继续查询数据库和缓存，这样就可以极大地减少异常查询带来的缓存穿透。</p>
+<p><img src="https://i.loli.net/2019/12/04/VFpabuKdtwIN5ko.jpg" alt="nullcache2.jpg"></p>
+<p>布隆过滤器拥有极高的性能，无论是写入操作还是读取操作，时间复杂度都是 O(1)，是常量值。在空间上，相对于其他数据结构它也有很大的优势，比如，20 亿的数组需要 2000000000/8/1024/1024 = 238M 的空间，而如果使用数组来存储，假设每个用户 ID 占用 4 个字节的空间，那么存储 20 亿用户需要 2000000000 * 4 / 1024 / 1024 = 7600M 的空间，是布隆过滤器的 32 倍。</p>
+<p>不过，任何事物都有两面性，布隆过滤器也不例外，<strong>它主要有两个缺陷：</strong></p>
+<ol>
+<li><p>它在判断元素是否在集合中时是有一定错误几率的，比如它会把不是集合中的元素判断为处在集合中；</p>
+</li>
+<li><p>不支持删除元素。</p>
+</li>
+</ol>
+<p><strong>关于第一个缺陷，主要是 Hash 算法的问题。</strong>因为布隆过滤器是由一个二进制数组和一个 Hash 算法组成的，Hash 算法存在着一定的碰撞几率。Hash 碰撞的含义是不同的输入值经过 Hash 运算后得到了相同的 Hash 结果。</p>
+<p>本来，Hash 的含义是不同的输入，依据不同的算法映射成独一无二的固定长度的值，也就是我输入字符串“1”，根据 CRC32 算法，值是 2212294583。但是现实中 Hash 算法的输入值是无限的，输出值的值空间却是固定的，比如 16 位的 Hash 值的值空间是 65535，那么它的碰撞几率就是 1/65535，即如果输入值的个数超过 65535 就一定会发生碰撞。</p>
+<p><strong>那么你可能会问为什么不映射成更长的 Hash 值呢？</strong></p>
+<p>因为更长的 Hash 值会带来更高的存储成本和计算成本。即使使用 32 位的 Hash 算法，它的值空间长度是 2 的 32 次幂减一，约等于 42 亿，用来映射 20 亿的用户数据，碰撞几率依然有接近 50%。</p>
+<p>Hash 的碰撞就造成了两个用户 ID ，A 和 B 会计算出相同的 Hash 值，那么如果 A 是注册的用户，它的 Hash 值对应的数组中的值是 1，那么 B 即使不是注册用户，它在数组中的位置和 A 是相同的，对应的值也是 1，<strong>这就产生了误判。</strong></p>
+<p>布隆过滤器的误判有一个特点，就是它只会出现“false positive”的情况。这是什么意思呢？当布隆过滤器判断元素在集合中时，这个元素可能不在集合中。但是一旦布隆过滤器判断这个元素不在集合中时，它一定不在集合中。<strong>这一点非常适合解决缓存穿透的问题。</strong>为什么呢？</p>
+<p>你想，如果布隆过滤器会将集合中的元素判定为不在集合中，那么我们就不确定，被布隆过滤器判定为不在集合中的元素，是不是在集合中。假设在刚才的场景中，如果有大量查询未注册的用户信息的请求存在，那么这些请求到达布隆过滤器之后，即使布隆过滤器判断为不是注册用户，那么我们也不确定它是不是真的不是注册用户，那么就还是需要去数据库和缓存中查询，这就使布隆过滤器失去了价值。</p>
+<p>所以你看，布隆过滤器虽然存在误判的情况，但是还是会减少缓存穿透的情况发生，只是我们需要尽量减少误判的几率，这样布隆过滤器的判断正确的几率更高，对缓存的穿透也更少。<strong>一个解决方案是：</strong></p>
+<p>使用多个 Hash 算法为元素计算出多个 Hash 值，只有所有 Hash 值对应的数组中的值都为 1 时，才会认为这个元素在集合中。</p>
+<p><strong>布隆过滤器不支持删除元素的缺陷也和 Hash 碰撞有关。</strong>给你举一个例子，假如两个元素 A 和 B 都是集合中的元素，它们有相同的 Hash 值，它们就会映射到数组的同一个位置。这时我们删除了 A，数组中对应位置的值也从 1 变成 0，那么在判断 B 的时候发现值是 0，也会判断 B 是不在集合中的元素，就会得到错误的结论。</p>
+<p><strong>那么我是怎么解决这个问题的呢？</strong>我会让数组中不再只有 0 和 1 两个值，而是存储一个计数。比如如果 A 和 B 同时命中了一个数组的索引，那么这个位置的值就是 2，如果 A 被删除了就把这个值从 2 改为 1。这个方案中的数组不再存储 bit 位，而是存储数值，也就会增加空间的消耗。<strong>所以，你要依据业务场景来选择是否能够使用布隆过滤器，</strong>比如像是注册用户的场景下，因为用户删除的情况基本不存在，所以还是可以使用布隆过滤器来解决缓存穿透的问题的。</p>
+<p><strong>讲了这么多，关于布隆过滤器的使用上，我也给你几个建议：</strong></p>
+<ol>
+<li><p>选择多个 Hash 函数计算多个 Hash 值，这样可以减少误判的几率；</p>
+</li>
+<li><p>布隆过滤器会消耗一定的内存空间，所以在使用时需要评估你的业务场景下需要多大的内存，存储的成本是否可以接受。</p>
+</li>
+</ol>
+<p>总的来说，<strong>回种空值和布隆过滤器</strong>是解决缓存穿透问题的两种最主要的解决方案，但是它们也有各自的适用场景，并不能解决所有问题。比方说当有一个极热点的缓存项，它一旦失效会有大量请求穿透到数据库，这会对数据库造成瞬时极大的压力，我们把这个场景叫做“dog-pile effect”（狗桩效应），</p>
+<p>这是典型的缓存并发穿透的问题，<strong>那么，我们如何来解决这个问题呢？</strong>解决狗桩效应的思路是尽量地减少缓存穿透后的并发，方案也比较简单：</p>
+<ol>
+<li><p>在代码中，控制在某一个热点缓存项失效之后启动一个后台线程，穿透到数据库，将数据加载到缓存中，在缓存未加载之前，所有访问这个缓存的请求都不再穿透而直接返回。</p>
+</li>
+<li><p>通过在 Memcached 或者 Redis 中设置分布式锁，只有获取到锁的请求才能够穿透到数据库。</p>
+</li>
+</ol>
+<p>分布式锁的方式也比较简单，比方说 ID 为 1 的用户是一个热点用户，当他的用户信息缓存失效后，我们需要从数据库中重新加载数据时，先向 Memcached 中写入一个 Key 为”lock.1”的缓存项，然后去数据库里面加载数据，当数据加载完成后再把这个 Key 删掉。这时，如果另外一个线程也要请求这个用户的数据，它发现缓存中有 Key 为“lock.1”的缓存，就认为目前已经有线程在加载数据库中的值到缓存中了，它就可以重新去缓存中查询数据，不再穿透数据库了。</p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
         <a href="/2019/12/04/2019-12-04-分布式缓存高可用/" class="image is-7by1">
             <img class="thumbnail" src="https://i.loli.net/2019/12/04/8YZSFOvUQWpbXnj.jpg" alt="缓存专题(四) 分布式缓存高可用">
         </a>
@@ -277,80 +392,6 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2019/12/03/PzE62RftLeOGNAr.jpg" alt="NoSql相对于关系型数据库的优势">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/nosql/">nosql</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    11 分钟 读完 (大约 1648 个字)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/">NoSql相对于关系型数据库的优势</a>
-            
-        </h1>
-        <div class="content">
-            <h3 id="使用-NoSQL-提升写入性能"><a href="#使用-NoSQL-提升写入性能" class="headerlink" title="使用 NoSQL 提升写入性能"></a>使用 NoSQL 提升写入性能</h3><p>数据库系统大多使用的是传统的机械磁盘，对于机械磁盘的访问方式有两种：一种是随机 IO；另一种是顺序 IO。随机 IO 就需要花费时间做昂贵的磁盘寻道，一般来说，它的读写效率要比顺序 IO 小两到三个数量级，所以我们想要提升写入的性能就要尽量减少随机 IO。</p>
-<p>以 MySQL 的 InnoDB 存储引擎来说，更新 binlog、redolog、undolog 都是在做顺序 IO，而更新 datafile 和索引文件则是在做随机 IO，而为了减少随机 IO 的发生，关系数据库已经做了很多的优化，比如说写入时先写入内存，然后批量刷新到磁盘上，但是随机 IO 还是会发生。</p>
-<p>索引在 InnoDB 引擎中是以 B+ 树方式来组织的，而 MySQL 主键是聚簇索引（一种索引类型，数据与索引数据放在一起），既然数据和索引数据放在一起，那么在数据插入或者更新的时候，我们需要找到要插入的位置，再把数据写到特定的位置上，这就产生了随机的 IO。而且一旦发生了页分裂，就不可避免会做数据的移动，也会极大地损耗写入性能。</p>
-<p><strong>NoSQL 数据库是怎么解决这个问题的呢？</strong></p>
-<p>它们有多种的解决方式，这里我给你讲一种最常见的方案，就是很多 NoSQL 数据库都在使用的<strong>基于 LSM 树的存储引擎，</strong>这种算法使用最多，所以在这里着重剖析一下。</p>
-<p>LSM 树（Log-Structured Merge Tree）牺牲了一定的读性能来换取写入数据的高性能，Hbase、Cassandra、LevelDB 都是用这种算法作为存储的引擎。</p>
-<p>它的思想很简单，数据首先会写入到一个叫做 MemTable 的内存结构中，在 MemTable 中数据是按照写入的 Key 来排序的。为了防止 MemTable 里面的数据因为机器掉电或者重启而丢失，一般会通过写 Write Ahead Log 的方式将数据备份在磁盘上。</p>
-<p>MemTable 在累积到一定规模时，它会被刷新生成一个新的文件，我们把这个文件叫做 SSTable（Sorted String Table）。当 SSTable 达到一定数量时，我们会将这些 SSTable 合并，减少文件的数量，因为 SSTable 都是有序的，所以合并的速度也很快。</p>
-<p>当从 LSM 树里面读数据时，我们首先从 MemTable 中查找数据，如果数据没有找到，再从 SSTable 中查找数据。因为存储的数据都是有序的，所以查找的效率是很高的，只是因为数据被拆分成多个 SSTable，所以读取的效率会低于 B+ 树索引。</p>
-<p><img src="https://i.loli.net/2019/12/01/crYi7PBhUFKSbdx.jpg" alt="sstable.jpg"></p>
-<p>和 LSM 树类似的算法有很多，比如说 TokuDB 使用的名为 Fractal tree 的索引结构，它们的核心思想就是将随机 IO 变成顺序的 IO，从而提升写入的性能。</p>
-<h2 id="提升扩展性"><a href="#提升扩展性" class="headerlink" title="提升扩展性"></a>提升扩展性</h2><p>另外，在扩展性方面，很多 NoSQL 数据库也有着先天的优势。还是以你的垂直电商系统为例，你已经为你的电商系统增加了评论系统，开始你的评估比较乐观，觉得电商系统的评论量级不会增长很快，所以就为它分了 8 个库，每个库拆分成 16 张表。</p>
-<p>但是评论系统上线之后，存储量级增长的异常迅猛，你不得不将数据库拆分成更多的库表，而数据也要重新迁移到新的库表中，过程非常痛苦，而且数据迁移的过程也非常容易出错。</p>
-<p>这时，你考虑是否可以考虑使用 NoSQL 数据库来彻底解决扩展性的问题，经过调研你发现它们在设计之初就考虑到了分布式和大数据存储的场景，<strong>比如像 MongoDB 就有三个扩展性方面的特性。</strong></p>
-<ul>
-<li>其一是 Replica，也叫做副本集，你可以理解为主从分离，也就是通过将数据拷贝成多份来保证当主挂掉后数据不会丢失。同时呢，Replica 还可以分担读请求。Replica 中有主节点来承担写请求，并且把对数据变动记录到 oplog 里（类似于 binlog）；从节点接收到 oplog 后就会修改自身的数据以保持和主节点的一致。一旦主节点挂掉，MongoDB 会从从节点中选取一个节点成为主节点，可以继续提供写数据服务。</li>
-<li>其二是 Shard，也叫做分片，你可以理解为分库分表，即将数据按照某种规则拆分成多份，存储在不同的机器上。MongoDB 的 Sharding 特性一般需要三个角色来支持，一个是 Shard Server，它是实际存储数据的节点，是一个独立的 Mongod 进程；二是 Config Server，也是一组 Mongod 进程，主要存储一些元信息，比如说哪些分片存储了哪些数据等；最后是 Route Server，它不实际存储数据，仅仅作为路由使用，它从 Config Server 中获取元信息后，将请求路由到正确的 Shard Server 中。</li>
-</ul>
-<p><img src="https://i.loli.net/2019/12/01/NAGs5wjJHzceSXm.jpg" alt="mongodb.jpg"></p>
-<ul>
-<li>其三是负载均衡，就是当 MongoDB 发现 Shard 之间数据分布不均匀，会启动 Balancer 进程对数据做重新的分配，最终让不同 Shard Server 的数据可以尽量的均衡。当我们的 Shard Server 存储空间不足需要扩容时，数据会自动被移动到新的 Shard Server 上，减少了数据迁移和验证的成本。</li>
-</ul>
-<p>你可以看到，NoSQL 数据库中内置的扩展性方面的特性可以让我们不再需要对数据库做分库分表和主从分离，也是对传统数据库一个良好的补充。</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -425,7 +466,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            43
+                            44
                         </p>
                     </a>
                 </div>
@@ -619,7 +660,7 @@
                 <span class="level-item">中间件</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">15</span>
+                <span class="level-item tag">16</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/中间件/mysql/">
@@ -659,7 +700,7 @@
                 <span class="level-item">消息队列</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">3</span>
+                <span class="level-item tag">4</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/中间件/缓存/">
@@ -752,7 +793,7 @@
         <h3 class="menu-label">
             标签云
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 10px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/消息/" style="font-size: 11px;">消息</a> <a href="/tags/消息队列/" style="font-size: 10px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 11px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/消息/" style="font-size: 11px;">消息</a> <a href="/tags/消息队列/" style="font-size: 11px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
     </div>
 </div>
     
@@ -767,7 +808,26 @@
         
         <article class="media">
             
-            <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="media-left">
+            <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/04/08/QlkTUGNtbAL3gx5.jpg" alt="消息队列基础补充">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-07T16:00:00.000Z">2020-04-08</time></div>
+                    <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础补充</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/04/02/QqsSbO1gldWTpfo.jpg" alt="消息队列基础概念">
                 </p>
@@ -776,7 +836,7 @@
             <div class="media-content">
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-01T16:00:00.000Z">2020-04-02</time></div>
-                    <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
+                    <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
                     </p>
@@ -841,25 +901,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
-                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -877,7 +918,7 @@
                     <span class="level-item">四月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -1138,7 +1179,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/中间件/">
                         <span class="tag">中间件</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -1201,7 +1242,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/消息队列/">
                         <span class="tag">消息队列</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -1250,7 +1291,26 @@
         
         <article class="media">
             
-            <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="media-left">
+            <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/04/08/QlkTUGNtbAL3gx5.jpg" alt="消息队列基础补充">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-07T16:00:00.000Z">2020-04-08</time></div>
+                    <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础补充</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/04/02/QqsSbO1gldWTpfo.jpg" alt="消息队列基础概念">
                 </p>
@@ -1259,7 +1319,7 @@
             <div class="media-content">
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-01T16:00:00.000Z">2020-04-02</time></div>
-                    <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
+                    <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
                     </p>
@@ -1324,25 +1384,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
-                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1360,7 +1401,7 @@
                     <span class="level-item">四月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -1621,7 +1662,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/中间件/">
                         <span class="tag">中间件</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -1684,7 +1725,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/消息队列/">
                         <span class="tag">消息队列</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 

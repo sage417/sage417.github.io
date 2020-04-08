@@ -144,7 +144,59 @@
 <div class="card">
     
     <div class="card-image">
-        <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="image is-7by1">
+        <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2020/04/08/QlkTUGNtbAL3gx5.jpg" alt="消息队列基础补充">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2020-04-07T16:00:00.000Z">2020-04-08</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    几秒 读完 (大约 10 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2020/04/08/2020-04-08_消息队列基础概念脑图/">消息队列基础补充</a>
+            
+        </h1>
+        <div class="content">
+            <p><img src="https://i.loli.net/2020/04/07/xIej7suwfgq83MY.png" alt="kafka (1).png"></p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
+        <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="image is-7by1">
             <img class="thumbnail" src="https://i.loli.net/2020/04/02/QqsSbO1gldWTpfo.jpg" alt="消息队列基础概念">
         </a>
     </div>
@@ -172,7 +224,7 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2020/04/02/2020-03-30-消息队列基础概念/">消息队列基础概念</a>
+                <a class="has-link-black-ter" href="/2020/04/02/2020-04-02_消息队列基础概念/">消息队列基础概念</a>
             
         </h1>
         <div class="content">
@@ -1152,80 +1204,6 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2019/12/03/PzE62RftLeOGNAr.jpg" alt="NoSql相对于关系型数据库的优势">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-12-01T02:00:00.000Z">2019-12-01</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/nosql/">nosql</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    11 分钟 读完 (大约 1648 个字)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/12/01/2019-12-01-nosql相对关系型数据库的优势/">NoSql相对于关系型数据库的优势</a>
-            
-        </h1>
-        <div class="content">
-            <h3 id="使用-NoSQL-提升写入性能"><a href="#使用-NoSQL-提升写入性能" class="headerlink" title="使用 NoSQL 提升写入性能"></a>使用 NoSQL 提升写入性能</h3><p>数据库系统大多使用的是传统的机械磁盘，对于机械磁盘的访问方式有两种：一种是随机 IO；另一种是顺序 IO。随机 IO 就需要花费时间做昂贵的磁盘寻道，一般来说，它的读写效率要比顺序 IO 小两到三个数量级，所以我们想要提升写入的性能就要尽量减少随机 IO。</p>
-<p>以 MySQL 的 InnoDB 存储引擎来说，更新 binlog、redolog、undolog 都是在做顺序 IO，而更新 datafile 和索引文件则是在做随机 IO，而为了减少随机 IO 的发生，关系数据库已经做了很多的优化，比如说写入时先写入内存，然后批量刷新到磁盘上，但是随机 IO 还是会发生。</p>
-<p>索引在 InnoDB 引擎中是以 B+ 树方式来组织的，而 MySQL 主键是聚簇索引（一种索引类型，数据与索引数据放在一起），既然数据和索引数据放在一起，那么在数据插入或者更新的时候，我们需要找到要插入的位置，再把数据写到特定的位置上，这就产生了随机的 IO。而且一旦发生了页分裂，就不可避免会做数据的移动，也会极大地损耗写入性能。</p>
-<p><strong>NoSQL 数据库是怎么解决这个问题的呢？</strong></p>
-<p>它们有多种的解决方式，这里我给你讲一种最常见的方案，就是很多 NoSQL 数据库都在使用的<strong>基于 LSM 树的存储引擎，</strong>这种算法使用最多，所以在这里着重剖析一下。</p>
-<p>LSM 树（Log-Structured Merge Tree）牺牲了一定的读性能来换取写入数据的高性能，Hbase、Cassandra、LevelDB 都是用这种算法作为存储的引擎。</p>
-<p>它的思想很简单，数据首先会写入到一个叫做 MemTable 的内存结构中，在 MemTable 中数据是按照写入的 Key 来排序的。为了防止 MemTable 里面的数据因为机器掉电或者重启而丢失，一般会通过写 Write Ahead Log 的方式将数据备份在磁盘上。</p>
-<p>MemTable 在累积到一定规模时，它会被刷新生成一个新的文件，我们把这个文件叫做 SSTable（Sorted String Table）。当 SSTable 达到一定数量时，我们会将这些 SSTable 合并，减少文件的数量，因为 SSTable 都是有序的，所以合并的速度也很快。</p>
-<p>当从 LSM 树里面读数据时，我们首先从 MemTable 中查找数据，如果数据没有找到，再从 SSTable 中查找数据。因为存储的数据都是有序的，所以查找的效率是很高的，只是因为数据被拆分成多个 SSTable，所以读取的效率会低于 B+ 树索引。</p>
-<p><img src="https://i.loli.net/2019/12/01/crYi7PBhUFKSbdx.jpg" alt="sstable.jpg"></p>
-<p>和 LSM 树类似的算法有很多，比如说 TokuDB 使用的名为 Fractal tree 的索引结构，它们的核心思想就是将随机 IO 变成顺序的 IO，从而提升写入的性能。</p>
-<h2 id="提升扩展性"><a href="#提升扩展性" class="headerlink" title="提升扩展性"></a>提升扩展性</h2><p>另外，在扩展性方面，很多 NoSQL 数据库也有着先天的优势。还是以你的垂直电商系统为例，你已经为你的电商系统增加了评论系统，开始你的评估比较乐观，觉得电商系统的评论量级不会增长很快，所以就为它分了 8 个库，每个库拆分成 16 张表。</p>
-<p>但是评论系统上线之后，存储量级增长的异常迅猛，你不得不将数据库拆分成更多的库表，而数据也要重新迁移到新的库表中，过程非常痛苦，而且数据迁移的过程也非常容易出错。</p>
-<p>这时，你考虑是否可以考虑使用 NoSQL 数据库来彻底解决扩展性的问题，经过调研你发现它们在设计之初就考虑到了分布式和大数据存储的场景，<strong>比如像 MongoDB 就有三个扩展性方面的特性。</strong></p>
-<ul>
-<li>其一是 Replica，也叫做副本集，你可以理解为主从分离，也就是通过将数据拷贝成多份来保证当主挂掉后数据不会丢失。同时呢，Replica 还可以分担读请求。Replica 中有主节点来承担写请求，并且把对数据变动记录到 oplog 里（类似于 binlog）；从节点接收到 oplog 后就会修改自身的数据以保持和主节点的一致。一旦主节点挂掉，MongoDB 会从从节点中选取一个节点成为主节点，可以继续提供写数据服务。</li>
-<li>其二是 Shard，也叫做分片，你可以理解为分库分表，即将数据按照某种规则拆分成多份，存储在不同的机器上。MongoDB 的 Sharding 特性一般需要三个角色来支持，一个是 Shard Server，它是实际存储数据的节点，是一个独立的 Mongod 进程；二是 Config Server，也是一组 Mongod 进程，主要存储一些元信息，比如说哪些分片存储了哪些数据等；最后是 Route Server，它不实际存储数据，仅仅作为路由使用，它从 Config Server 中获取元信息后，将请求路由到正确的 Shard Server 中。</li>
-</ul>
-<p><img src="https://i.loli.net/2019/12/01/NAGs5wjJHzceSXm.jpg" alt="mongodb.jpg"></p>
-<ul>
-<li>其三是负载均衡，就是当 MongoDB 发现 Shard 之间数据分布不均匀，会启动 Balancer 进程对数据做重新的分配，最终让不同 Shard Server 的数据可以尽量的均衡。当我们的 Shard Server 存储空间不足需要扩容时，数据会自动被移动到新的 Shard Server 上，减少了数据迁移和验证的成本。</li>
-</ul>
-<p>你可以看到，NoSQL 数据库中内置的扩展性方面的特性可以让我们不再需要对数据库做分库分表和主从分离，也是对传统数据库一个良好的补充。</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -1290,7 +1268,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            43
+                            44
                         </p>
                     </a>
                 </div>
@@ -1484,7 +1462,7 @@
                 <span class="level-item">中间件</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">15</span>
+                <span class="level-item tag">16</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/中间件/mysql/">
@@ -1524,7 +1502,7 @@
                 <span class="level-item">消息队列</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">3</span>
+                <span class="level-item tag">4</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/中间件/缓存/">
@@ -1617,7 +1595,7 @@
         <h3 class="menu-label">
             标签云
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 10px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/消息/" style="font-size: 11px;">消息</a> <a href="/tags/消息队列/" style="font-size: 10px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
+        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 11px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/消息/" style="font-size: 11px;">消息</a> <a href="/tags/消息队列/" style="font-size: 11px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
     </div>
 </div>
     
@@ -1632,7 +1610,26 @@
         
         <article class="media">
             
-            <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="media-left">
+            <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/04/08/QlkTUGNtbAL3gx5.jpg" alt="消息队列基础补充">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-07T16:00:00.000Z">2020-04-08</time></div>
+                    <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础补充</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/04/02/QqsSbO1gldWTpfo.jpg" alt="消息队列基础概念">
                 </p>
@@ -1641,7 +1638,7 @@
             <div class="media-content">
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-01T16:00:00.000Z">2020-04-02</time></div>
-                    <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
+                    <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
                     </p>
@@ -1706,25 +1703,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
-                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -1742,7 +1720,7 @@
                     <span class="level-item">四月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -2003,7 +1981,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/中间件/">
                         <span class="tag">中间件</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -2066,7 +2044,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/消息队列/">
                         <span class="tag">消息队列</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -2115,7 +2093,26 @@
         
         <article class="media">
             
-            <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="media-left">
+            <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/04/08/QlkTUGNtbAL3gx5.jpg" alt="消息队列基础补充">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-07T16:00:00.000Z">2020-04-08</time></div>
+                    <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础补充</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/04/02/QqsSbO1gldWTpfo.jpg" alt="消息队列基础概念">
                 </p>
@@ -2124,7 +2121,7 @@
             <div class="media-content">
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-01T16:00:00.000Z">2020-04-02</time></div>
-                    <a href="/2020/04/02/2020-03-30-消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
+                    <a href="/2020/04/02/2020-04-02_消息队列基础概念/" class="title has-link-black-ter is-size-6 has-text-weight-normal">消息队列基础概念</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/消息队列/">消息队列</a>
                     </p>
@@ -2189,25 +2186,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time></div>
-                    <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="title has-link-black-ter is-size-6 has-text-weight-normal">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -2225,7 +2203,7 @@
                     <span class="level-item">四月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -2486,7 +2464,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/中间件/">
                         <span class="tag">中间件</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
@@ -2549,7 +2527,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/消息队列/">
                         <span class="tag">消息队列</span>
-                        <span class="tag is-grey">1</span>
+                        <span class="tag is-grey">2</span>
                     </a>
                 </div>
                 
