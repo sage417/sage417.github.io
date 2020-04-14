@@ -133,6 +133,66 @@
 <div class="card">
     
     <div class="card-image">
+        <a href="/2020/03/27/2020-03-27_【片段】方法参数收集/" class="image is-7by1">
+            <img class="thumbnail" src="https://i.loli.net/2020/03/27/DKo1cSZmtew2sTP.jpg" alt="【片段】 方法参数收集">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2020-03-26T16:00:00.000Z">2020-03-27</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Java框架/">Java框架</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/Java框架/Spring/">Spring</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    2 分钟 读完 (大约 330 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2020/03/27/2020-03-27_【片段】方法参数收集/">【片段】 方法参数收集</a>
+            
+        </h1>
+        <div class="content">
+            <p>以前的代码，用于收集当前方法的所有参数，放在map中方便调取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.google.common.collect.ImmutableMap;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.JoinPoint;</span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.annotation.After;</span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.annotation.Aspect;</span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.annotation.Before;</span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.annotation.Pointcut;</span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.reflect.MethodSignature;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.IntStream;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArgumentsCollector</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;Map&lt;String, Object&gt;&gt; ARGUMENTS = ThreadLocal.withInitial(ImmutableMap::of);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> Map&lt;String, Object&gt; <span class="title">getArgs</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ARGUMENTS.get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Object[] args(Object[] args, <span class="keyword">int</span> exceptLength) &#123;</span><br><span class="line">        <span class="keyword">if</span> (exceptLength == args.length) &#123;</span><br><span class="line">            <span class="keyword">return</span> args;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Arrays.copyOf(args, exceptLength);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Pointcut</span>(<span class="string">"@annotation(CollectArguments)"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">collectArgumentsAnnotationPointCut</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before</span>(<span class="string">"collectArgumentsAnnotationPointCut()"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doAccessCheck</span><span class="params">(JoinPoint joinPoint)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();</span><br><span class="line">        <span class="keyword">final</span> Object[] args = args(joinPoint.getArgs(), parameterNames.length);</span><br><span class="line"></span><br><span class="line">        ARGUMENTS.set(Collections.unmodifiableMap((IntStream.range(<span class="number">0</span>, parameterNames.length)</span><br><span class="line">                .mapToObj(idx -&gt; Tuple2.of(parameterNames[idx], args[idx]))</span><br><span class="line">                .collect(HashMap::<span class="keyword">new</span>, (m, t) -&gt; m.put(t.getT1(), t.getT2()), HashMap::putAll))));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span>(<span class="string">"collectArgumentsAnnotationPointCut()"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ARGUMENTS.remove();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Data</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Tuple2</span>&lt;<span class="title">T1</span>, <span class="title">T2</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> T1 t1;</span><br><span class="line">        <span class="keyword">private</span> T2 t2;</span><br><span class="line"></span><br><span class="line">        Tuple2(T1 t1, T2 t2) &#123;</span><br><span class="line">            <span class="keyword">this</span>.t1 = t1;</span><br><span class="line">            <span class="keyword">this</span>.t2 = t2;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> &lt;T1, T2&gt; <span class="function">Tuple2&lt;T1, T2&gt; <span class="title">of</span><span class="params">(T1 t1, T2 t2)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Tuple2&lt;&gt;(t1, t2);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>附送一段代码，用于将方法中收集的参数转换成Bean</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.BeanUtils;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.MutablePropertyValues;</span><br><span class="line"><span class="keyword">import</span> org.springframework.validation.DataBinder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BinderUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    BinderUtil() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">getTarget</span><span class="params">(Class&lt;T&gt; beanClazz)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> DataBinder binder = <span class="keyword">new</span> DataBinder(BeanUtils.instantiate(beanClazz));</span><br><span class="line">        binder.bind(<span class="keyword">new</span> MutablePropertyValues(ArgumentsCollector.getArgs()));</span><br><span class="line">        <span class="keyword">return</span> (T) binder.getTarget();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="meta">@CollectArguments</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;PsJobSequenceVO&gt; <span class="title">findJobSequence</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        String jobSeqGroupId,</span></span></span><br><span class="line"><span class="function"><span class="params">        String jobSeqId,</span></span></span><br><span class="line"><span class="function"><span class="params">        Integer state,</span></span></span><br><span class="line"><span class="function"><span class="params">        Date endDate</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> jobSequenceHandler.findJobSequence(BinderUtil.getTarget(PsJobSequenceFindRO.class)).getData();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-image">
         <a href="/2020/03/23/2020-02-23_IM系统关键点梳理/" class="image is-7by1">
             <img class="thumbnail" src="https://i.loli.net/2020/03/23/FwNYL9kIoCRDVT5.jpg" alt="IM系统关键点梳理">
         </a>
@@ -234,169 +294,6 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-image">
-        <a href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/" class="image is-7by1">
-            <img class="thumbnail" src="https://i.loli.net/2020/03/12/lKwIQ94qN5htP2U.png" alt="奇怪的知识又增加了- BLNJ导致索引有序性失效">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2020-03-11T16:00:00.000Z">2020-03-12</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/中间件/">中间件</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/中间件/mysql/">mysql</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    3 分钟 读完 (大约 483 个字)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2020/03/12/2020-03-12-奇怪的知识又增加了-BLNJ导致索引有序性失效/">奇怪的知识又增加了- BLNJ导致索引有序性失效</a>
-            
-        </h1>
-        <div class="content">
-            <p>先来看表结构：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE a (</span><br><span class="line">  `id`bigint AUTO_INCREMENT ,</span><br><span class="line">  `a` int,</span><br><span class="line">  `b` int,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  KEY `idx_a_b` (`a`,`b`)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">CREATE TABLE b (</span><br><span class="line">	`id`bigint AUTO_INCREMENT ,</span><br><span class="line">  `b` int,</span><br><span class="line">  `c` int,</span><br><span class="line">  PRIMARY KEY (`id`)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>看一下join语句，因为b上没有索引，所以mysql用的BLNJ：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">explain select * from a </span><br><span class="line">join b using(b)</span><br><span class="line">where a = 1</span><br><span class="line">order by a, b;</span><br></pre></td></tr></table></figure>
-
-<table>
-<thead>
-<tr>
-<th>id</th>
-<th>select_type</th>
-<th>table</th>
-<th>partitions</th>
-<th>type</th>
-<th>possible_keys</th>
-<th>key</th>
-<th>key_len</th>
-<th>ref</th>
-<th>rows</th>
-<th align="right">filtered</th>
-<th>extra</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>SIMPLE</td>
-<td>a</td>
-<td>null</td>
-<td>ref</td>
-<td>idx_a_b</td>
-<td>idx_a_b</td>
-<td>4</td>
-<td>const</td>
-<td>5206</td>
-<td align="right">100.00</td>
-<td>Using temporary; Using filesort</td>
-</tr>
-<tr>
-<td>1</td>
-<td>SIMPLE</td>
-<td>b</td>
-<td>null</td>
-<td>ALL</td>
-<td>null</td>
-<td>null</td>
-<td>null</td>
-<td>Null</td>
-<td>1000</td>
-<td align="right">100.00</td>
-<td>Using where; Using join buffer (Block Nested Loop)</td>
-</tr>
-</tbody></table>
-<p>如果b表有索引的话：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE b (</span><br><span class="line">	`id`bigint AUTO_INCREMENT ,</span><br><span class="line">  `b` int,</span><br><span class="line">  `c` int,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  KEY `idx_b` (`b`)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<table>
-<thead>
-<tr>
-<th>id</th>
-<th>select_type</th>
-<th>table</th>
-<th>partitions</th>
-<th>type</th>
-<th>possible_keys</th>
-<th>key</th>
-<th>key_len</th>
-<th>ref</th>
-<th>rows</th>
-<th align="right">filtered</th>
-<th>extra</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>SIMPLE</td>
-<td>a</td>
-<td>null</td>
-<td>ref</td>
-<td>idx_a_b</td>
-<td>idx_a_b</td>
-<td>8</td>
-<td>Const</td>
-<td>5206</td>
-<td align="right">100.00</td>
-<td>Using index condition</td>
-</tr>
-<tr>
-<td>1</td>
-<td>SIMPLE</td>
-<td>b</td>
-<td>null</td>
-<td>Ref</td>
-<td>idx_b</td>
-<td>Idx_b</td>
-<td>4</td>
-<td>b.b</td>
-<td>50</td>
-<td align="right">100.00</td>
-<td>null</td>
-</tr>
-</tbody></table>
-<p>可以发现a表idx_a_b有序性没有利用上，至于原因，先看一下BNLJ执行的流程图:</p>
-<p><img src="https://i.loli.net/2020/03/12/ON4hu3cKt1Ck9Ji.jpg" alt="BNLJ.jpeg"></p>
-<p>执行过程为：</p>
-<ol>
-<li>扫描表 t1，顺序读取数据行放入 join_buffer 中，直到 join_buffer 满了，继续第 2 步；</li>
-<li>扫描表 t2，把 t2 中的每一行取出来，跟 join_buffer 中的数据做对比，满足 join 条件的，作为结果集的一部分返回；</li>
-<li>清空 join_buffer；</li>
-<li>继续扫描表 t1，顺序读取之后数据放入 join_buffer 中，继续执行第 2 步，直到所有数据读取完毕。</li>
-</ol>
-<p>其中隐含的问题在于第二步：即使t1表的数据是有序读取到join_buffer中的，由于是先扫描t2表再关联join_buffer数据，导致join_buffer中的有序性失效。</p>
-<p>如果表b有索引idx_b,那么使用BKA算法第二步的关联顺序与BNLJ相反，是先扫描join_buffer后通过索引关联t2,则可以利用join_buffer中的有序数据。</p>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -467,7 +364,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            44
+                            45
                         </p>
                     </a>
                 </div>
@@ -491,7 +388,7 @@
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
-                            19
+                            21
                         </p>
                     </a>
                 </div>
@@ -741,7 +638,7 @@
                 <span class="level-item">架构</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">1</span>
+                <span class="level-item tag">2</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/算法/">
@@ -794,7 +691,7 @@
         <h3 class="menu-label">
             标签云
         </h3>
-        <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 11px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/消息/" style="font-size: 11px;">消息</a> <a href="/tags/消息队列/" style="font-size: 11px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
+        <a href="/tags/IM系统/" style="font-size: 10px;">IM系统</a> <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 11px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/消息/" style="font-size: 12px;">消息</a> <a href="/tags/消息队列/" style="font-size: 11px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
     </div>
 </div>
     
@@ -806,6 +703,25 @@
         <h3 class="menu-label">
             最新文章
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/04/13/2020-04-13_IM系统基础-IM系统结构/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="IM系统基础-IM系统结构">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-13T12:00:00.000Z">2020-04-13</time></div>
+                    <a href="/2020/04/13/2020-04-13_IM系统基础-IM系统结构/" class="title has-link-black-ter is-size-6 has-text-weight-normal">IM系统基础-IM系统结构</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -883,25 +799,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/23/2020-03-23_高并发系统-数据库关键点梳理/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/23/eNkhvRJ12jaXwgr.jpg" alt="高并发系统-数据库关键点梳理">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-22T16:00:00.000Z">2020-03-23</time></div>
-                    <a href="/2020/03/23/2020-03-23_高并发系统-数据库关键点梳理/" class="title has-link-black-ter is-size-6 has-text-weight-normal">高并发系统-数据库关键点梳理</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -919,7 +816,7 @@
                     <span class="level-item">四月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">2</span>
+                    <span class="level-item tag">3</span>
                 </span>
             </a>
         </li>
@@ -1136,6 +1033,13 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/IM系统/">
+                        <span class="tag">IM系统</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/aop/">
                         <span class="tag">aop</span>
                         <span class="tag is-grey">1</span>
@@ -1234,9 +1138,16 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/架构/">
+                        <span class="tag">架构</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/消息/">
                         <span class="tag">消息</span>
-                        <span class="tag is-grey">2</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
@@ -1292,6 +1203,25 @@
         
         <article class="media">
             
+            <a href="/2020/04/13/2020-04-13_IM系统基础-IM系统结构/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="IM系统基础-IM系统结构">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-04-13T12:00:00.000Z">2020-04-13</time></div>
+                    <a href="/2020/04/13/2020-04-13_IM系统基础-IM系统结构/" class="title has-link-black-ter is-size-6 has-text-weight-normal">IM系统基础-IM系统结构</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/架构/">架构</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/04/08/2020-04-08_消息队列基础概念脑图/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2020/04/08/QlkTUGNtbAL3gx5.jpg" alt="消息队列基础补充">
@@ -1366,25 +1296,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/23/2020-03-23_高并发系统-数据库关键点梳理/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/23/eNkhvRJ12jaXwgr.jpg" alt="高并发系统-数据库关键点梳理">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-22T16:00:00.000Z">2020-03-23</time></div>
-                    <a href="/2020/03/23/2020-03-23_高并发系统-数据库关键点梳理/" class="title has-link-black-ter is-size-6 has-text-weight-normal">高并发系统-数据库关键点梳理</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/中间件/">中间件</a> / <a class="has-link-grey -link" href="/categories/中间件/mysql/">mysql</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1402,7 +1313,7 @@
                     <span class="level-item">四月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">2</span>
+                    <span class="level-item tag">3</span>
                 </span>
             </a>
         </li>
@@ -1619,6 +1530,13 @@
             <div class="field is-grouped is-grouped-multiline">
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/IM系统/">
+                        <span class="tag">IM系统</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/aop/">
                         <span class="tag">aop</span>
                         <span class="tag is-grey">1</span>
@@ -1717,9 +1635,16 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/架构/">
+                        <span class="tag">架构</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/消息/">
                         <span class="tag">消息</span>
-                        <span class="tag is-grey">2</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
