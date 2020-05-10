@@ -136,6 +136,117 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-11-06T02:00:00.000Z">2018-11-06</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/工作/">工作</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    8 分钟 读完 (大约 1159 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2018/11/06/2018-11-06-biz/">根据权限查询时避免角色切换的一种思路</a>
+            
+        </h1>
+        <div class="content">
+            <h2 id="1-问题背景"><a href="#1-问题背景" class="headerlink" title="1. 问题背景"></a>1. 问题背景</h2><h3 id="权限系统现状"><a href="#权限系统现状" class="headerlink" title="权限系统现状"></a>权限系统现状</h3><p>UC权限系统基于角色访问控制技术RBAC（Role Based Access Control） 。具体来说，就是赋予用户某个角色，角色给与角色对应的权限能访问及操作不同范围的资源。</p>
+<h3 id="什么是数据权限"><a href="#什么是数据权限" class="headerlink" title="什么是数据权限"></a>什么是数据权限</h3><p>代表一个角色对应某个权限所能操作的数据范围，比如gitlab组管理员能看到组下的所有项目代码，我们可以这样配置：</p>
+<ol>
+<li>创建组管理员</li>
+<li>分配给组管理员查看项目代码的权限</li>
+<li>查看项目代码权限设置约束条件，约束为自己组下的项目</li>
+<li></li>
+</ol>
+<h3 id="实际产生遇到的问题"><a href="#实际产生遇到的问题" class="headerlink" title="实际产生遇到的问题"></a>实际产生遇到的问题</h3><p>对绝大多数简单的系统来说一个用户对应一个系统只会有一个角色，一个角色只有一个数据权限范围（即使有多个，也可以合并成一个）。但是随着产品的功能迭代，用户的变更和系统设计的原因，总有一些特殊且重要的用户在同一个系统中拥有多个角色。在多角色和数据权限的组合下，一个用户可以拥有复数的数据权限范围。</p>
+<p>考虑到实现复杂性，大多数系统选择使用<strong>角色切换</strong>的手段简化系统实现，同时对用户暴露出了他们不熟悉的角色这一概念，造成这些用户在系统使用中的各种不便。</p>
+<p>本文重点讨论在避免角色切换的前提下，进行多角色数据范围查询的一种思路。</p>
+<h3 id="具体需要解决的需求"><a href="#具体需要解决的需求" class="headerlink" title="具体需要解决的需求"></a>具体需要解决的需求</h3><p>我们的数据报表后台，不同的角色拥有不同的数据查看范围（不同角色所能看到的员工数据字段也各不相同），例如：</p>
+<ul>
+<li>薪酬管理员：查看非高职级员工数据</li>
+<li>高级薪酬管理员： 查看高职级员工数据</li>
+<li>长期激励管理员：查看有长期激励员工数据</li>
+<li>等等</li>
+</ul>
+<p>简单来说，拥有长期激励管理员和高级薪酬管理员的用户能否直接看到高职级员工数据和长期激励员工数据？至少在直觉上是可行的。</p>
+<h2 id="2-多角色数据范围查询"><a href="#2-多角色数据范围查询" class="headerlink" title="2.多角色数据范围查询"></a>2.多角色数据范围查询</h2><h3 id="直觉的做法"><a href="#直觉的做法" class="headerlink" title="直觉的做法"></a>直觉的做法</h3><p>单角色单数据范围可以使用一句sql查询出结果，那多角色多数据范围是不是使用多句sql查询出结果合并就可以了？</p>
+<h3 id="深入思考-多角色数据范围对行的影响"><a href="#深入思考-多角色数据范围对行的影响" class="headerlink" title="深入思考 多角色数据范围对行的影响"></a>深入思考 多角色数据范围对行的影响</h3><ol>
+<li>查询条件合并还是结果合并？ —-结果合并</li>
+<li>如何排序？ —–外部排序，或先内部排序,limit,再外部排序</li>
+<li>有重复数据怎么办？ —-使用groupby去重</li>
+<li>查询性能有影响吗？—-有</li>
+</ol>
+<p>具体体现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select * from (</span><br><span class="line">(select id, sortvalue from table_1 where t_name = &apos;a&apos; order by sortvalue desc limit 20)  -- 先内部排序,limit</span><br><span class="line">union all -- 结果合并</span><br><span class="line">(select id, sortvalue from table_1 where t_name = &apos;b&apos; order by sortvalue desc limit 20)  -- 先内部排序,limit</span><br><span class="line">order by sortvalue desc  -- 外部排序</span><br><span class="line">) a group by id -- 使用groupby去重</span><br><span class="line">limit 10, 10</span><br></pre></td></tr></table></figure>
+
+<h3 id="深入思考-多角色数据范围对列的影响"><a href="#深入思考-多角色数据范围对列的影响" class="headerlink" title="深入思考 多角色数据范围对列的影响"></a>深入思考 多角色数据范围对列的影响</h3><ul>
+<li>薪酬管理员： 查看员工薪酬字段</li>
+<li>长期激励管理员：查看员工长期激励字段</li>
+</ul>
+<p>如何解决？方法有很多！</p>
+<h3 id="综合思考，给出一种解决方案"><a href="#综合思考，给出一种解决方案" class="headerlink" title="综合思考，给出一种解决方案"></a>综合思考，给出一种解决方案</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">   A(查询行及角色信息) --&gt; B(根据角色查询对应列字段)</span><br><span class="line">   B --&gt; C(结果)</span><br></pre></td></tr></table></figure>
+
+<p>步骤：</p>
+<ol>
+<li>查询多角色数据范围下的数据，附带角色信息</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select id, GROUP_CONCAT(a.role) as roles from (</span><br><span class="line">(select id, &apos;role_a&apos; as role from table_1 where sortvalue &gt; 10 order by `sortvalue` desc limit 2)</span><br><span class="line">union all</span><br><span class="line">(select id, &apos;role_b&apos; as role from table_1 where sortvalue &gt; 20 order by `sortvalue` desc limit 2) </span><br><span class="line">order by `sortvalue` desc </span><br><span class="line">) a group by id</span><br><span class="line">limit 0, 2</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<table>
+<thead>
+<tr>
+<th align="center">id</th>
+<th align="center">roles</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">薪酬管理员</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">薪酬管理员，长期激励管理员</td>
+</tr>
+</tbody></table>
+<ol start="2">
+<li>根据每一行不同的角色，查询出可见的字段，例如id=1的行只能查看ROLE_B对应字段，而id=5的行可以看到ROLE_A,ROLE_B对应的两个角色的字段</li>
+<li></li>
+</ol>
+<h2 id="3-总结和延伸"><a href="#3-总结和延伸" class="headerlink" title="3.总结和延伸"></a>3.总结和延伸</h2><h3 id="多角色数据范围写操作？"><a href="#多角色数据范围写操作？" class="headerlink" title="多角色数据范围写操作？"></a>多角色数据范围写操作？</h3><p>遍历角色直到找到满足条件的权限即可。</p>
+<h3 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h3><p>自己不行动，等于等着被别人安排哈哈</p>
+<h3 id="还有疑问？"><a href="#还有疑问？" class="headerlink" title="还有疑问？"></a>还有疑问？</h3><p>自己想。<a href="mailto:jinyufeng@ke.com?subject=问题">还可以点这里</a></p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2018-09-08T02:00:00.000Z">2018-09-08</time>
                 
                 <div class="level-item">
@@ -332,108 +443,6 @@
 
 
 
-    
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-07-02T07:39:56.000Z">2018-07-02</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Java并发/">Java并发</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    13 分钟 读完 (大约 1882 个字)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/07/02/AbstractQueuedSynchronizer解析/">AbstractQueuedSynchronizer解析</a>
-            
-        </h1>
-        <div class="content">
-            <h4 id="AbstractQueuedSynchronizer-数据结构"><a href="#AbstractQueuedSynchronizer-数据结构" class="headerlink" title="AbstractQueuedSynchronizer 数据结构"></a>AbstractQueuedSynchronizer 数据结构</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> 	<span class="comment">/** </span></span><br><span class="line"><span class="comment">     * Head of the wait queue , lazily initialized . Except for </span></span><br><span class="line"><span class="comment">     * initialization , it is modified only via method setHead .   Note : </span></span><br><span class="line"><span class="comment">     * If head exists , its waitStatus is guaranteed not to be </span></span><br><span class="line"><span class="comment">     * CANCELLED . </span></span><br><span class="line"><span class="comment">     */</span> </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">transient</span> <span class="keyword">volatile</span> Node head; </span><br><span class="line"></span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * Tail of the wait queue , lazily initialized . Modified only via </span></span><br><span class="line"><span class="comment">     * method enq to add new wait node . </span></span><br><span class="line"><span class="comment">     */</span> </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">transient</span> <span class="keyword">volatile</span> Node tail; </span><br><span class="line"></span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * The synchronization state . </span></span><br><span class="line"><span class="comment">     */</span> </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> state;</span><br></pre></td></tr></table></figure>
-
-<p>稍微注意下在线程争用锁是才会初始化链表</p>
-<h4 id="AbstractQueuedSynchronizer-Node-数据结构"><a href="#AbstractQueuedSynchronizer-Node-数据结构" class="headerlink" title="AbstractQueuedSynchronizer.Node 数据结构"></a><strong>AbstractQueuedSynchronizer.Node</strong> 数据结构</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">* Status field , taking on only the values : </span></span><br><span class="line"><span class="comment">*    SIGNAL :      The successor of this node is ( or will soon be ) </span></span><br><span class="line"><span class="comment">*                blocked ( via park ), so the current node must </span></span><br><span class="line"><span class="comment">*                unpark its successor when it releases or </span></span><br><span class="line"><span class="comment">*                cancels . To avoid races , acquire methods must </span></span><br><span class="line"><span class="comment">*                first indicate they need a signal , </span></span><br><span class="line"><span class="comment">*                then retry the atomic acquire , and then , </span></span><br><span class="line"><span class="comment">*                on failure , block . </span></span><br><span class="line"><span class="comment">*    CANCELLED :   This node is cancelled due to timeout or interrupt . </span></span><br><span class="line"><span class="comment">*                Nodes never leave this state . In particular , </span></span><br><span class="line"><span class="comment">*                a thread with cancelled node never again blocks . </span></span><br><span class="line"><span class="comment">*    CONDITION :   This node is currently on a condition queue . </span></span><br><span class="line"><span class="comment">*                It will not be used as a sync queue node </span></span><br><span class="line"><span class="comment">*                until transferred , at which time the status </span></span><br><span class="line"><span class="comment">*                will be set to 0. ( Use of this value here has </span></span><br><span class="line"><span class="comment">*                nothing to do with the other uses of the </span></span><br><span class="line"><span class="comment">*                field , but simplifies mechanics .) </span></span><br><span class="line"><span class="comment">*    PROPAGATE :   A releaseShared should be propagated to other </span></span><br><span class="line"><span class="comment">*                nodes . This is set ( for head node only ) in </span></span><br><span class="line"><span class="comment">*                doReleaseShared to ensure propagation </span></span><br><span class="line"><span class="comment">*                continues , even if other operations have </span></span><br><span class="line"><span class="comment">*                since intervened . </span></span><br><span class="line"><span class="comment">*    0:           None of the above </span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* The values are arranged numerically to simplify use . </span></span><br><span class="line"><span class="comment">* Non - negative values mean that a node doesn ' t need to </span></span><br><span class="line"><span class="comment">* signal . So , most code doesn ' t need to check for particular </span></span><br><span class="line"><span class="comment">* values , just for sign . </span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* The field is initialized to 0 for normal sync nodes , and </span></span><br><span class="line"><span class="comment">* CONDITION for condition nodes .   It is modified using CAS </span></span><br><span class="line"><span class="comment">* ( or when possible , unconditional volatile writes ). </span></span><br><span class="line"><span class="comment">*/</span> </span><br><span class="line"><span class="keyword">volatile</span> <span class="keyword">int</span> waitStatus; </span><br><span class="line"></span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">* Link to predecessor node that current node / thread relies on </span></span><br><span class="line"><span class="comment">* for checking waitStatus . Assigned during enqueuing , and nulled </span></span><br><span class="line"><span class="comment">* out ( for sake of GC ) only upon dequeuing .   Also , upon </span></span><br><span class="line"><span class="comment">* cancellation of a predecessor , we short - circuit while </span></span><br><span class="line"><span class="comment">* finding a non - cancelled one , which will always exist </span></span><br><span class="line"><span class="comment">* because the head node is never cancelled : A node becomes </span></span><br><span class="line"><span class="comment">* head only as a result of successful acquire . A </span></span><br><span class="line"><span class="comment">* cancelled thread never succeeds in acquiring , and a thread only </span></span><br><span class="line"><span class="comment">* cancels itself , not any other node . </span></span><br><span class="line"><span class="comment">*/</span> </span><br><span class="line"><span class="keyword">volatile</span> Node prev; </span><br><span class="line"></span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">* Link to the successor node that the current node / thread </span></span><br><span class="line"><span class="comment">* unparks upon release . Assigned during enqueuing , adjusted </span></span><br><span class="line"><span class="comment">* when bypassing cancelled predecessors , and nulled out ( for </span></span><br><span class="line"><span class="comment">* sake of GC ) when dequeued .   The enq operation does not </span></span><br><span class="line"><span class="comment">* assign next field of a predecessor until after attachment , </span></span><br><span class="line"><span class="comment">* so seeing a null next field does not necessarily mean that </span></span><br><span class="line"><span class="comment">* node is at end of queue . However , if a next field appears </span></span><br><span class="line"><span class="comment">* to be null , we can scan prev ' s from the tail to </span></span><br><span class="line"><span class="comment">* double - check .   The next field of cancelled nodes is set to </span></span><br><span class="line"><span class="comment">* point to the node itself instead of null , to make life </span></span><br><span class="line"><span class="comment">* easier for isOnSyncQueue . </span></span><br><span class="line"><span class="comment">*/</span> </span><br><span class="line"><span class="keyword">volatile</span> Node next; </span><br><span class="line"></span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">* The thread that enqueued this node . Initialized on </span></span><br><span class="line"><span class="comment">* construction and nulled out after use . </span></span><br><span class="line"><span class="comment">*/</span> </span><br><span class="line"><span class="keyword">volatile</span> Thread thread; </span><br><span class="line"></span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">* Link to next node waiting on condition , or the special </span></span><br><span class="line"><span class="comment">* value SHARED . Because condition queues are accessed only </span></span><br><span class="line"><span class="comment">* when holding in exclusive mode , we just need a simple </span></span><br><span class="line"><span class="comment">* linked queue to hold nodes while they are waiting on </span></span><br><span class="line"><span class="comment">* conditions . They are then transferred to the queue to </span></span><br><span class="line"><span class="comment">* re - acquire . And because conditions can only be exclusive , </span></span><br><span class="line"><span class="comment">* we save a field by using special value to indicate shared </span></span><br><span class="line"><span class="comment">* mode . </span></span><br><span class="line"><span class="comment">*/</span> </span><br><span class="line">Node nextWaiter;</span><br></pre></td></tr></table></figure>
-
-<h4 id="AbstractQueuedSynchronizer-的数据结构（盗用的图）"><a href="#AbstractQueuedSynchronizer-的数据结构（盗用的图）" class="headerlink" title="AbstractQueuedSynchronizer** 的数据结构（盗用的图）"></a>AbstractQueuedSynchronizer** 的数据结构（盗用的图）</h4><p><img src="https://i.loli.net/2019/05/20/5ce25d1a4577394145.png" alt=""></p>
-<h4 id="AbstractQueuedSynchronizer-做了什么"><a href="#AbstractQueuedSynchronizer-做了什么" class="headerlink" title="AbstractQueuedSynchronizer 做了什么 ?"></a><strong>AbstractQueuedSynchronizer</strong> <strong>做了什么</strong> ?</h4><p>内部维护state和CLH队列，负责在资源争用时线程入队，资源释放时唤醒队列中线程。</p>
-<p>而实现类只需要实现 <strong>什么条件获取资源成功</strong> 和 <strong>什么条件释放资源</strong> 成功就可以了</p>
-<p>所以，最简单的CountDownLatch使用AbstractQueuedSynchronizer实现非常简单：</p>
-<ul>
-<li>申明AbstractQueuedSynchronizer的state数量（比如十个）</li>
-<li>await方法尝试获取资源，如果state&gt;0表示获取失败（ <strong>什么条件获取资源成功</strong> ，CountDownLatch实现），获取失败线程休眠（AbstractQueuedSynchronizer负责）</li>
-<li>countDown方法state-1，如果state==0表示资源释放成功( <strong>什么条件释放资源成功</strong> ，CountDownLatch实现)，唤醒队列中所有线程（AbstractQueuedSynchronizer负责）</li>
-</ul>
-<h4 id="AbstractQueuedSynchronizer-怎么做的"><a href="#AbstractQueuedSynchronizer-怎么做的" class="headerlink" title="AbstractQueuedSynchronizer 怎么做的?"></a><strong>AbstractQueuedSynchronizer</strong> 怎么做的?</h4><p>顺着ReentrantLock lock、unlock看一遍我们就大致总结出AbstractQueuedSynchronizer工作原理了</p>
-<p>先简单介绍下ReentrantLock特性：可重入，中断，有超时机制。</p>
-<h4 id="ReentrantLock-lock-流程-再盗图"><a href="#ReentrantLock-lock-流程-再盗图" class="headerlink" title="ReentrantLock lock() 流程 ( 再盗图 )"></a><strong>ReentrantLock lock()</strong> <strong>流程</strong> <strong>(</strong> <strong>再盗图</strong> )</h4><p><img src="https://i.loli.net/2019/05/20/5ce25da81509c52443.png" alt=""></p>
-<p>黄色表示ReentrantLock实现，绿色表示AbstractQueuedSynchronizer内部实现</p>
-<ol>
-<li>lock方法入口 直接调用 <a href="http://wiki.lianjia.com/display/JTZPCP/AQS####AbstractQueuedSynchronizer.acquire">AbstractQueuedSynchronizer.acquire方法</a></li>
-<li>tryAcquire</li>
-<li>addWaiter</li>
-<li>acquireQueued</li>
-</ol>
-<h5 id="AbstractQueuedSynchronizer-acquire"><a href="#AbstractQueuedSynchronizer-acquire" class="headerlink" title="AbstractQueuedSynchronizer.acquire"></a>AbstractQueuedSynchronizer.acquire</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">**<span class="keyword">public</span>** <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquire</span> <span class="params">( <span class="keyword">int</span> arg)</span> </span>&#123; </span><br><span class="line">    **<span class="keyword">if</span>** (! tryAcquire (arg) &amp;&amp; </span><br><span class="line">        acquireQueued ( addWaiter ( Node . EXCLUSIVE ), arg)) </span><br><span class="line">        selfInterrupt (); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>获取的锁的逻辑：直接获取成功则返回，如果没有获取成功入队休眠（对就是这么简单）</p>
-<p>下面我们仔细一个一个方法看</p>
-<h5 id="ReentrantLock-tryAcquire"><a href="#ReentrantLock-tryAcquire" class="headerlink" title="ReentrantLock.tryAcquire"></a>ReentrantLock.tryAcquire</h5><p>我这里贴的时非公平的所获取，公平和不公平的区别在于公平锁老老实实的会进入队列排队，非公平锁会先检查资源是否可用，如果可用不管队列中的情况直接尝试获取锁。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">nonfairTryAcquire</span> <span class="params">( <span class="keyword">int</span> acquires)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">final</span> Thread current = Thread . currentThread (); </span><br><span class="line">    <span class="keyword">int</span> c = getState (); </span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">0</span> ) &#123; </span><br><span class="line">        <span class="keyword">if</span> ( compareAndSetState ( <span class="number">0</span> , acquires)) &#123; </span><br><span class="line">            setExclusiveOwnerThread (current); </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span> ; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (current == getExclusiveOwnerThread ()) &#123; </span><br><span class="line">        <span class="keyword">int</span> nextc = c + acquires; </span><br><span class="line">        <span class="keyword">if</span> (nextc &lt; <span class="number">0</span> ) <span class="comment">// overflow</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Error ( <span class="string">"Maximum lock count exceeded"</span> ); </span><br><span class="line">        setState (nextc); </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span> ; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span> ; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>ReentrantLock.tryAcquire读取到state==0时尝试占用锁，并保证同一线程可以重复占用。其他情况下获取资源失败。如果获取成功就没啥事了，不过关键不就是锁争用的时候是如何处理的吗？</p>
-<h5 id="AbstractQueuedSynchronizer-addWaiter-Node-EXCLUSIVE"><a href="#AbstractQueuedSynchronizer-addWaiter-Node-EXCLUSIVE" class="headerlink" title="AbstractQueuedSynchronizer.addWaiter(Node.EXCLUSIVE)"></a>AbstractQueuedSynchronizer.addWaiter(Node.EXCLUSIVE)</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Node <span class="title">addWaiter</span> <span class="params">( Node mode)</span> </span>&#123; </span><br><span class="line">    Node node = <span class="keyword">new</span> Node (mode); </span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (;;) &#123; </span><br><span class="line">        Node oldTail = tail; </span><br><span class="line">        <span class="keyword">if</span> (oldTail != <span class="keyword">null</span> ) &#123; </span><br><span class="line">            node. setPrevRelaxed (oldTail); </span><br><span class="line">            <span class="keyword">if</span> ( compareAndSetTail (oldTail, node)) &#123; </span><br><span class="line">                oldTail. next = node; </span><br><span class="line">                <span class="keyword">return</span> node; </span><br><span class="line">            &#125; </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; </span><br><span class="line">            initializeSyncQueue (); </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>一旦锁争用，一定会初始化队列（因为排队的线程需要前驱节点唤醒，所以要初始化一个前驱节点），之后自旋成为队列尾节点。</p>
-<p>简单来说就是获取不到锁就放进队列里维护起来，等锁释放的时候再用。</p>
-<p>这里还有一个 <strong>很具有参考性的小细节</strong> ：先设置新节点的前驱结点，自旋成为尾节点后设置前驱的后驱</p>
-<h5 id="AbstractQueuedSynchronizer-acquireQueued"><a href="#AbstractQueuedSynchronizer-acquireQueued" class="headerlink" title="AbstractQueuedSynchronizer.acquireQueued"></a>AbstractQueuedSynchronizer.acquireQueued</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">acquireQueued</span> <span class="params">( <span class="keyword">final</span> Node node, <span class="keyword">int</span> arg)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">boolean</span> interrupted = <span class="keyword">false</span> ; </span><br><span class="line">    <span class="keyword">try</span> &#123; </span><br><span class="line">        <span class="keyword">for</span> (;;) &#123; </span><br><span class="line">            <span class="keyword">final</span> Node p = node. predecessor (); </span><br><span class="line">            <span class="keyword">if</span> (p == head &amp;&amp; tryAcquire (arg)) &#123; </span><br><span class="line">                setHead (node); </span><br><span class="line">                p. next = <span class="keyword">null</span> ; <span class="comment">// help GC </span></span><br><span class="line">                <span class="keyword">return</span> interrupted; </span><br><span class="line">            &#125; </span><br><span class="line">            <span class="keyword">if</span> ( shouldParkAfterFailedAcquire (p, node)) </span><br><span class="line">                interrupted |= parkAndCheckInterrupt (); </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; <span class="keyword">catch</span> ( Throwable t) &#123; </span><br><span class="line">        cancelAcquire (node); </span><br><span class="line">        <span class="keyword">if</span> (interrupted) </span><br><span class="line">            selfInterrupt (); </span><br><span class="line">        <span class="keyword">throw</span> t; </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">shouldParkAfterFailedAcquire</span> <span class="params">( Node pred, Node node)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">int</span> ws = pred. waitStatus ; </span><br><span class="line">    <span class="keyword">if</span> (ws == Node . SIGNAL ) </span><br><span class="line">        <span class="comment">/* </span></span><br><span class="line"><span class="comment">             * This node has already set status asking a release </span></span><br><span class="line"><span class="comment">             * to signal it, so it can safely park. </span></span><br><span class="line"><span class="comment">             */</span> </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span> ; </span><br><span class="line">    <span class="keyword">if</span> (ws &gt; <span class="number">0</span> ) &#123; </span><br><span class="line">        <span class="comment">/* </span></span><br><span class="line"><span class="comment">             * Predecessor was cancelled. Skip over predecessors and </span></span><br><span class="line"><span class="comment">             * indicate retry. </span></span><br><span class="line"><span class="comment">             */</span> </span><br><span class="line">        <span class="keyword">do</span> &#123; </span><br><span class="line">            node. prev = pred = pred. prev ; </span><br><span class="line">        &#125; <span class="keyword">while</span> (pred. waitStatus &gt; <span class="number">0</span> ); </span><br><span class="line">        pred. next = node; </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; </span><br><span class="line">        <span class="comment">/* </span></span><br><span class="line"><span class="comment">             * waitStatus must be 0 or PROPAGATE.  Indicate that we </span></span><br><span class="line"><span class="comment">             * need a signal, but don't park yet.  Caller will need to </span></span><br><span class="line"><span class="comment">             * retry to make sure it cannot acquire before parking. </span></span><br><span class="line"><span class="comment">             */</span> </span><br><span class="line">        pred. compareAndSetWaitStatus (ws, Node . SIGNAL ); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span> ; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">parkAndCheckInterrupt</span> <span class="params">()</span> </span>&#123; </span><br><span class="line">        LockSupport . park ( <span class="keyword">this</span> ); </span><br><span class="line">        <span class="keyword">return</span> Thread . interrupted (); </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>前面只是维护下链表数据结构，这里负责找到合适的唤醒前驱，然后让线程休眠。</p>
-<p>这里主要是一个循环过程：</p>
-<ol>
-<li>检查是否能获取到锁，获取到则返回</li>
-<li>失败则寻找前面最近的未放弃争用的前驱，把前驱的waitStatus设置为-1，并把放弃争用的节点抛弃</li>
-<li>检查是否能休眠</li>
-<li>使用Usafe.park休眠（不是wait）</li>
-</ol>
-<h4 id="ReentrantLock-lock-总结"><a href="#ReentrantLock-lock-总结" class="headerlink" title="ReentrantLock lock 总结"></a><strong>ReentrantLock lock</strong> 总结</h4><p><img src="https://i.loli.net/2019/05/20/5ce25ea9eeba265273.png" alt=""></p>
-<h4 id="ReentrantLock-unlock"><a href="#ReentrantLock-unlock" class="headerlink" title="ReentrantLock unlock()"></a>ReentrantLock unlock()</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">release</span> <span class="params">( <span class="keyword">int</span> arg)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">if</span> ( tryRelease (arg)) &#123; </span><br><span class="line">        Node h = head; </span><br><span class="line">        <span class="keyword">if</span> (h != <span class="keyword">null</span> &amp;&amp; h. waitStatus != <span class="number">0</span> ) </span><br><span class="line">            unparkSuccessor (h); </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span> ; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span> ; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">tryRelease</span> <span class="params">( <span class="keyword">int</span> releases)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">int</span> c = getState () - releases; </span><br><span class="line">    <span class="keyword">if</span> ( Thread . currentThread () != getExclusiveOwnerThread ()) </span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalMonitorStateException (); </span><br><span class="line">    <span class="keyword">boolean</span> free = <span class="keyword">false</span> ; </span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">0</span> ) &#123; </span><br><span class="line">        free = <span class="keyword">true</span> ; </span><br><span class="line">        setExclusiveOwnerThread ( <span class="keyword">null</span> ); </span><br><span class="line">    &#125; </span><br><span class="line">    setState (c); </span><br><span class="line">    <span class="keyword">return</span> free; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">unparkSuccessor</span> <span class="params">( Node node)</span> </span>&#123; </span><br><span class="line">    <span class="comment">/* </span></span><br><span class="line"><span class="comment">         * If status is negative (i.e., possibly needing signal) try </span></span><br><span class="line"><span class="comment">         * to clear in anticipation of signalling.  It is OK if this </span></span><br><span class="line"><span class="comment">         * fails or if status is changed by waiting thread. </span></span><br><span class="line"><span class="comment">         */</span> </span><br><span class="line">    <span class="keyword">int</span> ws = node. waitStatus ; </span><br><span class="line">    <span class="keyword">if</span> (ws &lt; <span class="number">0</span> ) </span><br><span class="line">        node. compareAndSetWaitStatus (ws, <span class="number">0</span> ); </span><br><span class="line"></span><br><span class="line">    <span class="comment">/* </span></span><br><span class="line"><span class="comment">         * Thread to unpark is held in successor, which is normally </span></span><br><span class="line"><span class="comment">         * just the next node.  But if cancelled or apparently null, </span></span><br><span class="line"><span class="comment">         * traverse backwards from tail to find the actual </span></span><br><span class="line"><span class="comment">         * non-cancelled successor. </span></span><br><span class="line"><span class="comment">         */</span> </span><br><span class="line">    Node s = node. next ; </span><br><span class="line">    <span class="keyword">if</span> (s == <span class="keyword">null</span> || s. waitStatus &gt; <span class="number">0</span> ) &#123; </span><br><span class="line">        s = <span class="keyword">null</span> ; </span><br><span class="line">        <span class="keyword">for</span> ( Node p = tail; p != node &amp;&amp; p != <span class="keyword">null</span> ; p = p. prev ) </span><br><span class="line">            <span class="keyword">if</span> (p. waitStatus &lt;= <span class="number">0</span> ) </span><br><span class="line">                s = p; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">if</span> (s != <span class="keyword">null</span> ) </span><br><span class="line">        LockSupport . unpark (s. thread ); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>unlock的代码特别简单：</p>
-<ol>
-<li>每unlock一次state-1</li>
-<li>state == 0 时资源成功释放</li>
-<li>如果释放成功，唤醒第二个节点</li>
-<li>如果第二个节点没引用或者放弃争用，从队尾开始寻找可以唤醒的线程</li>
-</ol>
-
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -441,7 +450,7 @@
         <div class="pagination-previous">
             <a class="is-flex-grow has-text-black-ter" href="/page/14/">上一页</a>
         </div>
-        <div class="pagination-next is-invisible is-hidden-mobile">
+        <div class="pagination-next">
             <a class="is-flex-grow has-text-black-ter" href="/page/16/">下一页</a>
         </div>
         <ul class="pagination-list is-hidden-mobile">
@@ -453,6 +462,8 @@
             <li><a class="pagination-link has-text-black-ter" href="/page/14/">14</a></li>
             
             <li><a class="pagination-link is-current" href="/page/15/">15</a></li>
+            
+            <li><a class="pagination-link has-text-black-ter" href="/page/16/">16</a></li>
             
         </ul>
     </nav>
@@ -502,7 +513,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            45
+                            46
                         </p>
                     </a>
                 </div>
@@ -526,7 +537,7 @@
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
-                            21
+                            22
                         </p>
                     </a>
                 </div>
@@ -752,7 +763,7 @@
                 <span class="level-item">工作</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">5</span>
+                <span class="level-item tag">6</span>
             </span>
         </a><ul><li>
         <a class="level is-marginless" href="/categories/工作/总结/">
@@ -768,7 +779,7 @@
                 <span class="level-item">挑战</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">3</span>
+                <span class="level-item tag">4</span>
             </span>
         </a></li></ul></li><li>
         <a class="level is-marginless" href="/categories/架构/">
@@ -829,7 +840,7 @@
         <h3 class="menu-label">
             标签云
         </h3>
-        <a href="/tags/IM系统/" style="font-size: 10px;">IM系统</a> <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 11px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/消息/" style="font-size: 12px;">消息</a> <a href="/tags/消息队列/" style="font-size: 11px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
+        <a href="/tags/IM系统/" style="font-size: 10px;">IM系统</a> <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/java/" style="font-size: 18px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mybatis/" style="font-size: 14px;">mybatis</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/spring/" style="font-size: 11px;">spring</a> <a href="/tags/中间件/" style="font-size: 11px;">中间件</a> <a href="/tags/代码/" style="font-size: 20px;">代码</a> <a href="/tags/分布式/" style="font-size: 16px;">分布式</a> <a href="/tags/团队/" style="font-size: 10px;">团队</a> <a href="/tags/工作/" style="font-size: 19px;">工作</a> <a href="/tags/感悟/" style="font-size: 12px;">感悟</a> <a href="/tags/搜索/" style="font-size: 10px;">搜索</a> <a href="/tags/操作系统/" style="font-size: 10px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13px;">数据库</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/消息/" style="font-size: 12px;">消息</a> <a href="/tags/消息队列/" style="font-size: 11px;">消息队列</a> <a href="/tags/算法/" style="font-size: 15px;">算法</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/读书/" style="font-size: 17px;">读书</a>
     </div>
 </div>
     
@@ -841,6 +852,25 @@
         <h3 class="menu-label">
             最新文章
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/05/10/2020-05-10_排查docker oomkillded问题/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/05/10/gHNt97KdvDYPCwq.jpg" alt="排查docker oomkillded问题">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-05-10T14:00:00.000Z">2020-05-10</time></div>
+                    <a href="/2020/05/10/2020-05-10_排查docker oomkillded问题/" class="title has-link-black-ter is-size-6 has-text-weight-normal">排查docker oomkillded问题</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -918,25 +948,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/23/2020-02-23_IM系统关键点梳理/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/23/FwNYL9kIoCRDVT5.jpg" alt="IM系统关键点梳理">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-23T03:55:01.694Z">2020-03-23</time></div>
-                    <a href="/2020/03/23/2020-02-23_IM系统关键点梳理/" class="title has-link-black-ter is-size-6 has-text-weight-normal">IM系统关键点梳理</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
         
@@ -947,6 +958,17 @@
             归档
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/04/">
@@ -1250,7 +1272,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">21</span>
+                        <span class="tag is-grey">22</span>
                     </a>
                 </div>
                 
@@ -1264,6 +1286,13 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/搜索/">
                         <span class="tag">搜索</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/操作系统/">
+                        <span class="tag">操作系统</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -1341,6 +1370,25 @@
         
         <article class="media">
             
+            <a href="/2020/05/10/2020-05-10_排查docker oomkillded问题/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="https://i.loli.net/2020/05/10/gHNt97KdvDYPCwq.jpg" alt="排查docker oomkillded问题">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-05-10T14:00:00.000Z">2020-05-10</time></div>
+                    <a href="/2020/05/10/2020-05-10_排查docker oomkillded问题/" class="title has-link-black-ter is-size-6 has-text-weight-normal">排查docker oomkillded问题</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/工作/">工作</a> / <a class="has-link-grey -link" href="/categories/工作/挑战/">挑战</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/04/13/2020-04-13_IM系统基础-IM系统结构/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="https://i.loli.net/2019/12/08/5F9DmKdQazwo4UY.jpg" alt="IM系统基础-IM系统结构">
@@ -1415,25 +1463,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2020/03/23/2020-02-23_IM系统关键点梳理/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="https://i.loli.net/2020/03/23/FwNYL9kIoCRDVT5.jpg" alt="IM系统关键点梳理">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-23T03:55:01.694Z">2020-03-23</time></div>
-                    <a href="/2020/03/23/2020-02-23_IM系统关键点梳理/" class="title has-link-black-ter is-size-6 has-text-weight-normal">IM系统关键点梳理</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/架构/">架构</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -1444,6 +1473,17 @@
             归档
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/04/">
@@ -1747,7 +1787,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/工作/">
                         <span class="tag">工作</span>
-                        <span class="tag is-grey">21</span>
+                        <span class="tag is-grey">22</span>
                     </a>
                 </div>
                 
@@ -1761,6 +1801,13 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/搜索/">
                         <span class="tag">搜索</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/操作系统/">
+                        <span class="tag">操作系统</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
