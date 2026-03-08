@@ -1,7 +1,7 @@
 ---
 title: '在windows上安装Rust'
 date: '2026-02-05 00:00:00'
-cover: 
+cover: https://i.imgur.com/PcPyt1D.jpeg
 toc: true
 categories:
     - 代码

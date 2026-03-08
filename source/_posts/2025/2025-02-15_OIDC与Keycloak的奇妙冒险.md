@@ -1,7 +1,7 @@
 ---
 title: 'OIDC与Keycloak的奇妙冒险'
 date: '2025-02-15 00:00:00'
-cover: 
+cover: https://i.imgur.com/nF2JhBa.jpeg
 toc: true
 categories:
     - 工作
