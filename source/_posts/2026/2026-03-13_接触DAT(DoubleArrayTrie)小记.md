@@ -1,5 +1,5 @@
 ---
-title: '2026-03-13_接触DAT(DoubleArrayTrie)小记'
+title: 接触DAT(DoubleArrayTrie)小记'
 date: '2026-03-13 00:00:00'
 cover: 
 toc: true
